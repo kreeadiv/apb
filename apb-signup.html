@@ -17,7 +17,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--da
 /* LEFT PANEL */
 .left { background:linear-gradient(160deg,var(--leaf) 0%,var(--leaf-mid) 60%,#1a4731 100%); display:flex; flex-direction:column; justify-content:space-between; padding:48px; position:relative; overflow:hidden; }
 .left-blob { position:absolute; border-radius:50%; opacity:.1; pointer-events:none; }
-.left-logo { font-family:'Playfair Display',serif; font-size:22px; color:rgba(255,255,255,.85); position:relative; z-index:1; }
+.left-logo { font-family:'Playfair Display',serif; font-size:22px; color:rgba(255,255,255,.85); position:relative; z-index:1; text-decoration:none; }
 .left-logo em { font-style:italic; color:rgba(255,255,255,.6); }
 .left-content { position:relative; z-index:1; }
 .left-eyebrow { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,.6); margin-bottom:16px; }
@@ -77,7 +77,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--da
 .pw-strength-bar { height:100%; border-radius:100px; transition:width .3s, background .3s; width:0%; }
 .pw-strength-label { font-size:11px; margin-top:4px; }
 
-/* WFPBNO EXPERIENCE */
+/* WFPB EXPERIENCE */
 .experience-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
 .exp-btn { padding:10px 12px; border:1.5px solid rgba(0,0,0,.1); border-radius:10px; font-size:12px; cursor:pointer; font-family:'DM Sans',sans-serif; background:white; text-align:left; transition:all .15s; }
 .exp-btn:hover { border-color:var(--leaf-light); }
@@ -137,14 +137,14 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--da
   <div class="left-blob" style="width:500px;height:500px;background:white;top:-150px;right:-150px;"></div>
   <div class="left-blob" style="width:300px;height:300px;background:var(--sun);bottom:-80px;left:-80px;"></div>
 
-  <div class="left-logo">APB <em>🌿</em></div>
+  <a href="index.html" class="left-logo">APB <em>🌿</em></a>
 
   <div class="left-content">
     <div class="left-eyebrow">🚨 Calling All Plant Based Humans</div>
     <h2 class="left-headline">Join a community of <em>whole food,</em> plant-based humans.</h2>
-    <p class="left-sub">Free forever. Your community, your pantry, your recipe book. No credit card, no catch.</p>
+    <p class="left-sub">Free forever. Your community, your recipe book. No credit card, no catch.</p>
     <div class="benefits">
-      <div class="benefit"><div class="benefit-check">✓</div><div class="benefit-text"><strong>AI recipe suggestions</strong> from your pantry</div></div>
+      <div class="benefit"><div class="benefit-check">✓</div><div class="benefit-text"><strong>Curated recipes</strong> from trusted WFPB creators</div></div>
       <div class="benefit"><div class="benefit-check">✓</div><div class="benefit-text"><strong>Find plant-friendly places</strong> anywhere you go</div></div>
       <div class="benefit"><div class="benefit-check">✓</div><div class="benefit-text"><strong>Save and share</strong> recipes you love</div></div>
       <div class="benefit"><div class="benefit-check">✓</div><div class="benefit-text"><strong>Rate restaurants</strong> for WFPB friendliness</div></div>
@@ -282,9 +282,9 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--da
             <span class="exp-btn-sub">Everything free, no ads ever. One-time, never expires.</span>
           </div>
           <div id="plan-premium" class="exp-btn" onclick="selectPlan('premium')" style="cursor:pointer;">
-            <span class="exp-btn-icon">🤖</span>
+            <span class="exp-btn-icon">✨</span>
             <span class="exp-btn-label">Premium — $3.99/mo or $29.99/yr</span>
-            <span class="exp-btn-sub">No ads + AI ingredient-to-recipe suggestions. Cancel anytime.</span>
+            <span class="exp-btn-sub">No ads + early access to upcoming premium features. Cancel anytime.</span>
           </div>
         </div>
         <div class="form-hint" style="margin-top:8px;" id="plan-hint">Free forever. You can upgrade anytime from your account settings.</div>
@@ -388,7 +388,7 @@ async function createAccount() {
         last_name: lastName,
         username: username || firstName.toLowerCase(),
         city,
-        wfpbno_experience: selectedExp,
+        wfpb_experience: selectedExp,
         interests: selectedInterests,
         is_premium: selectedPlan === 'premium',
       }
@@ -417,7 +417,7 @@ async function createAccount() {
       last_name: lastName,
       username: username || firstName.toLowerCase(),
       city,
-      wfpbno_experience: selectedExp,
+      wfpb_experience: selectedExp,
       interests: selectedInterests,
       is_premium: false, // premium set after Stripe payment
       created_at: new Date().toISOString()

@@ -21,7 +21,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--da
 
 /* NAV */
 nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); backdrop-filter:blur(12px); padding:14px 48px; display:flex; align-items:center; gap:24px; border-bottom:1px solid rgba(45,106,79,0.1); }
-.logo { font-family:'Playfair Display',serif; font-size:20px; color:var(--leaf); margin-right:auto; }
+.logo { font-family:'Playfair Display',serif; font-size:20px; color:var(--leaf); margin-right:auto; text-decoration:none; }
 .logo em { font-style:italic; color:var(--leaf-light); }
 .nav-link { font-size:13px; color:var(--muted); text-decoration:none; }
 .nav-avatar { width:32px; height:32px; border-radius:50%; background:var(--leaf); color:white; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:500; }
@@ -94,11 +94,11 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
 .card-distance { font-size:11px; color:var(--muted); }
 .card-hours-open  { font-size:11px; color:#16a34a; font-weight:500; }
 .card-hours-closed { font-size:11px; color:#dc2626; font-weight:500; }
-.wfpbno-tier-badge { font-size:10px; font-weight:600; padding:3px 9px; border-radius:6px; }
-.wfpbno-tier-badge.haven    { background:var(--tier-haven-bg);   color:var(--tier-haven-text); }
-.wfpbno-tier-badge.friendly { background:var(--tier-friendly-bg); color:var(--tier-friendly-text); }
-.wfpbno-tier-badge.possible { background:var(--tier-possible-bg); color:var(--tier-possible-text); }
-.wfpbno-tier-badge.unrated  { background:#f5f5f5; color:var(--muted); }
+.wfpb-tier-badge { font-size:10px; font-weight:600; padding:3px 9px; border-radius:6px; }
+.wfpb-tier-badge.haven    { background:var(--tier-haven-bg);   color:var(--tier-haven-text); }
+.wfpb-tier-badge.friendly { background:var(--tier-friendly-bg); color:var(--tier-friendly-text); }
+.wfpb-tier-badge.possible { background:var(--tier-possible-bg); color:var(--tier-possible-text); }
+.wfpb-tier-badge.unrated  { background:#f5f5f5; color:var(--muted); }
 
 /* DUAL RATINGS */
 .dual-ratings { display:grid; grid-template-columns:1fr 1fr; border-bottom:1px solid #f5f5f5; }
@@ -108,7 +108,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
 .rating-val { display:flex; align-items:baseline; gap:5px; }
 .rating-num { font-family:'Playfair Display',serif; font-size:20px; }
 .stars-google { color:var(--sun); font-size:11px; }
-.stars-wfpbno { color:var(--leaf-light); font-size:11px; }
+.stars-wfpb { color:var(--leaf-light); font-size:11px; }
 .rating-sub { font-size:10px; color:var(--muted); margin-top:1px; }
 .rate-link { font-size:11px; color:var(--leaf); cursor:pointer; margin-top:3px; display:block; }
 .rate-link:hover { text-decoration:underline; }
@@ -197,7 +197,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
 <body>
 
 <nav>
-  <div class="logo">APB <em>🌿</em></div>
+  <a href="index.html" class="logo">APB <em>🌿</em></a>
   
   <a href="apb-nearby.html" class="nav-link active">Find Food</a>
   <a href="apb-recipes-feed.html" class="nav-link">Recipes</a>
@@ -271,7 +271,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
     <select onchange="sortResults(this.value)">
       <option value="distance">Distance</option>
       <option value="rating">Google Rating</option>
-      <option value="wfpbno">WFPB Rating</option>
+      <option value="wfpb">WFPB Rating</option>
     </select>
   </div>
 </div>
@@ -311,12 +311,12 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
     </div>
 
     <div class="modal-sec-label">🌱 WFPB Rating <span class="modal-sec-sub">  How well does it serve a WFPB eater?</span></div>
-    <div class="star-row" id="wfpbno-stars">
-      <button class="star-btn" style="color:var(--leaf-light)" onclick="setStars('wfpbno',1)">★</button>
-      <button class="star-btn" style="color:var(--leaf-light)" onclick="setStars('wfpbno',2)">★</button>
-      <button class="star-btn" style="color:var(--leaf-light)" onclick="setStars('wfpbno',3)">★</button>
-      <button class="star-btn" style="color:var(--leaf-light)" onclick="setStars('wfpbno',4)">★</button>
-      <button class="star-btn" style="color:var(--leaf-light)" onclick="setStars('wfpbno',5)">★</button>
+    <div class="star-row" id="wfpb-stars">
+      <button class="star-btn" style="color:var(--leaf-light)" onclick="setStars('wfpb',1)">★</button>
+      <button class="star-btn" style="color:var(--leaf-light)" onclick="setStars('wfpb',2)">★</button>
+      <button class="star-btn" style="color:var(--leaf-light)" onclick="setStars('wfpb',3)">★</button>
+      <button class="star-btn" style="color:var(--leaf-light)" onclick="setStars('wfpb',4)">★</button>
+      <button class="star-btn" style="color:var(--leaf-light)" onclick="setStars('wfpb',5)">★</button>
     </div>
 
     <div class="modal-sec-label">🏷️ WFPB Tier <span class="modal-sec-sub">  Which tier fits based on your experience?</span></div>
@@ -385,29 +385,29 @@ const GOOGLE_API_KEY = 'YOUR_GOOGLE_PLACES_API_KEY';
 // APB community data   in production this comes from Supabase.
 // Keyed by Google place_id. Shows what the community has rated.
 const APB_COMMUNITY_DATA = {
-  'ChIJKzpW9PExVIgRB_lkoO5aPCQ': { tier:'friendly', wfpbno_rating:null, overall_rating:null, wto:'Ask about oil-free prep. Menu rotates   check their Instagram for current veg specials.' },
-  'ChIJt8e4nYw5VIgRDMCdh_dqZ2I': { tier:'haven',    wfpbno_rating:null, overall_rating:null, wto:'Stock up on seasonal produce, bulk grains, and legumes. Best WFPB pantry shopping near Monroe.' },
-  'ChIJgxW7cLUwVIgRD_tJzmzNyPY': { tier:'possible',  wfpbno_rating:null, overall_rating:null, wto:'Produce section, dried beans, lentils, rice and grains. Good for everyday staples.' },
-  'ChIJI0CXR-w7VIgR_5HJPYqq8uw': { tier:'possible',  wfpbno_rating:null, overall_rating:null, wto:'Call ahead to ask about plant-based prep without oil. Rice and peas and vegetable dishes are your best bet.' },
-  'ChIJD0aMOtYlVIgR_hc3kePlw3U': { tier:'friendly', wfpbno_rating:null, overall_rating:null, wto:'Ask Yanni directly about oil-free prep   the kitchen is accommodating.' },
-  'ChIJuzWMj_YdVIgRajR1bJ0e5fA': { tier:'possible', wfpbno_rating:null, overall_rating:null, wto:'Ask for grilled mushroom bowls without oil. Skip the fries and fried items.' },
-  'ChIJFcgZqs9-hYARZzkB8L40ZDI': { tier:'friendly', wfpbno_rating:null, overall_rating:null, wto:'Tell your server you eat whole food plant-based   they have a printed list and adapt dishes. Mushroom chowder and king oysters can be made oil-free.' },
-  'ChIJ7Xdl_qEfVIgRHpOpGMREYEY': { tier:'possible', wfpbno_rating:null, overall_rating:null, wto:'Rainbow wrap and pressed juices are most WFPB-aligned. Skip nachos, elote ribs, and fried items.' },
-  'ChIJraDu1--hVogR7xixAzNcKwo': { tier:'friendly', wfpbno_rating:null, overall_rating:null, wto:'Power Bowl and taco salad (dressing on the side) are most WFPB-aligned. Skip the chikie bites.' },
-  'ChIJtfNvQAChVogRFEKAr1RTAHM': { tier:'possible', wfpbno_rating:null, overall_rating:null, wto:'Soul Bowl (grilled mushrooms, rice, sweet potatoes, black-eyed peas)   ask for oil-free. Skip the BBQ ribs.' },
-  'ChIJFWApelqhVogRsYXI3XbODu4': { tier:'possible', wfpbno_rating:null, overall_rating:null, wto:'Ask about lighter preparations. Oyster mushroom sandwich without sauce. Limited Thu-Sun only.' },
-  'ChIJ6yQf5BkgVIgRTQ-MHoKeLV0': { tier:'possible', wfpbno_rating:null, overall_rating:null, wto:'Bean-based chili and collard greens are most WFPB-aligned. Skip the carrot bacon and burgers.' },
-  'ChIJM6vihBSeVogRy6Qw_JteorU': { tier:'haven',    wfpbno_rating:null, overall_rating:null, wto:'Bulk bins, organic produce, plant milks, nutritional yeast. Hot bar   ask about oil-free options.' },
-  'ChIJx47_MM0nVIgRiqiMCJ90RLc': { tier:'haven',    wfpbno_rating:null, overall_rating:null, wto:'Bulk bins, organic produce, plant milks. Upstairs dining area. Closest Whole Foods to Monroe.' },
-  'ChIJVU-E6tOCVogRhv04rFpH3HI': { tier:'haven',    wfpbno_rating:null, overall_rating:null, wto:'Supplement section (B12, nooch), plant milks, organic produce. Open 7 AM daily.' },
-  'ChIJyX3YAq4fVIgRtdy_FFdUvnY': { tier:'haven',    wfpbno_rating:null, overall_rating:null, wto:'Fresh produce, bulk bins. Near Oh My Soul and Soul Miner\'s Garden   great combo trip.' },
-  'ChIJkRJNZoyfVogRmWLdSIS3sFA': { tier:'haven',    wfpbno_rating:null, overall_rating:null, wto:'Best value organic staples in Charlotte. Frozen veggies, canned legumes, whole grains, plant milks.' },
-  'ChIJgZApsnudVogRhjsY5IDyYuQ': { tier:'haven',    wfpbno_rating:null, overall_rating:null, wto:'Closest TJ\'s to Monroe. Right next to Sanctuary Bistro on Rea Rd   perfect combo trip.' },
-  'mod-pizza-indian-trail': { tier:'possible', wfpbno_rating:null, overall_rating:null, name:'MOD Pizza', address:'6720 Old Monroe Rd, Indian Trail, NC 28079', wto:'Build your own salad with lots of ingredient choices, but the only oil-free dressing option is balsamic vinegar. APB tip: bring your own dressing from home for a better salad experience. For pizza, the signature red tomato sauce is oil-free and there are plenty of veggie toppings. The crust does contain some oil so keep that in mind. Leave off the cheese, or ask for vegan cheese if that is something you include in your diet. Great option for going out with non-plant-based friends since everyone can build exactly what they want.', submittedBy:'APB Team', apbTested:true },
-  'mikes-vegan-charlotte': { tier:'notwfpb', wfpbno_rating:null, overall_rating:null, name:"Mike's Vegan Grill", address:'440 E McCullough Dr Ste 123, Charlotte, NC 28262', wto:'Great vegan comfort food with excellent reviews and really friendly staff. However, if you are eating WFPB there are not really available options here. The menu focuses on vegan versions of classic comfort foods like burgers, cheesesteaks, and fried chicken. Worth knowing about if you are with non-WFPB friends who want vegan food, but do not expect to find oil-free whole food options.', submittedBy:'APB Team', apbTested:true },
-  'healthy-habit-hilton-head': { tier:'friendly', wfpbno_rating:null, overall_rating:null, name:'Healthy Habit', address:'33 Office Park Rd Ste 227, Hilton Head Island, SC 29928', wto:'Has a separate vegan/vegetarian menu   watch the key carefully since it can be confusing. Breakfast bowls and smoothies appeared to be WFPB. For dinner, salads and wraps are your best bet. APB recommends the Yummus Salad (watch out   there is also a chicken version) and ask to leave off the Mediterranean red wine dressing. The Latin Wrap is also excellent. Ingredients are fresh and flavorful throughout. The hummus may contain oil so keep that in mind. Always check the ingredients of whichever dish you try.', submittedBy:'APB Team', apbTested:true },
-  'ChIJfQzmipmfVogRBHP01F5-IME': { tier:'friendly', wfpbno_rating:null, overall_rating:null, wto:'B12 supplements, nutritional yeast, alkaline water. Good for hard-to-find WFPB supplements. Closed Sundays.' },
-  'ChIJPfuWb7GFVogR00e11ZThvcg': { tier:'haven',    wfpbno_rating:null, overall_rating:null, wto:'Hot bar   ask about oil-free. Organic produce, clean-label condiments. Bakery/meat close ~6 PM.' },
+  'ChIJKzpW9PExVIgRB_lkoO5aPCQ': { tier:'friendly', wfpb_rating:null, overall_rating:null, wto:'Ask about oil-free prep. Menu rotates   check their Instagram for current veg specials.' },
+  'ChIJt8e4nYw5VIgRDMCdh_dqZ2I': { tier:'haven',    wfpb_rating:null, overall_rating:null, wto:'Stock up on seasonal produce, bulk grains, and legumes. Best WFPB pantry shopping near Monroe.' },
+  'ChIJgxW7cLUwVIgRD_tJzmzNyPY': { tier:'possible',  wfpb_rating:null, overall_rating:null, wto:'Produce section, dried beans, lentils, rice and grains. Good for everyday staples.' },
+  'ChIJI0CXR-w7VIgR_5HJPYqq8uw': { tier:'possible',  wfpb_rating:null, overall_rating:null, wto:'Call ahead to ask about plant-based prep without oil. Rice and peas and vegetable dishes are your best bet.' },
+  'ChIJD0aMOtYlVIgR_hc3kePlw3U': { tier:'friendly', wfpb_rating:null, overall_rating:null, wto:'Ask Yanni directly about oil-free prep   the kitchen is accommodating.' },
+  'ChIJuzWMj_YdVIgRajR1bJ0e5fA': { tier:'possible', wfpb_rating:null, overall_rating:null, wto:'Ask for grilled mushroom bowls without oil. Skip the fries and fried items.' },
+  'ChIJFcgZqs9-hYARZzkB8L40ZDI': { tier:'friendly', wfpb_rating:null, overall_rating:null, wto:'Tell your server you eat whole food plant-based   they have a printed list and adapt dishes. Mushroom chowder and king oysters can be made oil-free.' },
+  'ChIJ7Xdl_qEfVIgRHpOpGMREYEY': { tier:'possible', wfpb_rating:null, overall_rating:null, wto:'Rainbow wrap and pressed juices are most WFPB-aligned. Skip nachos, elote ribs, and fried items.' },
+  'ChIJraDu1--hVogR7xixAzNcKwo': { tier:'friendly', wfpb_rating:null, overall_rating:null, wto:'Power Bowl and taco salad (dressing on the side) are most WFPB-aligned. Skip the chikie bites.' },
+  'ChIJtfNvQAChVogRFEKAr1RTAHM': { tier:'possible', wfpb_rating:null, overall_rating:null, wto:'Soul Bowl (grilled mushrooms, rice, sweet potatoes, black-eyed peas)   ask for oil-free. Skip the BBQ ribs.' },
+  'ChIJFWApelqhVogRsYXI3XbODu4': { tier:'possible', wfpb_rating:null, overall_rating:null, wto:'Ask about lighter preparations. Oyster mushroom sandwich without sauce. Limited Thu-Sun only.' },
+  'ChIJ6yQf5BkgVIgRTQ-MHoKeLV0': { tier:'possible', wfpb_rating:null, overall_rating:null, wto:'Bean-based chili and collard greens are most WFPB-aligned. Skip the carrot bacon and burgers.' },
+  'ChIJM6vihBSeVogRy6Qw_JteorU': { tier:'haven',    wfpb_rating:null, overall_rating:null, wto:'Bulk bins, organic produce, plant milks, nutritional yeast. Hot bar   ask about oil-free options.' },
+  'ChIJx47_MM0nVIgRiqiMCJ90RLc': { tier:'haven',    wfpb_rating:null, overall_rating:null, wto:'Bulk bins, organic produce, plant milks. Upstairs dining area. Closest Whole Foods to Monroe.' },
+  'ChIJVU-E6tOCVogRhv04rFpH3HI': { tier:'haven',    wfpb_rating:null, overall_rating:null, wto:'Supplement section (B12, nooch), plant milks, organic produce. Open 7 AM daily.' },
+  'ChIJyX3YAq4fVIgRtdy_FFdUvnY': { tier:'haven',    wfpb_rating:null, overall_rating:null, wto:'Fresh produce, bulk bins. Near Oh My Soul and Soul Miner\'s Garden   great combo trip.' },
+  'ChIJkRJNZoyfVogRmWLdSIS3sFA': { tier:'haven',    wfpb_rating:null, overall_rating:null, wto:'Best value organic staples in Charlotte. Frozen veggies, canned legumes, whole grains, plant milks.' },
+  'ChIJgZApsnudVogRhjsY5IDyYuQ': { tier:'haven',    wfpb_rating:null, overall_rating:null, wto:'Closest TJ\'s to Monroe. Right next to Sanctuary Bistro on Rea Rd   perfect combo trip.' },
+  'mod-pizza-indian-trail': { tier:'possible', wfpb_rating:null, overall_rating:null, name:'MOD Pizza', address:'6720 Old Monroe Rd, Indian Trail, NC 28079', wto:'Build your own salad with lots of ingredient choices, but the only oil-free dressing option is balsamic vinegar. APB tip: bring your own dressing from home for a better salad experience. For pizza, the signature red tomato sauce is oil-free and there are plenty of veggie toppings. The crust does contain some oil so keep that in mind. Leave off the cheese, or ask for vegan cheese if that is something you include in your diet. Great option for going out with non-plant-based friends since everyone can build exactly what they want.', submittedBy:'APB Team', apbTested:true },
+  'mikes-vegan-charlotte': { tier:'notwfpb', wfpb_rating:null, overall_rating:null, name:"Mike's Vegan Grill", address:'440 E McCullough Dr Ste 123, Charlotte, NC 28262', wto:'Great vegan comfort food with excellent reviews and really friendly staff. However, if you are eating WFPB there are not really available options here. The menu focuses on vegan versions of classic comfort foods like burgers, cheesesteaks, and fried chicken. Worth knowing about if you are with non-WFPB friends who want vegan food, but do not expect to find oil-free whole food options.', submittedBy:'APB Team', apbTested:true },
+  'healthy-habit-hilton-head': { tier:'friendly', wfpb_rating:null, overall_rating:null, name:'Healthy Habit', address:'33 Office Park Rd Ste 227, Hilton Head Island, SC 29928', wto:'Has a separate vegan/vegetarian menu   watch the key carefully since it can be confusing. Breakfast bowls and smoothies appeared to be WFPB. For dinner, salads and wraps are your best bet. APB recommends the Yummus Salad (watch out   there is also a chicken version) and ask to leave off the Mediterranean red wine dressing. The Latin Wrap is also excellent. Ingredients are fresh and flavorful throughout. The hummus may contain oil so keep that in mind. Always check the ingredients of whichever dish you try.', submittedBy:'APB Team', apbTested:true },
+  'ChIJfQzmipmfVogRBHP01F5-IME': { tier:'friendly', wfpb_rating:null, overall_rating:null, wto:'B12 supplements, nutritional yeast, alkaline water. Good for hard-to-find WFPB supplements. Closed Sundays.' },
+  'ChIJPfuWb7GFVogR00e11ZThvcg': { tier:'haven',    wfpb_rating:null, overall_rating:null, wto:'Hot bar   ask about oil-free. Organic produce, clean-label condiments. Bakery/meat close ~6 PM.' },
 };
 
 // Place types to search   covers restaurants, cafes, grocers, health food stores
@@ -429,7 +429,7 @@ let activeTiers = new Set(['haven','friendly','possible','unrated','notwfpb']);
 let activeType = 'all';
 let ratingTarget = null;
 let overallRating = 0;
-let wfpbnoRating = 0;
+let wfpbRating = 0;
 let tierVote = null;
 
 // ── LOCATION DETECTION ─────────────────────────────────────────
@@ -623,7 +623,7 @@ function enrichPlace(p, userLat, userLng) {
     tier: apb?.tier || 'unrated',
     wto: apb?.wto || null,
     apb_overall: apb?.overall_rating || null,
-    apb_wfpbno: apb?.wfpbno_rating || null,
+    apb_wfpb: apb?.wfpb_rating || null,
   };
 }
 
@@ -660,8 +660,8 @@ function cardHTML(p) {
   const gRating = p.rating ? `<span class="rating-num">${p.rating}</span><span class="stars-google">${'★'.repeat(Math.round(p.rating))}${'☆'.repeat(5-Math.round(p.rating))}</span>` : '<span style="color:var(--muted);font-size:12px;">No Google rating</span>';
   const gCount = p.user_ratings_total ? `<div class="rating-sub">${p.user_ratings_total.toLocaleString()} Google reviews</div>` : '';
 
-  const wRating = p.apb_wfpbno
-    ? `<div class="rating-val"><span class="rating-num">${p.apb_wfpbno}</span><span class="stars-wfpbno">${'★'.repeat(Math.round(p.apb_wfpbno))}${'☆'.repeat(5-Math.round(p.apb_wfpbno))}</span></div><div class="rating-sub">APB community rating</div>`
+  const wRating = p.apb_wfpb
+    ? `<div class="rating-val"><span class="rating-num">${p.apb_wfpb}</span><span class="stars-wfpb">${'★'.repeat(Math.round(p.apb_wfpb))}${'☆'.repeat(5-Math.round(p.apb_wfpb))}</span></div><div class="rating-sub">APB community rating</div>`
     : `<div style="font-size:12px;color:var(--muted);font-style:italic;margin-bottom:4px;">No ratings yet</div>`;
 
   const wtoBlock = p.wto
@@ -692,7 +692,7 @@ function cardHTML(p) {
       </div>
       <div class="card-meta">
         <span class="card-distance">📍 ${p.distanceMi} mi away</span>
-        <span class="wfpbno-tier-badge ${p.tier}">${tierLabels[p.tier]}</span>
+        <span class="wfpb-tier-badge ${p.tier}">${tierLabels[p.tier]}</span>
       </div>
     </div>
     <div class="dual-ratings">
@@ -828,14 +828,14 @@ function setType(type, btn) {
 function sortResults(by) {
   if (by === 'distance') allResults.sort((a,b) => a.distanceM - b.distanceM);
   else if (by === 'rating') allResults.sort((a,b) => (b.rating||0) - (a.rating||0));
-  else if (by === 'wfpbno') allResults.sort((a,b) => (b.apb_wfpbno||0) - (a.apb_wfpbno||0));
+  else if (by === 'wfpb') allResults.sort((a,b) => (b.apb_wfpb||0) - (a.apb_wfpb||0));
   renderCards();
 }
 
 // ── RATING MODAL ────────────────────────────────────────────────
 function openRating(placeId, name) {
   ratingTarget = placeId;
-  overallRating = 0; wfpbnoRating = 0; tierVote = null;
+  overallRating = 0; wfpbRating = 0; tierVote = null;
   document.getElementById('modal-place-name').textContent = name;
   document.getElementById('modal-tip').value = '';
   document.querySelectorAll('.star-btn').forEach(s => s.classList.remove('lit'));
@@ -846,7 +846,7 @@ function closeModal() { document.getElementById('rating-modal').classList.remove
 
 function setStars(type, n) {
   if (type === 'overall') overallRating = n;
-  else wfpbnoRating = n;
+  else wfpbRating = n;
   document.querySelectorAll(`#${type}-stars .star-btn`).forEach((s,i) => s.classList.toggle('lit', i < n));
 }
 
@@ -857,14 +857,14 @@ function selectTierVote(tier, btn) {
 }
 
 function submitRating() {
-  if (!overallRating && !wfpbnoRating) { alert('Please add at least one star rating.'); return; }
+  if (!overallRating && !wfpbRating) { alert('Please add at least one star rating.'); return; }
   // In production: POST to Supabase reviews table
-  // supabase.from('reviews').insert({ user_id, place_id: ratingTarget, overall_rating: overallRating, wfpbno_rating: wfpbnoRating, tier_vote: tierVote, tip: ... })
-  alert(`Rating saved! ✓\n\nIn production this writes to Supabase:\n• place_id: ${ratingTarget}\n• overall: ${overallRating}★\n• wfpbno: ${wfpbnoRating}🌱\n• tier vote: ${tierVote || 'none'}\n\nThe card updates immediately with your rating.`);
+  // supabase.from('reviews').insert({ user_id, place_id: ratingTarget, overall_rating: overallRating, wfpb_rating: wfpbRating, tier_vote: tierVote, tip: ... })
+  alert(`Rating saved! ✓\n\nIn production this writes to Supabase:\n• place_id: ${ratingTarget}\n• overall: ${overallRating}★\n• wfpb: ${wfpbRating}🌱\n• tier vote: ${tierVote || 'none'}\n\nThe card updates immediately with your rating.`);
 
   // Update local APB data so the card refreshes without a reload
   if (!APB_COMMUNITY_DATA[ratingTarget]) APB_COMMUNITY_DATA[ratingTarget] = {};
-  if (wfpbnoRating) APB_COMMUNITY_DATA[ratingTarget].wfpbno_rating = wfpbnoRating;
+  if (wfpbRating) APB_COMMUNITY_DATA[ratingTarget].wfpb_rating = wfpbRating;
   if (overallRating) APB_COMMUNITY_DATA[ratingTarget].overall_rating = overallRating;
   if (tierVote) APB_COMMUNITY_DATA[ratingTarget].tier = tierVote;
 

@@ -136,10 +136,6 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
   .featured-banner-cta { margin-left:0; }
   .write-callout a { margin-left:0; }
 }
-
-@media print {
-  nav, .page-tabs, .filter-bar { display:none!important; }
-}
 </style>
 </head>
 <body>
@@ -244,7 +240,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
   <div class="section-header">
     <div>
       <h2>Videos & <em>Channels</em></h2>
-      <p>Curated video content from trusted WFPBNO creators. All videos open on YouTube.</p>
+      <p>Curated video content from trusted WFPB creators. All videos open on YouTube.</p>
     </div>
   </div>
 
@@ -309,7 +305,7 @@ const APB_BLOG_POSTS = [
     date: "June 2026",
     readTime: "4 min read",
     category: "guide",
-    tags: ["guide", "beginner", "explainer", "WFPBNO"],
+    tags: ["guide", "beginner", "explainer", "WFPB"],
     emoji: "🥦",
     bgColor: "#e8f5e9",
     description: "A lot of people confuse vegan and WFPB. They're not the same thing. This piece explains the difference   and why the distinction matters.",
@@ -320,7 +316,7 @@ const APB_BLOG_POSTS = [
   },
   {
     id: "apb-blog-003",
-    title: "Eating Out WFPBNO in the South   A Survival Guide",
+    title: "Eating Out WFPB in the South   A Survival Guide",
     author: "APB Team",
     date: "June 2026",
     readTime: "5 min read",
@@ -425,8 +421,8 @@ const SOURCES = [
     url: "https://plantifulkiki.com",
     icon: "🌿",
     type: "Recipe Blog & YouTube",
-    wfpbno: true,
-    description: "Kiki Nelson lost 70 lbs and reversed prediabetes, hypothyroid, and high blood pressure through a high-carb, low-fat plant-based diet. Her site features hundreds of free WFPB recipes. One of the most authentic WFPBNO voices online.",
+    wfpb: true,
+    description: "Kiki Nelson lost 70 lbs and reversed prediabetes, hypothyroid, and high blood pressure through a high-carb, low-fat plant-based diet. Her site features hundreds of free WFPB recipes. One of the most authentic WFPB voices online.",
     contentTypes: ["Recipes", "YouTube Videos", "Personal Stories"],
   },
   {
@@ -436,7 +432,7 @@ const SOURCES = [
     url: "https://www.smartyplants.org",
     icon: "🧠",
     type: "Recipe Site & Program",
-    wfpbno: true,
+    wfpb: true,
     description: "A brother-and-sister team of chefs and nutritionists offering hundreds of curated plant-based recipes, a 28-Day Kickstart program, and a weekly meal plan. Many free recipes available.",
     contentTypes: ["Recipes", "Articles", "28-Day Program"],
   },
@@ -447,7 +443,7 @@ const SOURCES = [
     url: "https://nutritionfacts.org",
     icon: "🔬",
     type: "Science & Videos",
-    wfpbno: true,
+    wfpb: true,
     description: "Dr. Michael Greger's nonprofit featuring thousands of science-based videos and articles on whole food plant-based nutrition. No ads, no product sales   just the science.",
     contentTypes: ["Videos", "Articles", "Research Summaries"],
   },
@@ -458,7 +454,7 @@ const SOURCES = [
     url: "https://www.forksoverknives.com",
     icon: "🍴",
     type: "Recipes & Articles",
-    wfpbno: true,
+    wfpb: true,
     description: "One of the most recognized whole food plant-based resources, with hundreds of free oil-free recipes and WFPB lifestyle articles. Based on the landmark documentary of the same name.",
     contentTypes: ["Recipes", "Articles", "Meal Plans"],
   },
@@ -535,7 +531,7 @@ function renderSourceCard(source) {
         <div class="source-name">${source.name}</div>
         <div class="source-site">${source.site}</div>
       </div>
-      ${source.wfpbno ? '<span class="source-badge">✅ WFPBNO Aligned</span>' : ''}
+      ${source.wfpb ? '<span class="source-badge">✅ WFPB Aligned</span>' : ''}
       <div class="source-desc">${source.description}</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;">
         ${source.contentTypes.map(t => `<span class="blog-tag">${t}</span>`).join('')}

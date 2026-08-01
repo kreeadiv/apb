@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>APB   Recipes</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 :root {
@@ -18,7 +17,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--da
 
 /* NAV */
 nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); backdrop-filter:blur(12px); padding:14px 48px; display:flex; align-items:center; gap:24px; border-bottom:1px solid rgba(45,106,79,0.1); }
-.logo { font-family:'Playfair Display',serif; font-size:20px; color:var(--leaf); margin-right:auto; }
+.logo { font-family:'Playfair Display',serif; font-size:20px; color:var(--leaf); margin-right:auto; text-decoration:none; }
 .logo em { font-style:italic; color:var(--leaf-light); }
 .nav-link { font-size:13px; color:var(--muted); text-decoration:none; transition:color .2s; }
 .nav-link:hover { color:var(--leaf); }
@@ -36,41 +35,6 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
 /* SECTION */
 .section { display:none; }
 .section.active { display:block; }
-
-/* ── SECTION 1: AI SUGGESTIONS ── */
-.ai-section { padding:48px; background:linear-gradient(160deg, #1a2e1a 0%, #0d1a0d 100%); min-height:300px; }
-.ai-header { display:flex; align-items:flex-start; justify-content:space-between; gap:24px; margin-bottom:32px; flex-wrap:wrap; }
-.ai-header-text h2 { font-family:'Playfair Display',serif; font-size:clamp(24px,3vw,36px); color:white; margin-bottom:8px; }
-.ai-header-text h2 em { font-style:italic; color:var(--sun); }
-.ai-header-text p { font-size:14px; color:rgba(255,255,255,.55); line-height:1.7; max-width:480px; }
-.pantry-summary { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:12px; padding:14px 18px; display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
-.pantry-summary-label { font-size:11px; text-transform:uppercase; letter-spacing:.8px; color:rgba(255,255,255,.4); }
-.pantry-items-preview { display:flex; gap:6px; flex-wrap:wrap; }
-.pantry-chip { font-size:11px; background:rgba(82,183,136,.15); color:var(--leaf-light); padding:3px 9px; border-radius:100px; border:1px solid rgba(82,183,136,.2); }
-.pantry-chip.low { background:rgba(233,196,106,.15); color:var(--sun); border-color:rgba(233,196,106,.2); }
-
-.ai-generate-btn { background:var(--leaf-light); color:white; border:none; border-radius:100px; padding:13px 28px; font-size:14px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; display:flex; align-items:center; gap:8px; transition:all .2s; white-space:nowrap; }
-.ai-generate-btn:hover { background:var(--leaf-mid); transform:translateY(-1px); }
-.ai-generate-btn:disabled { opacity:.5; cursor:default; transform:none; }
-
-.ai-results { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:18px; margin-top:8px; }
-.ai-recipe-card { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:var(--radius); padding:20px; cursor:pointer; transition:all .2s; }
-.ai-recipe-card:hover { background:rgba(255,255,255,.1); transform:translateY(-2px); }
-.ai-recipe-emoji { font-size:36px; margin-bottom:12px; }
-.ai-recipe-title { font-family:'Playfair Display',serif; font-size:18px; color:white; margin-bottom:6px; line-height:1.3; }
-.ai-recipe-uses { font-size:11px; color:rgba(255,255,255,.4); margin-bottom:10px; }
-.ai-recipe-meta { display:flex; gap:12px; font-size:11px; color:rgba(255,255,255,.5); margin-bottom:14px; }
-.ai-recipe-tags { display:flex; gap:5px; flex-wrap:wrap; }
-.ai-tag { font-size:10px; background:rgba(82,183,136,.12); color:var(--leaf-light); padding:2px 8px; border-radius:100px; border:1px solid rgba(82,183,136,.15); }
-.ai-card-footer { display:flex; gap:8px; margin-top:14px; padding-top:12px; border-top:1px solid rgba(255,255,255,.08); }
-.btn-view-full { flex:1; background:var(--leaf); color:white; border:none; border-radius:8px; padding:8px; font-size:12px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; }
-.btn-save-ai { background:rgba(255,255,255,.08); color:rgba(255,255,255,.7); border:1px solid rgba(255,255,255,.12); border-radius:8px; padding:8px 12px; font-size:13px; cursor:pointer; }
-
-.ai-loading { text-align:center; padding:48px 20px; color:rgba(255,255,255,.5); }
-.ai-loading-icon { font-size:40px; margin-bottom:12px; animation:spin 2s linear infinite; display:inline-block; }
-@keyframes spin { to { transform:rotate(360deg); } }
-.ai-empty { text-align:center; padding:48px 20px; }
-.ai-empty p { color:rgba(255,255,255,.4); font-size:14px; margin-bottom:20px; }
 
 /* ── SECTION 2: IN-APP RECIPES ── */
 .inapp-header { padding:36px 48px 24px; background:white; border-bottom:1px solid rgba(0,0,0,.07); display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
@@ -170,17 +134,8 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
 .btn-detail-secondary { background:var(--leaf-pale); color:var(--leaf); border:none; border-radius:100px; padding:12px 20px; font-size:13px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; }
 .wfpb-check { display:flex; align-items:center; gap:8px; background:var(--leaf-xpale); border-radius:10px; padding:10px 14px; margin-bottom:20px; font-size:13px; color:var(--leaf); }
 
-/* PRINT STYLES */
-@media print {
-  nav, .page-tabs, .detail-hero-actions, .detail-close, .detail-actions, .inapp-filter-bar, .inapp-header-actions { display:none!important; }
-  .detail-overlay { position:static; opacity:1; pointer-events:all; padding:0; background:white; }
-  .detail-modal { border-radius:0; box-shadow:none; max-width:100%; }
-  body { background:white; }
-}
-
 @media (max-width:768px) {
   nav, .page-tabs, .inapp-header, .inapp-filter-bar, .inapp-grid, .external-header, .ext-filter-bar, .ext-grid, .notice { padding-left:20px; padding-right:20px; }
-  .ai-section { padding:32px 20px; }
   .ingredients-grid { grid-template-columns:1fr; }
   .detail-body { padding:20px; }
 }
@@ -190,7 +145,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
 
 <!-- NAV -->
 <nav>
-  <div class="logo">APB <em>🌿</em></div>
+  <a href="index.html" class="logo">APB <em>🌿</em></a>
   
   <a href="apb-nearby.html" class="nav-link">Find Food</a>
   <a href="apb-recipes-feed.html" class="nav-link active">Recipes</a>
@@ -208,48 +163,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
 </div>
 
 <!-- ══════════════════════════════════════════
-     SECTION 1: AI SUGGESTIONS
-══════════════════════════════════════════ -->
-<div class="section" id="section-ai">
-  <div class="ai-section">
-    <div class="ai-header">
-      <div class="ai-header-text">
-        <h2>What can you make <em>tonight?</em></h2>
-        <p>Tell APB what ingredients you have on hand and we'll suggest recipes you can make right now.</p>
-      </div>
-      <button class="ai-generate-btn" id="ai-gen-btn" onclick="generateAIRecipes()">
-        ✨ Get Suggestions
-      </button>
-    </div>
-
-    <div class="pantry-summary">
-      <div>
-        <div class="pantry-summary-label">Your ingredients</div>
-        <div class="pantry-items-preview">
-          <span class="pantry-chip">Red Lentils</span>
-          <span class="pantry-chip">Brown Rice</span>
-          <span class="pantry-chip">Sweet Potatoes</span>
-          <span class="pantry-chip">Chickpeas</span>
-          <span class="pantry-chip">Nutritional Yeast</span>
-          <span class="pantry-chip">Rolled Oats</span>
-          <span class="pantry-chip">Tahini</span>
-          <span class="pantry-chip">Garlic</span>
-          <span class="pantry-chip">Onion</span>
-          <span class="pantry-chip">Canned Tomatoes</span>
-        </div>
-      </div>
-    </div>
-
-    <div id="ai-results-area" style="margin-top:28px;">
-      <div class="ai-empty">
-        <p>Choose or enter your ingredients above, then tap "Get Suggestions" and APB will suggest recipes that work with what you have.</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     SECTION 2: IN-APP RECIPES
+     SECTION 1: IN-APP RECIPES
 ══════════════════════════════════════════ -->
 <div class="section" id="section-inapp">
   <div class="inapp-header">
@@ -623,20 +537,6 @@ function openDetail(id) {
 function closeDetail() { document.getElementById('detail-overlay').classList.remove('open'); }
 function shareRecipe(title) { alert(`Share "${title}"\n\nIn the live app this generates a shareable deep link and social image card.`); }
 
-// Export AI-generated recipe as PDF (captures whatever is currently in the modal)
-function exportAIPDF() {
-  const body = document.querySelector('#detail-modal .detail-body');
-  if (!body) return;
-  const title = body.querySelector('.detail-title')?.textContent || 'APB_Recipe';
-  const filename = title.replace(/[^a-z0-9]/gi,'_').toLowerCase() + '_APB.pdf';
-  html2pdf().set({
-    margin:10, filename,
-    image:{ type:'jpeg', quality:.95 },
-    html2canvas:{ scale:2 },
-    jsPDF:{ unit:'mm', format:'a4', orientation:'portrait' }
-  }).from(body).save();
-}
-
 // ══════════════════════════════════════════
 // RENDER EXTERNAL RECIPES
 // ══════════════════════════════════════════
@@ -670,250 +570,6 @@ function filterExt(cat, btn) {
     : cat === 'video' ? EXTERNAL_RECIPES.filter(r => r.type === 'video')
     : EXTERNAL_RECIPES.filter(r => r.cat === cat);
   renderExternal(filtered);
-}
-
-// ══════════════════════════════════════════
-// AI RECIPE GENERATION
-// ══════════════════════════════════════════
-const ANTHROPIC_API_KEY = 'YOUR_ANTHROPIC_API_KEY';
-const pantryItems = ['red lentils','brown rice','sweet potatoes','chickpeas','nutritional yeast','rolled oats','tahini','garlic','onion','canned tomatoes'];
-
-async function generateAIRecipes() {
-  const btn = document.getElementById('ai-gen-btn');
-  const area = document.getElementById('ai-results-area');
-  btn.disabled = true;
-  btn.textContent = '✨ Generating…';
-  area.innerHTML = `<div class="ai-loading"><div class="ai-loading-icon">🌿</div><p>APB's AI is scanning your pantry and creating WFPB recipes…</p></div>`;
-
-  const prompt = `You are a WFPB recipe expert (Whole Food Plant Based No Oil). Based on these ingredients: ${pantryItems.join(', ')}, suggest some recipe ideas (as many as genuinely fit well).
-
-Respond ONLY with valid JSON in this exact format, no other text:
-[
-  {
-    "emoji": "🍛",
-    "title": "Recipe Name",
-    "uses": "Main ingredients used",
-    "time": "XX min",
-    "servings": "X",
-    "tags": ["oil-free","tag2"],
-    "teaser": "One sentence about why this recipe is great (max 15 words)"
-  }
-]
-
-Rules: all recipes must be 100% oil-free, whole food, plant-based. No processed ingredients.`;
-
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{ 'Content-Type':'application/json' },
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        messages:[{ role:'user', content:prompt }]
-      })
-    });
-    const data = await res.json();
-    const text = data.content?.[0]?.text || '';
-    const clean = text.replace(/```json|```/g,'').trim();
-    const recipes = JSON.parse(clean);
-    renderAIRecipes(recipes);
-  } catch(e) {
-    area.innerHTML = `<div class="ai-empty"><p>Couldn't reach the AI right now. Add your Anthropic API key to enable this feature, or try again in a moment.</p></div>`;
-  }
-
-  btn.disabled = false;
-  btn.textContent = '✨ Regenerate';
-}
-
-function renderAIRecipes(recipes) {
-  const bgs = ['linear-gradient(135deg,#d8f3dc,#b7e4c7)','linear-gradient(135deg,#fff8e1,#fce4ec)','linear-gradient(135deg,#e8eaf6,#f3e5f5)'];
-  document.getElementById('ai-results-area').innerHTML = `
-    <div class="ai-results">
-      ${recipes.map((r,i) => `
-        <div class="ai-recipe-card" onclick="generateFullRecipe('${r.title.replace(/'/g,"\\'")}','${r.uses.replace(/'/g,"\\'")}')">
-          <div class="ai-recipe-emoji">${r.emoji}</div>
-          <div class="ai-recipe-title">${r.title}</div>
-          <div class="ai-recipe-uses">Uses: ${r.uses}</div>
-          <div class="ai-recipe-meta"><span>⏱ ${r.time}</span><span>🍽 ${r.servings} serv.</span></div>
-          <div class="ai-recipe-tags">${(r.tags||[]).map(t=>`<span class="ai-tag">${t}</span>`).join('')}</div>
-          <p style="font-size:12px;color:rgba(255,255,255,.6);margin-top:10px;line-height:1.6;">${r.teaser}</p>
-          <div class="ai-card-footer">
-            <button class="btn-view-full" onclick="event.stopPropagation();generateFullRecipe('${r.title.replace(/'/g,"\\'")}','${r.uses.replace(/'/g,"\\'")}')">Get Full Recipe →</button>
-            <button class="btn-save-ai" onclick="event.stopPropagation();window.location.href='apb-signin.html'">♡</button>
-          </div>
-        </div>`).join('')}
-    </div>
-    <p style="font-size:11px;color:rgba(255,255,255,.3);margin-top:16px;text-align:center;">Click any recipe card to generate the full ingredients and steps.</p>`;
-}
-
-async function generateFullRecipe(title, uses) {
-  // This calls Claude API again for the full recipe and opens it in the detail modal
-  // Reuses same openDetail pattern but with AI-generated content
-  const area = document.getElementById('ai-results-area');
-  const overlay = document.getElementById('detail-overlay');
-  const modal = document.getElementById('detail-modal');
-
-  modal.innerHTML = `<div style="padding:48px;text-align:center;"><div style="font-size:40px;margin-bottom:12px;animation:spin 2s linear infinite;display:inline-block;">🌿</div><p style="color:var(--muted);">Generating full recipe for ${title}…</p></div>`;
-  overlay.classList.add('open');
-
-  const prompt = `Create a complete WFPB (Whole Food Plant Based No Oil) recipe for: ${title}
-Using these ingredients: ${uses}
-
-Respond ONLY with valid JSON, no other text:
-{
-  "title": "${title}",
-  "description": "2 sentence description",
-  "time": "XX min",
-  "servings": "X",
-  "ingredients": ["amount ingredient", "amount ingredient"],
-  "steps": ["Step instruction.", "Step instruction."],
-  "tags": ["oil-free","tag2","tag3"]
-}
-
-All ingredients and steps must be 100% oil-free and whole food.`;
-
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{ 'Content-Type':'application/json' },
-      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, messages:[{role:'user',content:prompt}] })
-    });
-    const data = await res.json();
-    const text = data.content?.[0]?.text || '';
-    const r = JSON.parse(text.replace(/```json|```/g,'').trim());
-
-    modal.innerHTML = `
-      <div class="detail-hero" style="background:linear-gradient(135deg,#1a2e1a,#0d1a0d)">
-        <span style="font-size:80px;">🤖</span>
-        <button class="detail-close" onclick="closeDetail()">✕</button>
-        <div class="detail-hero-actions">
-          
-          <button class="detail-hero-btn" onclick="alert('Sign in to save!')">♡ Save</button>
-        </div>
-      </div>
-      <div class="detail-body">
-        <div class="detail-category">✨ APB Suggestion</div>
-        <div class="detail-title">${r.title}</div>
-        <div class="detail-author">Suggested by APB based on your ingredients</div>
-        <div class="wfpb-check">🌱 WFPB Compliant   whole food, plant-based, no oil</div>
-        <div class="detail-stats">
-          <div class="detail-stat"><div class="detail-stat-val">⏱ ${r.time}</div><div class="detail-stat-lbl">Total Time</div></div>
-          <div class="detail-stat"><div class="detail-stat-val">🍽 ${r.servings}</div><div class="detail-stat-lbl">Servings</div></div>
-        </div>
-        <div class="detail-desc">${r.description}</div>
-        <div class="detail-tags">${(r.tags||[]).map(t=>`<span class="detail-tag">${t}</span>`).join('')}</div>
-        <div class="detail-section-label">Ingredients</div>
-        <div class="ingredients-grid">${(r.ingredients||[]).map(i=>`<div class="ingredient">${i}</div>`).join('')}</div>
-        <div class="detail-section-label">Instructions</div>
-        <div class="steps-list">${(r.steps||[]).map((s,i)=>`<div class="step"><div class="step-num">${i+1}</div><div class="step-text">${s}</div></div>`).join('')}</div>
-        <div class="detail-actions">
-          <button class="btn-detail-primary" onclick="window.location.href='apb-signin.html'">♡ Save to Recipe Book</button>
-          
-        </div>
-      </div>`;
-  } catch(e) {
-    modal.innerHTML = `<div style="padding:48px;text-align:center;"><p style="color:var(--muted);">Couldn't generate the full recipe. Add your Anthropic API key to enable this feature.</p><button onclick="closeDetail()" style="margin-top:16px;background:var(--leaf);color:white;border:none;border-radius:100px;padding:10px 24px;cursor:pointer;">Close</button></div>`;
-  }
-}
-
-// ══════════════════════════════════════════
-// PDF EXPORT   html2pdf.js (free, no API cost)
-// Available to all registered users
-// ══════════════════════════════════════════
-function exportRecipePDF(recipe) {
-  // Build a clean, branded PDF-ready HTML string
-  const pdfContent = `
-    <div style="font-family:'DM Sans',Arial,sans-serif;max-width:600px;margin:0 auto;padding:40px;color:#141414;">
-
-      <!-- HEADER -->
-      <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:2px solid #d8f3dc;margin-bottom:24px;">
-        <div>
-          <div style="font-family:Georgia,serif;font-size:13px;color:#2d6a4f;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;">APB   Calling All Plant Based Humans</div>
-          <div style="font-size:10px;color:#6b7c72;">apb.app · WFPB Community Recipe</div>
-        </div>
-        <div style="font-size:32px;">${recipe.emoji}</div>
-      </div>
-
-      <!-- TITLE -->
-      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#52b788;font-weight:600;margin-bottom:8px;">${recipe.catLabel}</div>
-      <h1 style="font-family:Georgia,serif;font-size:28px;line-height:1.2;color:#141414;margin-bottom:6px;">${recipe.title}</h1>
-      <div style="font-size:12px;color:#6b7c72;margin-bottom:16px;">${recipe.author}</div>
-
-      <!-- WFPB BADGE -->
-      <div style="display:inline-flex;align-items:center;gap:6px;background:#d8f3dc;color:#1b4332;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:600;margin-bottom:20px;">
-        🌱 WFPB Compliant   Whole Food · Plant-Based
-      </div>
-
-      <!-- STATS ROW -->
-      <div style="display:flex;gap:32px;padding:14px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:24px;">
-        <div style="text-align:center;">
-          <div style="font-family:Georgia,serif;font-size:20px;color:#2d6a4f;">⏱ ${recipe.time}</div>
-          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#6b7c72;margin-top:2px;">Total Time</div>
-        </div>
-        <div style="text-align:center;">
-          <div style="font-family:Georgia,serif;font-size:20px;color:#2d6a4f;">🍽 ${recipe.servings}</div>
-          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#6b7c72;margin-top:2px;">Servings</div>
-        </div>
-        <div style="text-align:center;">
-          <div style="font-family:Georgia,serif;font-size:20px;color:#2d6a4f;">★ ${recipe.rating}</div>
-          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#6b7c72;margin-top:2px;">${recipe.ratingCount.toLocaleString()} made this</div>
-        </div>
-      </div>
-
-      <!-- INGREDIENTS -->
-      <div style="margin-bottom:24px;">
-        <h2 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#141414;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #f0f0f0;">Ingredients</h2>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
-          ${recipe.ingredients.map(i => `
-            <div style="display:flex;gap:8px;font-size:13px;padding:5px 0;border-bottom:1px solid #fafafa;align-items:flex-start;">
-              <span style="color:#52b788;font-size:16px;line-height:1.1;">·</span>
-              <span>${i}</span>
-            </div>`).join('')}
-        </div>
-      </div>
-
-      <!-- INSTRUCTIONS -->
-      <div style="margin-bottom:32px;">
-        <h2 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#141414;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #f0f0f0;">Instructions</h2>
-        ${recipe.steps.map((s, i) => `
-          <div style="display:flex;gap:14px;margin-bottom:14px;">
-            <div style="width:26px;height:26px;min-width:26px;border-radius:50%;background:#2d6a4f;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-top:2px;">${i+1}</div>
-            <div style="font-size:13px;line-height:1.7;color:#141414;padding-top:3px;">${s}</div>
-          </div>`).join('')}
-      </div>
-
-      <!-- TAGS -->
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:28px;">
-        ${recipe.tags.map(t => `<span style="font-size:10px;background:#d8f3dc;color:#2d6a4f;padding:3px 10px;border-radius:100px;">${t}</span>`).join('')}
-      </div>
-
-      <!-- FOOTER -->
-      <div style="border-top:1px solid #f0f0f0;padding-top:16px;display:flex;justify-content:space-between;align-items:center;">
-        <div style="font-size:10px;color:#6b7c72;">Downloaded from APB · apb.app</div>
-        <div style="font-size:10px;color:#6b7c72;">🌿 Whole Food · Plant-Based · No Oil</div>
-      </div>
-    </div>`;
-
-  // Create a hidden container, render the HTML into it, export as PDF
-  const container = document.createElement('div');
-  container.innerHTML = pdfContent;
-  container.style.position = 'absolute';
-  container.style.left = '-9999px';
-  document.body.appendChild(container);
-
-  const filename = recipe.title.replace(/[^a-z0-9]/gi,'_').toLowerCase() + '_APB.pdf';
-
-  html2pdf()
-    .set({
-      margin: 0,
-      filename,
-      image: { type:'jpeg', quality:0.95 },
-      html2canvas: { scale:2, useCORS:true },
-      jsPDF: { unit:'mm', format:'a4', orientation:'portrait' }
-    })
-    .from(container)
-    .save()
-    .then(() => document.body.removeChild(container));
 }
 
 // ══════════════════════════════════════════

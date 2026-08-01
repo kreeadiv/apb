@@ -149,16 +149,11 @@
   .dash-widget-val { font-size: 24px; font-family: 'Playfair Display', serif; color: white; }
   .dash-widget-sub { font-size: 12px; color: var(--leaf-light); margin-top: 4px; }
 
-  /* PANTRY / RECIPE */
-  .pantry-section { background: var(--leaf-pale); }
-  .pantry-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
-  .pantry-card { background: white; border-radius: var(--radius); padding: 28px; }
-  .pantry-card h3 { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 16px; }
-  .pantry-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
-  .pantry-item:last-child { border-bottom: none; }
-  .pantry-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--leaf-light); }
-  .pantry-item-name { font-size: 14px; font-weight: 500; }
-  .pantry-item-cat { font-size: 12px; color: var(--muted); margin-left: auto; background: var(--leaf-pale); padding: 3px 10px; border-radius: 100px; }
+  /* RECIPES / RECIPE BOOK */
+  .recipes-section { background: var(--leaf-pale); }
+  .recipes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+  .recipe-card { background: white; border-radius: var(--radius); padding: 28px; }
+  .recipe-card h3 { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 16px; }
 
   /* NEARBY / RESTAURANT */
   .nearby-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-top: 40px; }
@@ -219,7 +214,7 @@
     section { padding: 60px 24px; }
     .stats-bar { padding: 28px 24px; }
     .dash-widgets { grid-template-columns: 1fr; }
-    .pantry-grid { grid-template-columns: 1fr; }
+    .recipes-grid { grid-template-columns: 1fr; }
     .pricing-cards { grid-template-columns: 1fr; }
   }
 </style>
@@ -248,7 +243,7 @@
     <p class="hero-sub">The community-powered guide for whole food, plant-based living. Find plant-friendly restaurants, discover recipes, connect with humans who eat just like you.</p>
 
     <div class="hero-actions">
-      <a href="src/pages/apb-signup.html" class="btn-primary">Join the Community →</a>
+      <a href="apb-signup.html" class="btn-primary">Join the Community →</a>
       <button class="btn-secondary" onclick="scrollToId('features')">Explore features ↓</button>
     </div>
   </div>
@@ -410,14 +405,14 @@
   </div>
 </section>
 
-<!-- PANTRY + RECIPES -->
-<section id="recipes" class="pantry-section">
+<!-- RECIPES + RECIPE BOOK -->
+<section id="recipes" class="recipes-section">
   <div class="section-badge">Your kitchen HQ</div>
-  <h2 class="section-title">Pantry & Recipe Book</h2>
-  <p class="section-sub">Track what you have, get AI-powered recipe suggestions, and build a living recipe book that's always yours.</p>
+  <h2 class="section-title">Recipes & Recipe Book</h2>
+  <p class="section-sub">Browse curated WFPB recipes from trusted creators, and build a living recipe book that's always yours.</p>
 
-  <div class="pantry-grid">
-    <div class="pantry-card">
+  <div class="recipes-grid">
+    <div class="recipe-card">
       <h3>🥘 Browse Recipes</h3>
       <p style="font-size:14px;color:var(--muted);margin-bottom:16px;">Hundreds of curated WFPB recipes from trusted creators   all personally reviewed by the APB team.</p>
       <div style="display:flex;flex-direction:column;gap:10px;">
@@ -439,7 +434,7 @@
       </div>
     </div>
 
-    <div class="pantry-card">
+    <div class="recipe-card">
       <h3>📖 My Recipe Book</h3>
       <p style="font-size:14px;color:var(--muted);margin-bottom:16px;">Save any recipe you love   from the APB feed or anywhere on the web. Your personal collection, always with you.</p>
       <div style="display:flex;flex-direction:column;gap:10px;">
@@ -504,7 +499,7 @@
       <strong style="font-size:15px;">Have a blog post, recipe, or link to share?</strong>
       <p style="font-size:13px;color:var(--muted);margin-top:4px;">Registered members can post and contribute. Sign up to post and contribute.</p>
     </div>
-    <a href="src/pages/apb-signup.html" class="btn-primary" style="white-space:nowrap;">Join & Contribute →</a>
+    <a href="apb-signup.html" class="btn-primary" style="white-space:nowrap;">Join & Contribute →</a>
   </div>
 </section>
 

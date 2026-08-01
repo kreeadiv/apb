@@ -23,7 +23,7 @@ nav {
   padding:14px 48px; display:flex; align-items:center; gap:24px;
   border-bottom:1px solid rgba(45,106,79,0.1);
 }
-.logo { font-family:'Playfair Display',serif; font-size:20px; color:var(--leaf); margin-right:auto; }
+.logo { font-family:'Playfair Display',serif; font-size:20px; color:var(--leaf); margin-right:auto; text-decoration:none; }
 .logo em { font-style:italic; color:var(--leaf-light); }
 .nav-link { font-size:13px; color:var(--muted); text-decoration:none; }
 .nav-link:hover { color:var(--leaf); }
@@ -116,7 +116,6 @@ nav {
 .btn-sm { padding:7px 12px; border-radius:8px; font-size:11px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; border:none; transition:all .15s; }
 .btn-sm.edit { background:var(--leaf-pale); color:var(--leaf); }
 .btn-sm.share { background:var(--leaf); color:white; }
-.btn-sm.print { background:white; color:var(--muted); border:1px solid rgba(0,0,0,.1); }
 .btn-sm.submit { background:var(--sun); color:var(--dark); }
 .own-recipe-body { font-size:13px; color:var(--muted); line-height:1.7; margin-bottom:14px; }
 .own-recipe-ingredients { display:grid; grid-template-columns:1fr 1fr; gap:4px; margin-bottom:14px; }
@@ -169,14 +168,6 @@ nav {
 .form-type-btn.selected { background:var(--leaf-pale); border-color:var(--leaf-light); color:var(--leaf); }
 .form-actions { display:flex; gap:10px; margin-top:24px; }
 
-/* ── PRINT STYLES ── */
-@media print {
-  nav, .sidebar, .section-header-actions, .book-card-actions, .own-recipe-actions, .tabs { display:none!important; }
-  body { background:white; }
-  .page { grid-template-columns:1fr; padding:20px; }
-  .book-card { break-inside:avoid; }
-}
-
 @media (max-width:900px) {
   .page { grid-template-columns:1fr; padding:20px 20px 60px; }
   .sidebar { position:static; }
@@ -188,7 +179,7 @@ nav {
 
 <!-- NAV -->
 <nav>
-  <div class="logo">APB <em>🌿</em></div>
+  <a href="index.html" class="logo">APB <em>🌿</em></a>
   
   <a href="apb-nearby.html" class="nav-link">Find Food</a>
   <a href="apb-recipes-feed.html" class="nav-link">Recipes</a>
@@ -458,7 +449,7 @@ nav {
             <button class="btn-sm submit" onclick="submitToCommunity('Mom\'s Black Bean Soup')">Submit to APB</button>
           </div>
         </div>
-        <div class="own-recipe-body">A rich, smoky black bean soup adapted from my mother's recipe. Oil-free and WFPBNO compliant   I swapped the oil sauté for water-sauté and added extra cumin and smoked paprika. The secret is a splash of apple cider vinegar at the very end.</div>
+        <div class="own-recipe-body">A rich, smoky black bean soup adapted from my mother's recipe. Oil-free and WFPB compliant   I swapped the oil sauté for water-sauté and added extra cumin and smoked paprika. The secret is a splash of apple cider vinegar at the very end.</div>
         <div class="own-recipe-ingredients">
           <div class="ingredient">2 cans black beans</div>
           <div class="ingredient">1 medium onion, diced</div>
