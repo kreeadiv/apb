@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APB   Find Plant-Friendly Places Near You</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --leaf:#2d6a4f; --leaf-mid:#40916c; --leaf-light:#52b788; --leaf-pale:#d8f3dc; --leaf-xpale:#f0faf2;
+  --sun:#e9c46a; --sun-deep:#c8963e;
+  --cream:#fefae0; --dark:#141414; --muted:#6b7c72; --card:#ffffff; --radius:16px;
+  --tier-haven-bg:#d8f3dc;   --tier-haven-text:#1b4332;
+  --tier-friendly-bg:#e8f5e9; --tier-friendly-text:#2d6a4f;
+  --tier-possible-bg:#fff8e1; --tier-possible-text:#c8963e;
+  
+}
+html { scroll-behavior:smooth; }
+body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--dark); }
+
+/* NAV */
+nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); backdrop-filter:blur(12px); padding:14px 48px; display:flex; align-items:center; gap:24px; border-bottom:1px solid rgba(45,106,79,0.1); }
+.logo { font-family:'Playfair Display',serif; font-size:20px; color:var(--leaf); margin-right:auto; }
+.logo em { font-style:italic; color:var(--leaf-light); }
+.nav-link { font-size:13px; color:var(--muted); text-decoration:none; }
+.nav-avatar { width:32px; height:32px; border-radius:50%; background:var(--leaf); color:white; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:500; }
+
+/* PAGE HEADER */
+.page-header { padding:48px 48px 28px; }
+.page-eyebrow { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--leaf-light); font-weight:500; margin-bottom:10px; }
+.page-title { font-family:'Playfair Display',serif; font-size:clamp(28px,3.5vw,44px); margin-bottom:10px; }
+.page-title em { font-style:italic; color:var(--leaf); }
+.page-sub { font-size:15px; color:var(--muted); max-width:540px; line-height:1.7; margin-bottom:24px; }
+
+/* LOCATION BAR */
+.location-bar { display:flex; align-items:center; gap:12px; background:white; border:1.5px solid var(--leaf-pale); border-radius:16px; padding:16px 20px; margin-bottom:24px; max-width:680px; }
+.location-bar-icon { font-size:22px; }
+.location-bar-text { flex:1; }
+.location-bar-label { font-size:11px; text-transform:uppercase; letter-spacing:.8px; color:var(--muted); margin-bottom:2px; }
+.location-bar-value { font-size:15px; font-weight:500; color:var(--dark); }
+.location-bar-value.loading { color:var(--muted); font-style:italic; font-weight:400; }
+.btn-locate { background:var(--leaf); color:white; border:none; border-radius:100px; padding:9px 18px; font-size:13px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; transition:background .2s; white-space:nowrap; }
+.btn-locate:hover { background:var(--leaf-mid); }
+.btn-locate:disabled { background:var(--muted); cursor:default; }
+
+/* SEARCH BAR */
+.search-row { display:flex; gap:10px; margin-bottom:20px; max-width:680px; flex-wrap:wrap; }
+.search-input-wrap { flex:1; min-width:200px; display:flex; background:white; border:1.5px solid rgba(0,0,0,.1); border-radius:100px; overflow:hidden; transition:border-color .2s; }
+.search-input-wrap:focus-within { border-color:var(--leaf-light); }
+.search-input-wrap input { flex:1; padding:10px 18px; font-size:14px; font-family:'DM Sans',sans-serif; border:none; outline:none; background:transparent; }
+.search-input-wrap button { background:var(--leaf); color:white; border:none; padding:10px 20px; font-size:13px; cursor:pointer; font-family:'DM Sans',sans-serif; transition:background .2s; }
+.search-input-wrap button:hover { background:var(--leaf-mid); }
+.radius-select { padding:10px 16px; border:1.5px solid rgba(0,0,0,.1); border-radius:100px; font-size:13px; font-family:'DM Sans',sans-serif; background:white; outline:none; cursor:pointer; }
+
+/* TIER LEGEND */
+.tier-legend { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+.tier-btn { display:inline-flex; align-items:center; gap:6px; border-radius:100px; padding:7px 14px; font-size:12px; font-weight:500; cursor:pointer; border:1.5px solid transparent; transition:all .15s; background:white; color:var(--muted); }
+.tier-btn.haven  { background:var(--tier-haven-bg);   color:var(--tier-haven-text); }
+.tier-btn.friendly { background:var(--tier-friendly-bg); color:var(--tier-friendly-text); }
+.tier-btn.possible { background:var(--tier-possible-bg); color:var(--tier-possible-text); }
+.tier-btn.selected { border-color:currentColor; box-shadow:0 0 0 2px currentColor; }
+.tier-btn.dim { opacity:.35; }
+
+/* TYPE FILTERS */
+.type-filters { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:28px; }
+.type-btn { padding:7px 16px; border-radius:100px; font-size:12px; font-weight:500; border:1.5px solid rgba(0,0,0,.1); background:white; cursor:pointer; font-family:'DM Sans',sans-serif; color:var(--muted); transition:all .15s; }
+.type-btn.active { background:var(--dark); color:white; border-color:var(--dark); }
+
+/* RESULTS HEADER */
+.results-header { display:flex; align-items:center; justify-content:space-between; padding:0 48px; margin-bottom:16px; flex-wrap:wrap; gap:8px; }
+.results-count { font-size:13px; color:var(--muted); }
+.results-sort { display:flex; gap:6px; align-items:center; font-size:12px; color:var(--muted); }
+.results-sort select { border:1px solid rgba(0,0,0,.1); border-radius:8px; padding:5px 10px; font-size:12px; font-family:'DM Sans',sans-serif; background:white; outline:none; }
+
+/* CARDS GRID */
+.cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:18px; padding:0 48px 80px; }
+
+/* LOCATION CARD */
+.loc-card { background:white; border-radius:var(--radius); border:1px solid rgba(0,0,0,.07); overflow:hidden; display:flex; flex-direction:column; transition:transform .2s, box-shadow .2s; }
+.loc-card:hover { transform:translateY(-3px); box-shadow:0 10px 32px rgba(0,0,0,.09); }
+
+/* CARD HEADER */
+.card-header { padding:16px 18px 12px; border-bottom:1px solid #f5f5f5; }
+.card-header-top { display:flex; gap:12px; align-items:flex-start; margin-bottom:8px; }
+.card-type-icon { width:40px; height:40px; min-width:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; }
+.icon-restaurant { background:#fef3c7; }
+.icon-grocery    { background:var(--leaf-pale); }
+.icon-market     { background:#fce7f3; }
+.icon-health     { background:#e0e7ff; }
+.card-name { font-family:'Playfair Display',serif; font-size:16px; line-height:1.2; flex:1; }
+.card-addr { font-size:11px; color:var(--muted); margin-bottom:4px; }
+.card-meta { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.card-distance { font-size:11px; color:var(--muted); }
+.card-hours-open  { font-size:11px; color:#16a34a; font-weight:500; }
+.card-hours-closed { font-size:11px; color:#dc2626; font-weight:500; }
+.wfpbno-tier-badge { font-size:10px; font-weight:600; padding:3px 9px; border-radius:6px; }
+.wfpbno-tier-badge.haven    { background:var(--tier-haven-bg);   color:var(--tier-haven-text); }
+.wfpbno-tier-badge.friendly { background:var(--tier-friendly-bg); color:var(--tier-friendly-text); }
+.wfpbno-tier-badge.possible { background:var(--tier-possible-bg); color:var(--tier-possible-text); }
+.wfpbno-tier-badge.unrated  { background:#f5f5f5; color:var(--muted); }
+
+/* DUAL RATINGS */
+.dual-ratings { display:grid; grid-template-columns:1fr 1fr; border-bottom:1px solid #f5f5f5; }
+.rating-col { padding:10px 18px; }
+.rating-col:first-child { border-right:1px solid #f5f5f5; }
+.rating-label { font-size:10px; text-transform:uppercase; letter-spacing:.8px; color:var(--muted); font-weight:500; margin-bottom:4px; }
+.rating-val { display:flex; align-items:baseline; gap:5px; }
+.rating-num { font-family:'Playfair Display',serif; font-size:20px; }
+.stars-google { color:var(--sun); font-size:11px; }
+.stars-wfpbno { color:var(--leaf-light); font-size:11px; }
+.rating-sub { font-size:10px; color:var(--muted); margin-top:1px; }
+.rate-link { font-size:11px; color:var(--leaf); cursor:pointer; margin-top:3px; display:block; }
+.rate-link:hover { text-decoration:underline; }
+
+/* CARD BODY */
+.card-body { padding:12px 18px; flex:1; }
+.card-desc { font-size:12px; color:var(--muted); line-height:1.65; margin-bottom:10px; }
+.what-to-order { background:var(--leaf-xpale); border-radius:8px; padding:9px 11px; margin-bottom:10px; }
+.wto-label { font-size:9px; text-transform:uppercase; letter-spacing:1px; color:var(--leaf-light); font-weight:500; margin-bottom:3px; }
+.wto-text { font-size:11px; color:var(--dark); line-height:1.6; }
+.card-tags { display:flex; gap:4px; flex-wrap:wrap; }
+.tag { font-size:10px; background:var(--leaf-pale); color:var(--leaf); padding:2px 8px; border-radius:100px; }
+.tag.vegan-tag { background:#e8f5e9; color:#2e7d32; }
+.tag.grocery-tag { background:#ede9fe; color:#5b21b6; }
+.tag.gf-tag { background:#fff8e1; color:var(--sun-deep); }
+.tag.new-tag { background:#fee2e2; color:#991b1b; }
+
+/* CARD FOOTER */
+.card-footer { padding:10px 18px; border-top:1px solid #f5f5f5; display:flex; gap:6px; }
+.btn-directions { flex:1; background:var(--leaf); color:white; border:none; border-radius:8px; padding:9px; font-size:12px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:4px; transition:background .2s; }
+.btn-directions:hover { background:var(--leaf-mid); }
+.btn-sm-icon { background:white; border:1px solid rgba(0,0,0,.1); color:var(--muted); border-radius:8px; padding:9px 11px; font-size:13px; cursor:pointer; transition:all .15s; }
+.btn-sm-icon:hover { border-color:var(--leaf-light); color:var(--leaf); }
+
+/* STATES */
+.state-box { grid-column:1/-1; text-align:center; padding:60px 20px; }
+.state-icon { font-size:48px; margin-bottom:14px; }
+.state-title { font-family:'Playfair Display',serif; font-size:22px; margin-bottom:8px; }
+.state-sub { font-size:14px; color:var(--muted); line-height:1.7; max-width:480px; margin:0 auto 16px; }
+.state-steps { text-align:left; display:inline-block; margin:12px auto 16px; padding:0 0 0 20px; max-width:420px; }
+.state-steps li { font-size:13px; color:var(--dark); line-height:1.8; margin-bottom:4px; }
+.state-steps li strong { color:var(--leaf); }
+.state-note { font-size:13px; color:var(--muted); max-width:420px; margin:10px auto 16px; line-height:1.7; }
+.state-note strong { color:var(--dark); }
+.btn-action { background:var(--leaf); color:white; border:none; border-radius:100px; padding:12px 28px; font-size:14px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; margin-top:8px; }
+
+/* SKELETON LOADER */
+.skeleton { background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:8px; }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+.skel-card { background:white; border-radius:var(--radius); border:1px solid rgba(0,0,0,.07); padding:18px; }
+.skel-row { height:14px; margin-bottom:10px; }
+.skel-short { width:40%; }
+.skel-med { width:65%; }
+.skel-full { width:100%; }
+
+/* TIER EXPLAINER BAR */
+.tier-explainer { border-radius:10px; padding:10px 16px; font-size:13px; line-height:1.6; margin-bottom:20px; max-width:680px; transition:background .3s, color .3s; }
+
+/* RATING MODAL */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:500; display:flex; align-items:center; justify-content:center; padding:20px; opacity:0; pointer-events:none; transition:opacity .2s; }
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal { background:white; border-radius:20px; padding:28px; max-width:440px; width:100%; max-height:90vh; overflow-y:auto; }
+.modal h3 { font-family:'Playfair Display',serif; font-size:20px; margin-bottom:4px; }
+.modal-place { font-size:13px; color:var(--muted); margin-bottom:22px; }
+.modal-sec-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:var(--dark); margin-bottom:8px; }
+.modal-sec-sub { font-size:10px; color:var(--muted); font-weight:400; text-transform:none; letter-spacing:0; }
+.star-row { display:flex; gap:6px; margin-bottom:18px; }
+.star-btn { font-size:26px; cursor:pointer; opacity:.2; border:none; background:none; transition:opacity .1s; line-height:1; padding:0; }
+.star-btn.lit { opacity:1; }
+.tier-vote-grid { display:flex; flex-direction:column; gap:8px; margin-bottom:18px; }
+.tier-vote-btn { display:flex; gap:10px; align-items:flex-start; padding:10px 14px; border-radius:10px; border:1.5px solid rgba(0,0,0,.08); cursor:pointer; background:white; text-align:left; font-family:'DM Sans',sans-serif; transition:all .15s; }
+.tier-vote-btn.sel-haven    { border-color:var(--tier-haven-text);   background:var(--tier-haven-bg); }
+.tier-vote-btn.sel-friendly { border-color:var(--tier-friendly-text); background:var(--tier-friendly-bg); }
+.tier-vote-btn.sel-possible { border-color:var(--tier-possible-text); background:var(--tier-possible-bg); }
+.tvb-emoji { font-size:16px; margin-top:1px; }
+.tvb-title { font-size:13px; font-weight:500; }
+.tvb-desc { font-size:11px; color:var(--muted); margin-top:2px; }
+.modal-textarea { width:100%; padding:10px 14px; border:1.5px solid rgba(0,0,0,.1); border-radius:10px; font-size:13px; font-family:'DM Sans',sans-serif; min-height:76px; outline:none; resize:vertical; transition:border-color .2s; }
+.modal-textarea:focus { border-color:var(--leaf-light); }
+.modal-actions { display:flex; gap:10px; margin-top:20px; }
+.btn-submit { flex:1; background:var(--leaf); color:white; border:none; border-radius:100px; padding:13px; font-size:14px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; }
+.btn-cancel { background:white; color:var(--muted); border:1.5px solid rgba(0,0,0,.1); border-radius:100px; padding:13px 18px; font-size:14px; cursor:pointer; font-family:'DM Sans',sans-serif; }
+
+/* ADD PLACE BANNER */
+.add-place-banner { margin:0 48px 24px; background:var(--dark); border-radius:14px; padding:18px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+.apb-text h4 { color:white; font-size:15px; margin-bottom:3px; }
+.apb-text p { font-size:12px; color:rgba(255,255,255,.5); }
+.btn-add-place { background:var(--leaf-light); color:white; border:none; border-radius:100px; padding:10px 20px; font-size:13px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; white-space:nowrap; }
+
+@media (max-width:768px) {
+  nav, .page-header, .results-header, .cards-grid, .add-place-banner { padding-left:20px; padding-right:20px; }
+  .cards-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">APB <em>🌿</em></div>
+  
+  <a href="apb-nearby.html" class="nav-link active">Find Food</a>
+  <a href="apb-recipes-feed.html" class="nav-link">Recipes</a>
+  <a href="apb-blog.html" class="nav-link">Blog</a>
+  <a href="apb-products.html" class="nav-link">Products</a>
+  <a href="apb-recipe-book.html" class="nav-link">My Book</a>
+  <div class="nav-avatar">D</div>
+</nav>
+
+<div class="page-header">
+  <div class="page-eyebrow" id="eyebrow">📍 Detecting your location…</div>
+  <h1 class="page-title">Find Plant-Friendly Places <em>Near You</em></h1>
+  <p class="page-sub">Real restaurants, grocers, and markets   rated by the APB community for WFPB alignment. Works anywhere in the world.</p>
+
+  <!-- LOCATION BAR -->
+  <div class="location-bar">
+    <div class="location-bar-icon">📍</div>
+    <div class="location-bar-text">
+      <div class="location-bar-label">Your location</div>
+      <div class="location-bar-value loading" id="location-display">Detecting…</div>
+    </div>
+    <button class="btn-locate" id="btn-locate" onclick="detectLocation()">📍 Use My Location</button>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-row">
+    <div class="search-input-wrap">
+      <input type="text" id="city-search" placeholder="Or search any city, zip, or address…" onkeydown="if(event.key==='Enter')searchByCity()">
+      <button onclick="searchByCity()">Search</button>
+    </div>
+    <select class="radius-select" id="radius-select" onchange="if(window.userLat) searchNearby(window.userLat, window.userLng)">
+      <option value="5000">Within 3 miles</option>
+      <option value="8000" selected>Within 5 miles</option>
+      <option value="16000">Within 10 miles</option>
+      <option value="32000">Within 20 miles</option>
+      <option value="48000">Within 30 miles</option>
+    </select>
+  </div>
+
+  <!-- TIER FILTER -->
+  <div class="tier-legend">
+    <span style="font-size:12px;color:var(--muted);display:flex;align-items:center;margin-right:4px;">WFPB tier:</span>
+    <div class="tier-btn haven selected" onclick="toggleTier('haven',this)">🌱 Haven</div>
+    <div class="tier-btn friendly selected" onclick="toggleTier('friendly',this)">🌿 Friendly</div>
+    <div class="tier-btn possible selected" onclick="toggleTier('possible',this)">🍃 Possible</div>
+    <div class="tier-btn unrated selected" onclick="toggleTier('unrated',this)" style="background:#f5f5f5;color:var(--muted);">❓ Not Yet Rated</div>
+    <div class="tier-btn notwfpb selected" onclick="toggleTier('notwfpb',this)" style="background:#fee2e2;color:#991b1b;">🚫 Not WFPB</div>
+  </div>
+
+  <!-- TIER EXPLAINER -->
+  <div class="tier-explainer" id="tier-explainer" style="background:#f5f5f5;color:var(--muted);">
+    Tap a tier above to filter. <strong>🌱 Haven</strong> = designed for WFPB eating, oil-free options ready. <strong>🌿 Friendly</strong> = accommodating, good options with minimal modification. <strong>🍃 Possible</strong> = not plant-focused but workable   modifications needed. <strong>❓ Not Yet Rated</strong> = new places waiting for community ratings. <strong>🚫 Not WFPB</strong> = no suitable options for WFPB eating — listed so the community knows what to expect.
+  </div>
+
+  <!-- TYPE FILTERS -->
+  <div class="type-filters">
+    <button class="type-btn active" onclick="setType('all',this)">All</button>
+    <button class="type-btn" onclick="setType('restaurant',this)">🍽 Restaurants</button>
+    <button class="type-btn" onclick="setType('grocery_or_supermarket',this)">🛒 Grocers</button>
+    <button class="type-btn" onclick="setType('health_food_store',this)">🌿 Health Food</button>
+    <button class="type-btn" onclick="setType('meal_takeaway',this)">🥡 Takeaway</button>
+    <button class="type-btn" onclick="setType('cafe',this)">☕ Cafés</button>
+  </div>
+</div>
+
+<!-- RESULTS HEADER -->
+<div class="results-header">
+  <div class="results-count" id="results-count">-</div>
+  <div class="results-sort">
+    Sort by:
+    <select onchange="sortResults(this.value)">
+      <option value="distance">Distance</option>
+      <option value="rating">Google Rating</option>
+      <option value="wfpbno">WFPB Rating</option>
+    </select>
+  </div>
+</div>
+
+<!-- ADD PLACE BANNER -->
+<div class="add-place-banner">
+  <div class="apb-text">
+    <h4>Know a great plant-friendly spot not listed here?</h4>
+    <p>Any registered APB member can add a location. It goes live after admin verification.</p>
+  </div>
+  <button class="btn-add-place" onclick="openSubmitModal()">+ Add a Place</button>
+</div>
+
+<!-- CARDS -->
+<div class="cards-grid" id="cards-grid">
+  <div class="state-box">
+    <div class="state-icon">🌍</div>
+    <div class="state-title">Find food anywhere</div>
+    <div class="state-sub">Allow location access or search a city to find real plant-friendly restaurants and grocers near you   rated by the APB community for WFPB alignment.</div>
+    <button class="btn-action" onclick="detectLocation()">📍 Use My Location</button>
+  </div>
+</div>
+
+<!-- RATING MODAL -->
+<div class="modal-overlay" id="rating-modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <h3>Rate this place</h3>
+    <div class="modal-place" id="modal-place-name"></div>
+
+    <div class="modal-sec-label">⭐ Overall Experience <span class="modal-sec-sub">  How was your visit?</span></div>
+    <div class="star-row" id="overall-stars">
+      <button class="star-btn" style="color:var(--sun)" onclick="setStars('overall',1)">★</button>
+      <button class="star-btn" style="color:var(--sun)" onclick="setStars('overall',2)">★</button>
+      <button class="star-btn" style="color:var(--sun)" onclick="setStars('overall',3)">★</button>
+      <button class="star-btn" style="color:var(--sun)" onclick="setStars('overall',4)">★</button>
+      <button class="star-btn" style="color:var(--sun)" onclick="setStars('overall',5)">★</button>
+    </div>
+
+    <div class="modal-sec-label">🌱 WFPB Rating <span class="modal-sec-sub">  How well does it serve a WFPB eater?</span></div>
+    <div class="star-row" id="wfpbno-stars">
+      <button class="star-btn" style="color:var(--leaf-light)" onclick="setStars('wfpbno',1)">★</button>
+      <button class="star-btn" style="color:var(--leaf-light)" onclick="setStars('wfpbno',2)">★</button>
+      <button class="star-btn" style="color:var(--leaf-light)" onclick="setStars('wfpbno',3)">★</button>
+      <button class="star-btn" style="color:var(--leaf-light)" onclick="setStars('wfpbno',4)">★</button>
+      <button class="star-btn" style="color:var(--leaf-light)" onclick="setStars('wfpbno',5)">★</button>
+    </div>
+
+    <div class="modal-sec-label">🏷️ WFPB Tier <span class="modal-sec-sub">  Which tier fits based on your experience?</span></div>
+    <div class="tier-vote-grid">
+      <button class="tier-vote-btn" onclick="selectTierVote('haven',this)"><span class="tvb-emoji">🌱</span><div><div class="tvb-title">WFPB Haven</div><div class="tvb-desc">Whole food, plant-based eating is central to what this place does. Oil-free options exist without asking.</div></div></button>
+      <button class="tier-vote-btn" onclick="selectTierVote('friendly',this)"><span class="tvb-emoji">🌿</span><div><div class="tvb-title">WFPB Friendly</div><div class="tvb-desc">Not exclusively plant-based but genuinely accommodating. Good options, staff willing to modify.</div></div></button>
+      <button class="tier-vote-btn" onclick="selectTierVote('possible',this)"><span class="tvb-emoji">🍃</span><div><div class="tvb-title">WFPB Possible</div><div class="tvb-desc">Not plant-friendly by design but workable. May need modifications or piecing together from sides and components.</div></div></button>
+    </div>
+
+    <div class="modal-sec-label">📝 Your tip <span class="modal-sec-sub">(optional)</span></div>
+    <textarea class="modal-textarea" id="modal-tip" placeholder="What should WFPB eaters know? e.g. Ask for the grain bowl without oil. The mushroom dishes are excellent oil-free."></textarea>
+
+    <div class="modal-actions">
+      <button class="btn-submit" onclick="submitRating()">Submit Rating</button>
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!--
+  ═══════════════════════════════════════════════════════════════
+  DEVELOPER NOTES   Google Places API Integration
+  ═══════════════════════════════════════════════════════════════
+
+  SETUP REQUIRED:
+  1. Get a Google Maps Platform API key:
+     https://console.cloud.google.com/google/maps-apis
+
+  2. Enable these APIs in your Google Cloud Console:
+     • Places API (New)
+     • Geocoding API
+     • Maps JavaScript API (if adding map view later)
+
+  3. Replace YOUR_GOOGLE_PLACES_API_KEY below with your key.
+
+  4. Restrict the key to your domain in Cloud Console
+     (prevents unauthorized usage and billing surprises).
+
+  5. For production, proxy all Places API calls through your
+     Supabase Edge Function so the key never ships to the browser:
+     https://supabase.com/docs/guides/functions
+
+  PLACES API CALLS USED IN THIS PAGE:
+  • Nearby Search    finds places by type near lat/lng
+  • Text Search      finds places by city/address string
+  • Geocoding        converts city name → lat/lng
+  • Place Details    fetches hours, phone, website per place
+
+  ESTIMATED COST (Google Places API pricing as of 2026):
+  • Nearby Search: $0.032 per request
+  • Place Details: $0.017 per request
+  • 1,000 searches/day ≈ $32-50/day → use caching in Supabase
+
+  APB COMMUNITY DATA (Supabase):
+  When a place is returned by Google, this page also queries
+  the APB Supabase `reviews` and `locations` tables by
+  google_place_id to overlay community ratings and tier data.
+  ═══════════════════════════════════════════════════════════════
+-->
+
+<script>
+// ── CONFIG ─────────────────────────────────────────────────────
+// Replace with your real key. In production, proxy through Supabase Edge Function.
+const GOOGLE_API_KEY = 'YOUR_GOOGLE_PLACES_API_KEY';
+
+// APB community data   in production this comes from Supabase.
+// Keyed by Google place_id. Shows what the community has rated.
+const APB_COMMUNITY_DATA = {
+  'ChIJKzpW9PExVIgRB_lkoO5aPCQ': { tier:'friendly', wfpbno_rating:null, overall_rating:null, wto:'Ask about oil-free prep. Menu rotates   check their Instagram for current veg specials.' },
+  'ChIJt8e4nYw5VIgRDMCdh_dqZ2I': { tier:'haven',    wfpbno_rating:null, overall_rating:null, wto:'Stock up on seasonal produce, bulk grains, and legumes. Best WFPB pantry shopping near Monroe.' },
+  'ChIJgxW7cLUwVIgRD_tJzmzNyPY': { tier:'possible',  wfpbno_rating:null, overall_rating:null, wto:'Produce section, dried beans, lentils, rice and grains. Good for everyday staples.' },
+  'ChIJI0CXR-w7VIgR_5HJPYqq8uw': { tier:'possible',  wfpbno_rating:null, overall_rating:null, wto:'Call ahead to ask about plant-based prep without oil. Rice and peas and vegetable dishes are your best bet.' },
+  'ChIJD0aMOtYlVIgR_hc3kePlw3U': { tier:'friendly', wfpbno_rating:null, overall_rating:null, wto:'Ask Yanni directly about oil-free prep   the kitchen is accommodating.' },
+  'ChIJuzWMj_YdVIgRajR1bJ0e5fA': { tier:'possible', wfpbno_rating:null, overall_rating:null, wto:'Ask for grilled mushroom bowls without oil. Skip the fries and fried items.' },
+  'ChIJFcgZqs9-hYARZzkB8L40ZDI': { tier:'friendly', wfpbno_rating:null, overall_rating:null, wto:'Tell your server you eat whole food plant-based   they have a printed list and adapt dishes. Mushroom chowder and king oysters can be made oil-free.' },
+  'ChIJ7Xdl_qEfVIgRHpOpGMREYEY': { tier:'possible', wfpbno_rating:null, overall_rating:null, wto:'Rainbow wrap and pressed juices are most WFPB-aligned. Skip nachos, elote ribs, and fried items.' },
+  'ChIJraDu1--hVogR7xixAzNcKwo': { tier:'friendly', wfpbno_rating:null, overall_rating:null, wto:'Power Bowl and taco salad (dressing on the side) are most WFPB-aligned. Skip the chikie bites.' },
+  'ChIJtfNvQAChVogRFEKAr1RTAHM': { tier:'possible', wfpbno_rating:null, overall_rating:null, wto:'Soul Bowl (grilled mushrooms, rice, sweet potatoes, black-eyed peas)   ask for oil-free. Skip the BBQ ribs.' },
+  'ChIJFWApelqhVogRsYXI3XbODu4': { tier:'possible', wfpbno_rating:null, overall_rating:null, wto:'Ask about lighter preparations. Oyster mushroom sandwich without sauce. Limited Thu-Sun only.' },
+  'ChIJ6yQf5BkgVIgRTQ-MHoKeLV0': { tier:'possible', wfpbno_rating:null, overall_rating:null, wto:'Bean-based chili and collard greens are most WFPB-aligned. Skip the carrot bacon and burgers.' },
+  'ChIJM6vihBSeVogRy6Qw_JteorU': { tier:'haven',    wfpbno_rating:null, overall_rating:null, wto:'Bulk bins, organic produce, plant milks, nutritional yeast. Hot bar   ask about oil-free options.' },
+  'ChIJx47_MM0nVIgRiqiMCJ90RLc': { tier:'haven',    wfpbno_rating:null, overall_rating:null, wto:'Bulk bins, organic produce, plant milks. Upstairs dining area. Closest Whole Foods to Monroe.' },
+  'ChIJVU-E6tOCVogRhv04rFpH3HI': { tier:'haven',    wfpbno_rating:null, overall_rating:null, wto:'Supplement section (B12, nooch), plant milks, organic produce. Open 7 AM daily.' },
+  'ChIJyX3YAq4fVIgRtdy_FFdUvnY': { tier:'haven',    wfpbno_rating:null, overall_rating:null, wto:'Fresh produce, bulk bins. Near Oh My Soul and Soul Miner\'s Garden   great combo trip.' },
+  'ChIJkRJNZoyfVogRmWLdSIS3sFA': { tier:'haven',    wfpbno_rating:null, overall_rating:null, wto:'Best value organic staples in Charlotte. Frozen veggies, canned legumes, whole grains, plant milks.' },
+  'ChIJgZApsnudVogRhjsY5IDyYuQ': { tier:'haven',    wfpbno_rating:null, overall_rating:null, wto:'Closest TJ\'s to Monroe. Right next to Sanctuary Bistro on Rea Rd   perfect combo trip.' },
+  'mod-pizza-indian-trail': { tier:'possible', wfpbno_rating:null, overall_rating:null, name:'MOD Pizza', address:'6720 Old Monroe Rd, Indian Trail, NC 28079', wto:'Build your own salad with lots of ingredient choices, but the only oil-free dressing option is balsamic vinegar. APB tip: bring your own dressing from home for a better salad experience. For pizza, the signature red tomato sauce is oil-free and there are plenty of veggie toppings. The crust does contain some oil so keep that in mind. Leave off the cheese, or ask for vegan cheese if that is something you include in your diet. Great option for going out with non-plant-based friends since everyone can build exactly what they want.', submittedBy:'APB Team', apbTested:true },
+  'mikes-vegan-charlotte': { tier:'notwfpb', wfpbno_rating:null, overall_rating:null, name:"Mike's Vegan Grill", address:'440 E McCullough Dr Ste 123, Charlotte, NC 28262', wto:'Great vegan comfort food with excellent reviews and really friendly staff. However, if you are eating WFPB there are not really available options here. The menu focuses on vegan versions of classic comfort foods like burgers, cheesesteaks, and fried chicken. Worth knowing about if you are with non-WFPB friends who want vegan food, but do not expect to find oil-free whole food options.', submittedBy:'APB Team', apbTested:true },
+  'healthy-habit-hilton-head': { tier:'friendly', wfpbno_rating:null, overall_rating:null, name:'Healthy Habit', address:'33 Office Park Rd Ste 227, Hilton Head Island, SC 29928', wto:'Has a separate vegan/vegetarian menu   watch the key carefully since it can be confusing. Breakfast bowls and smoothies appeared to be WFPB. For dinner, salads and wraps are your best bet. APB recommends the Yummus Salad (watch out   there is also a chicken version) and ask to leave off the Mediterranean red wine dressing. The Latin Wrap is also excellent. Ingredients are fresh and flavorful throughout. The hummus may contain oil so keep that in mind. Always check the ingredients of whichever dish you try.', submittedBy:'APB Team', apbTested:true },
+  'ChIJfQzmipmfVogRBHP01F5-IME': { tier:'friendly', wfpbno_rating:null, overall_rating:null, wto:'B12 supplements, nutritional yeast, alkaline water. Good for hard-to-find WFPB supplements. Closed Sundays.' },
+  'ChIJPfuWb7GFVogR00e11ZThvcg': { tier:'haven',    wfpbno_rating:null, overall_rating:null, wto:'Hot bar   ask about oil-free. Organic produce, clean-label condiments. Bakery/meat close ~6 PM.' },
+};
+
+// Place types to search   covers restaurants, cafes, grocers, health food stores
+const SEARCH_TYPES = {
+  all: ['vegan_restaurant','vegetarian_restaurant','restaurant','grocery_or_supermarket','health_food_store','supermarket','meal_takeaway','cafe'],
+  restaurant: ['vegan_restaurant','vegetarian_restaurant','restaurant'],
+  grocery_or_supermarket: ['grocery_or_supermarket','supermarket','health_food_store'],
+  health_food_store: ['health_food_store'],
+  meal_takeaway: ['meal_takeaway'],
+  cafe: ['cafe']
+};
+
+// Keywords that help identify plant-friendly places
+const PLANT_KEYWORDS = ['vegan','plant','vegetarian','organic','natural','health','whole food','wfpb'];
+
+// ── STATE ───────────────────────────────────────────────────────
+let allResults = [];
+let activeTiers = new Set(['haven','friendly','possible','unrated','notwfpb']);
+let activeType = 'all';
+let ratingTarget = null;
+let overallRating = 0;
+let wfpbnoRating = 0;
+let tierVote = null;
+
+// ── LOCATION DETECTION ─────────────────────────────────────────
+function detectLocation() {
+  const btn = document.getElementById('btn-locate');
+  const display = document.getElementById('location-display');
+  btn.disabled = true;
+  btn.textContent = 'Detecting…';
+  display.textContent = 'Getting your location…';
+  display.classList.add('loading');
+
+  if (!navigator.geolocation) {
+    display.textContent = 'Location not supported';
+    display.classList.remove('loading');
+    btn.disabled = false; btn.textContent = '📍 Use My Location';
+    showState('no-geolocation');
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      window.userLat = pos.coords.latitude;
+      window.userLng = pos.coords.longitude;
+      btn.disabled = false; btn.textContent = '🔄 Refresh';
+      reverseGeocode(window.userLat, window.userLng);
+      searchNearby(window.userLat, window.userLng);
+    },
+    err => {
+      display.classList.remove('loading');
+      btn.disabled = false;
+      if (err.code === 1) {
+        // PERMISSION_DENIED   user blocked it, or browser remembered a prior block
+        display.textContent = 'Location permission denied';
+        btn.textContent = '📍 Use My Location';
+        showState('denied-permission');
+      } else if (err.code === 2) {
+        // POSITION_UNAVAILABLE   GPS/network couldn't get a fix
+        display.textContent = 'Location unavailable';
+        btn.textContent = '🔄 Try Again';
+        showState('denied-unavailable');
+      } else if (err.code === 3) {
+        // TIMEOUT   took longer than 10 seconds
+        display.textContent = 'Location timed out';
+        btn.textContent = '🔄 Try Again';
+        showState('denied-timeout');
+      } else {
+        display.textContent = 'Location error';
+        btn.textContent = '🔄 Try Again';
+        showState('denied-permission');
+      }
+    },
+    { timeout: 10000, enableHighAccuracy: false }
+  );
+}
+
+function reverseGeocode(lat, lng) {
+  // In production: call Google Geocoding API
+  // GET https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lng}&key={KEY}
+  // For demo, use coordinates directly
+  const display = document.getElementById('location-display');
+  display.classList.remove('loading');
+
+  fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GOOGLE_API_KEY}`)
+    .then(r => r.json())
+    .then(data => {
+      if (data.results && data.results[0]) {
+        const comps = data.results[0].address_components;
+        const city = comps.find(c => c.types.includes('locality'))?.long_name || '';
+        const state = comps.find(c => c.types.includes('administrative_area_level_1'))?.short_name || '';
+        display.textContent = city && state ? `${city}, ${state}` : data.results[0].formatted_address;
+        document.getElementById('eyebrow').textContent = `📍 ${city}, ${state}`;
+      } else {
+        display.textContent = `${lat.toFixed(3)}°, ${lng.toFixed(3)}°`;
+      }
+    })
+    .catch(() => {
+      display.textContent = `Near ${lat.toFixed(3)}°, ${lng.toFixed(3)}°`;
+    });
+}
+
+function searchByCity() {
+  const q = document.getElementById('city-search').value.trim();
+  if (!q) return;
+  showSkeletons();
+
+  // Geocode the city string to lat/lng, then do nearby search
+  // GET https://maps.googleapis.com/maps/api/geocode/json?address={q}&key={KEY}
+  fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(q)}&key=${GOOGLE_API_KEY}`)
+    .then(r => r.json())
+    .then(data => {
+      if (data.results && data.results[0]) {
+        const loc = data.results[0].geometry.location;
+        window.userLat = loc.lat;
+        window.userLng = loc.lng;
+        const display = document.getElementById('location-display');
+        display.textContent = data.results[0].formatted_address;
+        display.classList.remove('loading');
+        document.getElementById('eyebrow').textContent = `📍 ${data.results[0].formatted_address}`;
+        searchNearby(loc.lat, loc.lng);
+      } else {
+        showState('no-results', `No location found for "${q}". Try a different city or zip code.`);
+      }
+    })
+    .catch(() => showState('error'));
+}
+
+// ── NEARBY SEARCH ───────────────────────────────────────────────
+function searchNearby(lat, lng) {
+  const radius = document.getElementById('radius-select').value;
+  showSkeletons();
+  allResults = [];
+
+  // Google Places Nearby Search
+  // POST https://places.googleapis.com/v1/places:searchNearby
+  // This is the Places API (New) endpoint   uses POST with JSON body
+  //
+  // For the legacy Places API, use:
+  // GET https://maps.googleapis.com/maps/api/place/nearbysearch/json
+  //     ?location={lat},{lng}&radius={radius}&type={type}&key={KEY}
+  //
+  // We run multiple searches (vegan_restaurant, grocery_or_supermarket, health_food_store)
+  // and merge + deduplicate results by place_id.
+
+  const types = SEARCH_TYPES[activeType] || SEARCH_TYPES.all;
+  const uniqueTypes = [...new Set(types)];
+
+  const searches = uniqueTypes.slice(0, 4).map(type =>
+    fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=${radius}&type=${type}&key=${GOOGLE_API_KEY}`)
+      .then(r => r.json())
+      .catch(() => ({ results: [] }))
+  );
+
+  Promise.all(searches).then(responses => {
+    const seen = new Set();
+    const merged = [];
+    responses.forEach(res => {
+      (res.results || []).forEach(place => {
+        if (!seen.has(place.place_id)) {
+          seen.add(place.place_id);
+          merged.push(place);
+        }
+      });
+    });
+
+    // Score and filter for plant-friendliness
+    allResults = merged
+      .map(p => enrichPlace(p, lat, lng))
+      .filter(p => p.plantScore > 0 || APB_COMMUNITY_DATA[p.place_id])
+      .sort((a, b) => a.distanceM - b.distanceM);
+
+    renderCards();
+  }).catch(() => showState('error'));
+}
+
+// ── PLACE ENRICHMENT ────────────────────────────────────────────
+function enrichPlace(p, userLat, userLng) {
+  const apb = APB_COMMUNITY_DATA[p.place_id] || null;
+  const name = (p.name || '').toLowerCase();
+  const types = (p.types || []).join(' ');
+  const vicinity = (p.vicinity || '').toLowerCase();
+
+  // Plant-friendliness score   higher = more relevant to show
+  let plantScore = 0;
+  if (types.includes('vegan_restaurant')) plantScore += 10;
+  if (types.includes('vegetarian_restaurant')) plantScore += 8;
+  if (types.includes('health_food_store')) plantScore += 6;
+  PLANT_KEYWORDS.forEach(kw => { if (name.includes(kw)) plantScore += 3; });
+  if (apb) plantScore += 5; // already in APB database = definitely relevant
+
+  // Distance calculation (Haversine)
+  const R = 6371000;
+  const dLat = (p.geometry.location.lat - userLat) * Math.PI / 180;
+  const dLng = (p.geometry.location.lng - userLng) * Math.PI / 180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(userLat*Math.PI/180) * Math.cos(p.geometry.location.lat*Math.PI/180) * Math.sin(dLng/2)**2;
+  const distanceM = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+  // Determine place category for display
+  let category = 'restaurant';
+  if (types.includes('grocery') || types.includes('supermarket')) category = 'grocery';
+  else if (types.includes('health_food_store')) category = 'health';
+  else if (types.includes('meal_takeaway')) category = 'takeaway';
+  else if (types.includes('cafe')) category = 'cafe';
+
+  return {
+    ...p,
+    apb,
+    plantScore,
+    distanceM,
+    distanceMi: (distanceM / 1609.34).toFixed(1),
+    category,
+    tier: apb?.tier || 'unrated',
+    wto: apb?.wto || null,
+    apb_overall: apb?.overall_rating || null,
+    apb_wfpbno: apb?.wfpbno_rating || null,
+  };
+}
+
+// ── RENDERING ───────────────────────────────────────────────────
+function renderCards() {
+  const grid = document.getElementById('cards-grid');
+
+  const filtered = allResults.filter(p => {
+    const tierMatch = activeTiers.has(p.tier);
+    const typeMatch = activeType === 'all' || SEARCH_TYPES[activeType]?.some(t => (p.types||[]).includes(t));
+    return tierMatch && typeMatch;
+  });
+
+  document.getElementById('results-count').textContent =
+    `${filtered.length} place${filtered.length !== 1 ? 's' : ''} found · Tap ⭐ to rate for WFPB`;
+
+  if (filtered.length === 0) {
+    showState('no-results'); return;
+  }
+
+  grid.innerHTML = filtered.map(p => cardHTML(p)).join('');
+}
+
+function cardHTML(p) {
+  const tierLabels = {
+    haven:    '🌱 WFPB Haven',
+    friendly: '🌿 WFPB Friendly',
+    possible: '🍃 WFPB Possible',
+    unrated:  '❓ Not Yet Rated'
+  };
+  const icons = { restaurant:'🍽️', grocery:'🛒', health:'🌿', takeaway:'🥡', cafe:'☕' };
+  const iconBg = { restaurant:'icon-restaurant', grocery:'icon-grocery', health:'icon-health', takeaway:'icon-restaurant', cafe:'icon-restaurant' };
+
+  const gRating = p.rating ? `<span class="rating-num">${p.rating}</span><span class="stars-google">${'★'.repeat(Math.round(p.rating))}${'☆'.repeat(5-Math.round(p.rating))}</span>` : '<span style="color:var(--muted);font-size:12px;">No Google rating</span>';
+  const gCount = p.user_ratings_total ? `<div class="rating-sub">${p.user_ratings_total.toLocaleString()} Google reviews</div>` : '';
+
+  const wRating = p.apb_wfpbno
+    ? `<div class="rating-val"><span class="rating-num">${p.apb_wfpbno}</span><span class="stars-wfpbno">${'★'.repeat(Math.round(p.apb_wfpbno))}${'☆'.repeat(5-Math.round(p.apb_wfpbno))}</span></div><div class="rating-sub">APB community rating</div>`
+    : `<div style="font-size:12px;color:var(--muted);font-style:italic;margin-bottom:4px;">No ratings yet</div>`;
+
+  const wtoBlock = p.wto
+    ? `<div class="what-to-order"><div class="wto-label">${p.tier === 'haven' ? '🌱' : p.tier === 'friendly' ? '🌿' : '🍃'} What to order</div><div class="wto-text">${p.wto}</div></div>`
+    : `<div style="padding:10px 12px;background:#f9f9f9;border-radius:8px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <span style="font-size:12px;color:var(--muted);font-style:italic;">No APB info yet for this place.</span>
+        <button style="background:var(--leaf);color:white;border:none;border-radius:100px;padding:5px 12px;font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;" onclick="openAddInfoModal('${p.place_id}','${p.name.replace(/'/g,"\\'")}')">+ Add Info</button>
+      </div>`;
+
+  const tags = [];
+  if ((p.types||[]).includes('vegan_restaurant')) tags.push('<span class="tag vegan-tag">100% Vegan</span>');
+  if ((p.types||[]).includes('vegetarian_restaurant') && !(p.types||[]).includes('vegan_restaurant')) tags.push('<span class="tag vegan-tag">Vegetarian</span>');
+  if ((p.types||[]).includes('health_food_store')) tags.push('<span class="tag grocery-tag">Health Food</span>');
+  if ((p.types||[]).includes('grocery_or_supermarket') || (p.types||[]).includes('supermarket')) tags.push('<span class="tag grocery-tag">Grocery</span>');
+  if (!p.apb) tags.push('<span class="tag new-tag">Rate First</span>');
+
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name)}&query_place_id=${p.place_id}`;
+
+  return `
+  <div class="loc-card" data-tier="${p.tier}" data-types="${(p.types||[]).join(' ')}" data-place-id="${p.place_id}">
+    <div class="card-header">
+      <div class="card-header-top">
+        <div class="card-type-icon ${iconBg[p.category] || 'icon-restaurant'}">${icons[p.category] || '🍽️'}</div>
+        <div style="flex:1">
+          <div class="card-name">${p.name}</div>
+          <div class="card-addr">${p.vicinity || ''}</div>
+        </div>
+      </div>
+      <div class="card-meta">
+        <span class="card-distance">📍 ${p.distanceMi} mi away</span>
+        <span class="wfpbno-tier-badge ${p.tier}">${tierLabels[p.tier]}</span>
+      </div>
+    </div>
+    <div class="dual-ratings">
+      <div class="rating-col">
+        <div class="rating-label">Google Rating</div>
+        <div class="rating-val">${gRating}</div>
+        ${gCount}
+      </div>
+      <div class="rating-col">
+        <div class="rating-label">🌱 WFPB Rating</div>
+        ${wRating}
+        <span class="rate-link" onclick="openRating('${p.place_id}','${p.name.replace(/'/g,"\\'")}')">Rate for WFPB →</span>
+      </div>
+    </div>
+    <div class="card-body">
+      ${wtoBlock}
+      <div class="card-tags">${tags.join('')}</div>
+    </div>
+    <div class="card-footer">
+      <a class="btn-directions" href="${mapsUrl}" target="_blank">📍 Directions</a>
+      <button class="btn-sm-icon" onclick="openRating('${p.place_id}','${p.name.replace(/'/g,"\\'")}')">⭐</button>
+      <button class="btn-sm-icon" onclick="savePlace('${p.name.replace(/'/g,"\\'")}')">♡</button>
+    </div>
+  </div>`;
+}
+
+// ── UI STATES ───────────────────────────────────────────────────
+function showSkeletons() {
+  const grid = document.getElementById('cards-grid');
+  grid.innerHTML = Array(6).fill(0).map(() => `
+    <div class="skel-card">
+      <div class="skeleton skel-row skel-med" style="margin-bottom:14px;height:18px;"></div>
+      <div class="skeleton skel-row skel-short"></div>
+      <div class="skeleton skel-row skel-full"></div>
+      <div class="skeleton skel-row skel-med"></div>
+    </div>`).join('');
+  document.getElementById('results-count').textContent = 'Searching…';
+}
+
+function showState(type, msg) {
+  // Detect iOS vs Android vs desktop for platform-specific instructions
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isAndroid = /Android/.test(navigator.userAgent);
+  const isMobile = isIOS || isAndroid;
+
+  const permissionSteps = isIOS
+    ? `<ol class="state-steps"><li>Open your iPhone <strong>Settings</strong></li><li>Scroll down to <strong>Safari</strong> (or your browser)</li><li>Tap <strong>Location</strong> and choose <strong>While Using the App</strong></li><li>Come back and tap <strong>Use My Location</strong></li></ol>`
+    : isAndroid
+    ? `<ol class="state-steps"><li>Tap the <strong>lock icon</strong> or <strong>ⓘ</strong> in your browser's address bar</li><li>Tap <strong>Permissions → Location</strong></li><li>Select <strong>Allow</strong></li><li>Refresh the page and tap <strong>Use My Location</strong></li></ol>`
+    : `<ol class="state-steps"><li>Click the <strong>lock icon 🔒</strong> in your browser's address bar</li><li>Find <strong>Location</strong> in the permissions list</li><li>Change it from <strong>Block</strong> to <strong>Allow</strong></li><li>Refresh the page and tap <strong>Use My Location</strong></li></ol><p class="state-note">Or skip this entirely   just search any city or zip code in the search bar above. 👆</p>`;
+
+  const msgs = {
+    'denied-permission': {
+      icon: '🔒',
+      title: 'Location permission is blocked',
+      sub: `APB needs location access to find places near you. Your browser has blocked it   either from a previous choice or a system setting. Here's how to fix it:`,
+      extra: permissionSteps,
+      action: null  // Try Again won't work until they fix permissions   don't show it
+    },
+    'denied-unavailable': {
+      icon: '📡',
+      title: 'Your location couldn\'t be determined',
+      sub: `Your device couldn't get a GPS or network fix right now. This can happen indoors, in airplane mode, or when system location services are off.`,
+      extra: `<p class="state-note">Check that <strong>Location Services</strong> is enabled in your ${isIOS ? 'iPhone Settings → Privacy & Security → Location Services' : isAndroid ? 'Android Settings → Location' : 'device settings'}, then try again. Or just search a city name above. 👆</p>`,
+      action: { label: '🔄 Try Again', fn: 'detectLocation()' }
+    },
+    'denied-timeout': {
+      icon: '⏱️',
+      title: 'Location request timed out',
+      sub: `APB waited 10 seconds for your location but didn't get a response. This usually means a weak GPS signal or slow network.`,
+      extra: `<p class="state-note">Try moving closer to a window, stepping outside briefly, or searching a city name instead. 👆</p>`,
+      action: { label: '🔄 Try Again', fn: 'detectLocation()' }
+    },
+    'no-geolocation': {
+      icon: '🌐',
+      title: 'Location not supported',
+      sub: `Your browser doesn't support location detection. This can happen in some older browsers or certain privacy-focused settings.`,
+      extra: `<p class="state-note">No problem   just search any city, zip code, or address in the search bar above to find plant-friendly places anywhere. 👆</p>`,
+      action: null
+    },
+    'no-results': {
+      icon: '🌿',
+      title: 'No plant-friendly places found here',
+      sub: msg || 'APB didn\'t find any matches in this area. Try a wider radius or a different location.',
+      extra: `<p class="state-note">You can also <strong>add a place</strong>   if you know a great plant-friendly spot here, contribute it to the community.</p>`,
+      action: { label: '+ Add a Place', fn: 'openSubmitModal()' }
+    },
+    'error': {
+      icon: '⚠️',
+      title: 'Something went wrong',
+      sub: 'APB couldn\'t reach Google Places right now. This is usually a temporary network issue.',
+      extra: `<p class="state-note">Check your internet connection and try again. If the problem continues, search by city name above.</p>`,
+      action: { label: '🔄 Try Again', fn: 'if(window.userLat) searchNearby(window.userLat, window.userLng); else detectLocation()' }
+    }
+  };
+
+  const s = msgs[type] || msgs.error;
+  const actionHTML = s.action ? `<button class="btn-action" onclick="${s.action.fn}">${s.action.label}</button>` : '';
+
+  document.getElementById('cards-grid').innerHTML = `
+    <div class="state-box">
+      <div class="state-icon">${s.icon}</div>
+      <div class="state-title">${s.title}</div>
+      <div class="state-sub">${s.sub}</div>
+      ${s.extra || ''}
+      ${actionHTML}
+    </div>`;
+  document.getElementById('results-count').textContent = '-';
+}
+
+// ── FILTERS ─────────────────────────────────────────────────────
+function toggleTier(tier, btn) {
+  if (activeTiers.has(tier)) {
+    activeTiers.delete(tier);
+    btn.classList.remove('selected');
+    btn.classList.add('dim');
+  } else {
+    activeTiers.add(tier);
+    btn.classList.add('selected');
+    btn.classList.remove('dim');
+  }
+  if (activeTiers.size === 0) { activeTiers.add(tier); btn.classList.add('selected'); btn.classList.remove('dim'); }
+  renderCards();
+}
+
+function setType(type, btn) {
+  activeType = type;
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (window.userLat) searchNearby(window.userLat, window.userLng);
+}
+
+function sortResults(by) {
+  if (by === 'distance') allResults.sort((a,b) => a.distanceM - b.distanceM);
+  else if (by === 'rating') allResults.sort((a,b) => (b.rating||0) - (a.rating||0));
+  else if (by === 'wfpbno') allResults.sort((a,b) => (b.apb_wfpbno||0) - (a.apb_wfpbno||0));
+  renderCards();
+}
+
+// ── RATING MODAL ────────────────────────────────────────────────
+function openRating(placeId, name) {
+  ratingTarget = placeId;
+  overallRating = 0; wfpbnoRating = 0; tierVote = null;
+  document.getElementById('modal-place-name').textContent = name;
+  document.getElementById('modal-tip').value = '';
+  document.querySelectorAll('.star-btn').forEach(s => s.classList.remove('lit'));
+  document.querySelectorAll('.tier-vote-btn').forEach(b => b.className = 'tier-vote-btn');
+  document.getElementById('rating-modal').classList.add('open');
+}
+function closeModal() { document.getElementById('rating-modal').classList.remove('open'); }
+
+function setStars(type, n) {
+  if (type === 'overall') overallRating = n;
+  else wfpbnoRating = n;
+  document.querySelectorAll(`#${type}-stars .star-btn`).forEach((s,i) => s.classList.toggle('lit', i < n));
+}
+
+function selectTierVote(tier, btn) {
+  tierVote = tier;
+  document.querySelectorAll('.tier-vote-btn').forEach(b => b.className = 'tier-vote-btn');
+  btn.className = `tier-vote-btn sel-${tier}`;
+}
+
+function submitRating() {
+  if (!overallRating && !wfpbnoRating) { alert('Please add at least one star rating.'); return; }
+  // In production: POST to Supabase reviews table
+  // supabase.from('reviews').insert({ user_id, place_id: ratingTarget, overall_rating: overallRating, wfpbno_rating: wfpbnoRating, tier_vote: tierVote, tip: ... })
+  alert(`Rating saved! ✓\n\nIn production this writes to Supabase:\n• place_id: ${ratingTarget}\n• overall: ${overallRating}★\n• wfpbno: ${wfpbnoRating}🌱\n• tier vote: ${tierVote || 'none'}\n\nThe card updates immediately with your rating.`);
+
+  // Update local APB data so the card refreshes without a reload
+  if (!APB_COMMUNITY_DATA[ratingTarget]) APB_COMMUNITY_DATA[ratingTarget] = {};
+  if (wfpbnoRating) APB_COMMUNITY_DATA[ratingTarget].wfpbno_rating = wfpbnoRating;
+  if (overallRating) APB_COMMUNITY_DATA[ratingTarget].overall_rating = overallRating;
+  if (tierVote) APB_COMMUNITY_DATA[ratingTarget].tier = tierVote;
+
+  // Re-enrich and re-render
+  if (window.userLat) {
+    allResults = allResults.map(p => enrichPlace(p, window.userLat, window.userLng));
+    renderCards();
+  }
+  closeModal();
+}
+
+function savePlace(name) { alert(`Sign in to save "${name}" to your favorites!`); }
+
+// ── AUTO-DETECT ON LOAD ─────────────────────────────────────────
+window.addEventListener('load', () => {
+  // Auto-detect location on page load
+  if (navigator.geolocation) detectLocation();
+});
+</script>
+
+
+<!-- SUBMIT A PLACE MODAL -->
+<div class="modal-overlay" id="submit-modal" onclick="if(event.target===this)closeSubmitModal()">
+  <div class="modal">
+    <h3>📍 Add a Place</h3>
+    <div class="modal-place">Help the APB community discover plant-friendly spots. Submissions are reviewed before going live.</div>
+
+    <div class="modal-sec-label">Restaurant or Business Name</div>
+    <input class="modal-textarea" id="submit-name" type="text" placeholder="e.g. Green Bowl Cafe" style="min-height:auto;padding:10px 14px;">
+
+    <div class="modal-sec-label" style="margin-top:16px;">Address or City</div>
+    <input class="modal-textarea" id="submit-address" type="text" placeholder="e.g. 123 Main St, Monroe, NC" style="min-height:auto;padding:10px 14px;">
+
+    <div class="modal-sec-label" style="margin-top:16px;">Type of Place</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+      <button class="tier-vote-btn" onclick="selectPlaceType('restaurant',this)" style="flex:1;min-width:120px;"><span class="tvb-emoji">🍽️</span><div><div class="tvb-title">Restaurant</div></div></button>
+      <button class="tier-vote-btn" onclick="selectPlaceType('grocery',this)" style="flex:1;min-width:120px;"><span class="tvb-emoji">🛒</span><div><div class="tvb-title">Grocery / Market</div></div></button>
+      <button class="tier-vote-btn" onclick="selectPlaceType('cafe',this)" style="flex:1;min-width:120px;"><span class="tvb-emoji">☕</span><div><div class="tvb-title">Café / Juice Bar</div></div></button>
+      <button class="tier-vote-btn" onclick="selectPlaceType('other',this)" style="flex:1;min-width:120px;"><span class="tvb-emoji">📍</span><div><div class="tvb-title">Other</div></div></button>
+    </div>
+
+    <div class="modal-sec-label" style="margin-top:16px;">🏷️ WFPB Tier <span class="modal-sec-sub">  Your best guess</span></div>
+    <div class="tier-vote-grid">
+      <button class="tier-vote-btn" onclick="selectSubmitTier('haven',this)"><span class="tvb-emoji">🌱</span><div><div class="tvb-title">WFPB Haven</div><div class="tvb-desc">Whole food, plant-based eating is central here. Oil-free options exist without asking.</div></div></button>
+      <button class="tier-vote-btn" onclick="selectSubmitTier('friendly',this)"><span class="tvb-emoji">🌿</span><div><div class="tvb-title">WFPB Friendly</div><div class="tvb-desc">Not exclusively plant-based but genuinely accommodating. Good options with minimal modification.</div></div></button>
+      <button class="tier-vote-btn" onclick="selectSubmitTier('possible',this)"><span class="tvb-emoji">🍃</span><div><div class="tvb-title">WFPB Possible</div><div class="tvb-desc">Not plant-friendly by design but workable. Requires modifications or piecing together from sides.</div></div></button>
+    </div>
+
+    <div class="modal-sec-label" style="margin-top:16px;">🌱 What to Order / Tips for WFPB Eaters <span class="modal-sec-sub">(optional but really helpful)</span></div>
+    <textarea class="modal-textarea" id="submit-tip" placeholder="e.g. Ask for the veggie bowl without oil. The lentil soup is fully plant-based. Staff are very accommodating."></textarea>
+
+    <div class="modal-sec-label" style="margin-top:16px;">Your Name or Initials <span class="modal-sec-sub">  shown as submitted by</span></div>
+    <input class="modal-textarea" id="submit-author" type="text" placeholder="e.g. Dana M." style="min-height:auto;padding:10px 14px;">
+
+    <div style="margin-top:16px;padding:12px 14px;background:var(--leaf-xpale);border-radius:10px;font-size:12px;color:var(--muted);line-height:1.6;">
+      🔍 All submissions are reviewed by the APB team before going live. We verify the place exists and check the tier suggestion. Usually reviewed within 48 hours.
+    </div>
+
+    <div class="modal-actions" style="margin-top:16px;">
+      <button class="btn-submit" onclick="submitPlace()">Submit Place</button>
+      <button class="btn-cancel" onclick="closeSubmitModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── SUBMIT A PLACE ──────────────────────────────────────────
+let submitPlaceType = null;
+let submitTier = null;
+
+function openSubmitModal() {
+  // Reset form
+  ['submit-name','submit-address','submit-tip','submit-author'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  submitPlaceType = null;
+  submitTier = null;
+  document.querySelectorAll('#submit-modal .tier-vote-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('submit-modal').classList.add('open');
+}
+
+function closeSubmitModal() {
+  document.getElementById('submit-modal').classList.remove('open');
+}
+
+function selectPlaceType(type, btn) {
+  submitPlaceType = type;
+  btn.closest('div').querySelectorAll('.tier-vote-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function selectSubmitTier(tier, btn) {
+  submitTier = tier;
+  btn.closest('div').querySelectorAll('.tier-vote-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function submitPlace() {
+  const name = document.getElementById('submit-name').value.trim();
+  const address = document.getElementById('submit-address').value.trim();
+
+  if (!name) { alert('Please enter the name of the place.'); return; }
+  if (!address) { alert('Please enter an address or city.'); return; }
+  if (!submitTier) { alert('Please select a WFPB tier.'); return; }
+
+  const submission = {
+    name,
+    address,
+    type: submitPlaceType || 'restaurant',
+    tier: submitTier,
+    tip: document.getElementById('submit-tip').value.trim(),
+    author: document.getElementById('submit-author').value.trim() || 'Anonymous',
+    submitted: new Date().toISOString(),
+    status: 'pending'
+  };
+
+  // In production: POST to Supabase submissions table
+  // For now: log and show confirmation
+  console.log('Place submission:', submission);
+
+  closeSubmitModal();
+
+  // Show thank you confirmation
+  document.getElementById('cards-grid').insertAdjacentHTML('afterbegin', `
+    <div style="background:var(--leaf);color:white;border-radius:16px;padding:20px 24px;display:flex;align-items:center;gap:16px;margin-bottom:12px;" id="submit-confirm">
+      <span style="font-size:32px;">🌱</span>
+      <div>
+        <div style="font-weight:600;font-size:15px;">Thanks for submitting ${name}!</div>
+        <div style="font-size:13px;opacity:.85;margin-top:3px;">The APB team will review it within 48 hours. We'll add it to the map once verified.</div>
+      </div>
+      <button onclick="document.getElementById('submit-confirm').remove()" style="background:none;border:none;color:white;font-size:20px;cursor:pointer;margin-left:auto;">×</button>
+    </div>
+  `);
+}
+</script>
+
+
+<!-- ADD APB INFO MODAL -->
+<div class="modal-overlay" id="add-info-modal" onclick="if(event.target===this)closeAddInfoModal()">
+  <div class="modal">
+    <h3>🌱 Add APB Info</h3>
+    <div class="modal-place" id="add-info-place-name" style="font-weight:600;font-size:15px;margin-bottom:4px;"></div>
+    <div class="modal-place" style="margin-bottom:16px;">Help the APB community know what to expect here. Your tip goes live after a quick review.</div>
+
+    <div class="modal-sec-label">🏷️ WFPB Tier <span class="modal-sec-sub">  How would you rate this place?</span></div>
+    <div class="tier-vote-grid">
+      <button class="tier-vote-btn" onclick="selectAddInfoTier('haven',this)">
+        <span class="tvb-emoji">🌱</span>
+        <div>
+          <div class="tvb-title">WFPB Haven</div>
+          <div class="tvb-desc">Whole food, plant-based eating is central here. Oil-free options exist without asking.</div>
+        </div>
+      </button>
+      <button class="tier-vote-btn" onclick="selectAddInfoTier('friendly',this)">
+        <span class="tvb-emoji">🌿</span>
+        <div>
+          <div class="tvb-title">WFPB Friendly</div>
+          <div class="tvb-desc">Not exclusively plant-based but genuinely accommodating. Good options with minimal modification.</div>
+        </div>
+      </button>
+      <button class="tier-vote-btn" onclick="selectAddInfoTier('possible',this)">
+        <span class="tvb-emoji">🍃</span>
+        <div>
+          <div class="tvb-title">WFPB Possible</div>
+          <div class="tvb-desc">Not plant-friendly by design but workable. Requires modifications or piecing together from sides.</div>
+        </div>
+      </button>
+    </div>
+
+    <div class="modal-sec-label" style="margin-top:16px;">🌱 What to Order / Tips for WFPB Eaters <span class="modal-sec-sub">(really helpful for the community)</span></div>
+    <textarea class="modal-textarea" id="add-info-tip" placeholder="e.g. Ask for the veggie bowl without oil. The lentil soup is fully plant-based. The staff are very accommodating if you explain what you need."></textarea>
+
+    <div class="modal-sec-label" style="margin-top:16px;">Your Name or Initials <span class="modal-sec-sub">  shown as submitted by</span></div>
+    <input class="modal-textarea" id="add-info-author" type="text" placeholder="e.g. Dana M." style="min-height:auto;padding:10px 14px;">
+
+    <div style="margin-top:16px;padding:12px 14px;background:var(--leaf-xpale);border-radius:10px;font-size:12px;color:var(--muted);line-height:1.6;">
+      🔍 The APB team reviews all submissions before they go live   usually within 48 hours. Thank you for helping the community!
+    </div>
+
+    <div class="modal-actions" style="margin-top:16px;">
+      <button class="btn-submit" onclick="submitAddInfo()">Submit Info</button>
+      <button class="btn-cancel" onclick="closeAddInfoModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── ADD APB INFO ─────────────────────────────────────────────
+let addInfoTier = null;
+let addInfoPlaceId = null;
+let addInfoPlaceName = null;
+
+function openAddInfoModal(placeId, placeName) {
+  addInfoPlaceId = placeId;
+  addInfoPlaceName = placeName;
+  addInfoTier = null;
+  document.getElementById('add-info-place-name').textContent = placeName;
+  document.getElementById('add-info-tip').value = '';
+  document.getElementById('add-info-author').value = '';
+  document.querySelectorAll('#add-info-modal .tier-vote-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('add-info-modal').classList.add('open');
+}
+
+function closeAddInfoModal() {
+  document.getElementById('add-info-modal').classList.remove('open');
+}
+
+function selectAddInfoTier(tier, btn) {
+  addInfoTier = tier;
+  document.querySelectorAll('#add-info-modal .tier-vote-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function submitAddInfo() {
+  if (!addInfoTier) { alert('Please select a WFPB tier.'); return; }
+  const tip = document.getElementById('add-info-tip').value.trim();
+  if (!tip) { alert('Please add a tip or note about what to order.'); return; }
+
+  const submission = {
+    placeId: addInfoPlaceId,
+    placeName: addInfoPlaceName,
+    tier: addInfoTier,
+    tip,
+    author: document.getElementById('add-info-author').value.trim() || 'Anonymous',
+    submitted: new Date().toISOString(),
+    status: 'pending'
+  };
+
+  // In production: POST to Supabase apb_info_submissions table
+  console.log('APB Info submission:', submission);
+
+  closeAddInfoModal();
+
+  // Show confirmation on the card
+  const card = document.querySelector(\`[data-place-id="\${addInfoPlaceId}"]\`);
+  if (card) {
+    const existing = card.querySelector('.apb-info-confirm');
+    if (existing) existing.remove();
+    const confirm = document.createElement('div');
+    confirm.className = 'apb-info-confirm';
+    confirm.style.cssText = 'background:var(--leaf);color:white;border-radius:10px;padding:10px 14px;font-size:12px;margin-top:8px;line-height:1.5;';
+    confirm.innerHTML = '🌱 Thanks for your tip! The APB team will review it within 48 hours.';
+    card.appendChild(confirm);
+    setTimeout(() => confirm.remove(), 6000);
+  }
+}
+</script>
+
+</body>
+</html>

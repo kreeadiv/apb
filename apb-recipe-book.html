@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APB   My Recipe Book</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --leaf:#2d6a4f; --leaf-mid:#40916c; --leaf-light:#52b788; --leaf-pale:#d8f3dc; --leaf-xpale:#f0faf2;
+  --sun:#e9c46a; --sun-deep:#c8963e;
+  --cream:#fefae0; --dark:#141414; --dark2:#1e1e1e; --muted:#6b7c72;
+  --card:#ffffff; --radius:16px;
+}
+html { scroll-behavior:smooth; }
+body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--dark); min-height:100vh; }
+
+/* ── NAV ── */
+nav {
+  position:sticky; top:0; z-index:200;
+  background:rgba(254,250,224,0.95); backdrop-filter:blur(12px);
+  padding:14px 48px; display:flex; align-items:center; gap:24px;
+  border-bottom:1px solid rgba(45,106,79,0.1);
+}
+.logo { font-family:'Playfair Display',serif; font-size:20px; color:var(--leaf); margin-right:auto; }
+.logo em { font-style:italic; color:var(--leaf-light); }
+.nav-link { font-size:13px; color:var(--muted); text-decoration:none; }
+.nav-link:hover { color:var(--leaf); }
+.nav-user { display:flex; align-items:center; gap:10px; }
+.nav-avatar { width:32px; height:32px; border-radius:50%; background:var(--leaf); color:white; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:500; }
+.nav-name { font-size:13px; font-weight:500; }
+
+/* ── PAGE LAYOUT ── */
+.page { max-width:1200px; margin:0 auto; padding:40px 48px 80px; display:grid; grid-template-columns:260px 1fr; gap:40px; align-items:start; }
+
+/* ── SIDEBAR ── */
+.sidebar { position:sticky; top:72px; }
+.user-card { background:var(--leaf); color:white; border-radius:var(--radius); padding:24px; margin-bottom:20px; }
+.user-card-avatar { width:56px; height:56px; border-radius:50%; background:rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center; font-size:26px; margin-bottom:12px; }
+.user-card-name { font-family:'Playfair Display',serif; font-size:20px; margin-bottom:4px; }
+.user-card-sub { font-size:12px; color:rgba(255,255,255,.65); margin-bottom:16px; }
+.user-stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.user-stat { background:rgba(255,255,255,.12); border-radius:10px; padding:10px; }
+.user-stat-num { font-family:'Playfair Display',serif; font-size:22px; }
+.user-stat-lbl { font-size:10px; color:rgba(255,255,255,.6); }
+
+.sidebar-nav { background:white; border-radius:var(--radius); border:1px solid rgba(0,0,0,.06); overflow:hidden; margin-bottom:20px; }
+.sidebar-nav-item { display:flex; align-items:center; gap:10px; padding:13px 16px; font-size:13px; cursor:pointer; border-bottom:1px solid #f5f5f5; transition:background .15s; color:var(--dark); }
+.sidebar-nav-item:last-child { border-bottom:none; }
+.sidebar-nav-item:hover { background:var(--leaf-xpale); }
+.sidebar-nav-item.active { background:var(--leaf-pale); color:var(--leaf); font-weight:500; }
+.sidebar-nav-item .icon { font-size:16px; }
+.sidebar-nav-item .count { margin-left:auto; background:var(--leaf-pale); color:var(--leaf); font-size:10px; padding:2px 7px; border-radius:100px; font-weight:500; }
+.sidebar-nav-item.active .count { background:var(--leaf); color:white; }
+
+.add-recipe-btn { width:100%; background:var(--leaf); color:white; border:none; border-radius:var(--radius); padding:14px; font-size:14px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; display:flex; align-items:center; justify-content:center; gap:8px; transition:background .2s; }
+.add-recipe-btn:hover { background:var(--leaf-mid); }
+
+/* ── MAIN CONTENT ── */
+.main-content {}
+.section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+.section-header h2 { font-family:'Playfair Display',serif; font-size:28px; }
+.section-header h2 em { font-style:italic; color:var(--leaf); }
+.section-header-actions { display:flex; gap:10px; align-items:center; }
+.search-input { padding:9px 14px; border:1.5px solid rgba(0,0,0,.1); border-radius:100px; font-size:13px; font-family:'DM Sans',sans-serif; background:white; outline:none; width:200px; transition:border-color .2s; }
+.search-input:focus { border-color:var(--leaf-light); }
+.sort-select { padding:9px 14px; border:1.5px solid rgba(0,0,0,.1); border-radius:100px; font-size:13px; font-family:'DM Sans',sans-serif; background:white; outline:none; cursor:pointer; }
+
+/* ── TABS ── */
+.tabs { display:flex; gap:4px; margin-bottom:28px; background:white; padding:4px; border-radius:12px; border:1px solid rgba(0,0,0,.06); width:fit-content; }
+.tab { padding:8px 18px; border-radius:9px; font-size:13px; font-weight:500; cursor:pointer; transition:all .15s; color:var(--muted); border:none; background:none; font-family:'DM Sans',sans-serif; }
+.tab.active { background:var(--leaf); color:white; }
+
+/* ── RECIPE BOOK GRID ── */
+.book-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:18px; }
+
+/* ── SAVED EXTERNAL RECIPE CARD ── */
+.book-card { background:white; border-radius:var(--radius); border:1px solid rgba(0,0,0,.06); overflow:hidden; display:flex; flex-direction:column; transition:transform .2s, box-shadow .2s; position:relative; }
+.book-card:hover { transform:translateY(-3px); box-shadow:0 10px 32px rgba(0,0,0,.09); }
+
+.book-card-img { height:120px; display:flex; align-items:center; justify-content:center; font-size:44px; position:relative; }
+.book-card-type { position:absolute; top:8px; left:8px; font-size:9px; font-weight:500; padding:3px 8px; border-radius:100px; letter-spacing:.3px; }
+.book-card-type.external { background:rgba(45,106,79,.12); color:var(--leaf); }
+.book-card-type.mine { background:var(--sun); color:var(--dark); }
+.book-card-type.community { background:rgba(119,73,54,.12); color:#774936; }
+.book-card-source { position:absolute; top:8px; right:8px; font-size:9px; background:rgba(0,0,0,.45); color:white; padding:3px 8px; border-radius:100px; }
+.book-card-notes-flag { position:absolute; bottom:8px; right:8px; font-size:14px; }
+
+.book-card-body { padding:14px; flex:1; display:flex; flex-direction:column; }
+.book-card-cat { font-size:10px; text-transform:uppercase; letter-spacing:.8px; color:var(--leaf); font-weight:500; margin-bottom:4px; }
+.book-card-title { font-family:'Playfair Display',serif; font-size:16px; line-height:1.3; margin-bottom:6px; color:var(--dark); }
+.book-card-meta { font-size:11px; color:var(--muted); margin-bottom:8px; display:flex; gap:10px; }
+.book-card-notes { font-size:11px; color:var(--muted); background:var(--leaf-xpale); border-radius:8px; padding:8px 10px; margin-bottom:10px; line-height:1.6; border-left:3px solid var(--leaf-pale); font-style:italic; }
+.book-card-notes strong { display:block; font-style:normal; font-size:9px; text-transform:uppercase; letter-spacing:.8px; color:var(--leaf-light); margin-bottom:3px; }
+.book-card-tags { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:12px; }
+.tag { font-size:10px; background:var(--leaf-pale); color:var(--leaf); padding:2px 8px; border-radius:100px; }
+.tag.mine { background:#fff8e1; color:var(--sun-deep); }
+
+.book-card-actions { display:flex; gap:6px; margin-top:auto; }
+.btn-go { flex:1; background:var(--leaf); color:white; border:none; border-radius:8px; padding:8px; font-size:11px; font-weight:500; cursor:pointer; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:4px; font-family:'DM Sans',sans-serif; transition:background .2s; }
+.btn-go:hover { background:var(--leaf-mid); }
+.btn-go.internal { background:var(--leaf-pale); color:var(--leaf); }
+.btn-go.internal:hover { background:var(--leaf-light); color:white; }
+.btn-icon { background:white; border:1px solid rgba(0,0,0,.1); color:var(--muted); border-radius:8px; padding:8px 10px; font-size:13px; cursor:pointer; transition:all .15s; }
+.btn-icon:hover { border-color:var(--leaf-light); color:var(--leaf); }
+
+/* ── OWN RECIPE CARD (full content stored in APB) ── */
+.own-recipe-card { background:white; border-radius:var(--radius); border:1.5px solid var(--leaf-pale); padding:20px; margin-bottom:16px; }
+.own-recipe-header { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:14px; }
+.own-recipe-emoji { font-size:32px; }
+.own-recipe-info { flex:1; }
+.own-recipe-title { font-family:'Playfair Display',serif; font-size:20px; line-height:1.2; margin-bottom:4px; }
+.own-recipe-meta { font-size:12px; color:var(--muted); }
+.own-recipe-actions { display:flex; gap:6px; }
+.btn-sm { padding:7px 12px; border-radius:8px; font-size:11px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; border:none; transition:all .15s; }
+.btn-sm.edit { background:var(--leaf-pale); color:var(--leaf); }
+.btn-sm.share { background:var(--leaf); color:white; }
+.btn-sm.print { background:white; color:var(--muted); border:1px solid rgba(0,0,0,.1); }
+.btn-sm.submit { background:var(--sun); color:var(--dark); }
+.own-recipe-body { font-size:13px; color:var(--muted); line-height:1.7; margin-bottom:14px; }
+.own-recipe-ingredients { display:grid; grid-template-columns:1fr 1fr; gap:4px; margin-bottom:14px; }
+.ingredient { display:flex; gap:6px; font-size:12px; color:var(--dark); }
+.ingredient::before { content:'·'; color:var(--leaf-light); }
+.own-recipe-status { display:flex; align-items:center; gap:8px; font-size:11px; }
+.status-badge { padding:3px 10px; border-radius:100px; font-weight:500; }
+.status-badge.private { background:#f5f5f5; color:var(--muted); }
+.status-badge.submitted { background:#fff3e0; color:var(--sun-deep); }
+.status-badge.featured { background:var(--leaf); color:white; }
+
+/* ── NOTES MODAL ── */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:500; display:flex; align-items:center; justify-content:center; padding:20px; opacity:0; pointer-events:none; transition:opacity .2s; }
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal { background:white; border-radius:20px; padding:28px; max-width:480px; width:100%; }
+.modal h3 { font-family:'Playfair Display',serif; font-size:22px; margin-bottom:6px; }
+.modal-recipe-name { font-size:13px; color:var(--muted); margin-bottom:20px; }
+.modal label { font-size:12px; font-weight:500; color:var(--dark); display:block; margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px; }
+.modal textarea { width:100%; padding:12px 14px; border:1.5px solid rgba(0,0,0,.1); border-radius:10px; font-size:13px; font-family:'DM Sans',sans-serif; line-height:1.6; resize:vertical; min-height:100px; outline:none; transition:border-color .2s; }
+.modal textarea:focus { border-color:var(--leaf-light); }
+.modal-tags { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+.modal-tag-btn { padding:6px 12px; border-radius:100px; border:1.5px solid rgba(0,0,0,.1); font-size:12px; cursor:pointer; font-family:'DM Sans',sans-serif; background:white; transition:all .15s; }
+.modal-tag-btn.selected { background:var(--leaf-pale); border-color:var(--leaf-light); color:var(--leaf); }
+.modal-actions { display:flex; gap:10px; margin-top:20px; }
+.btn-save-modal { flex:1; background:var(--leaf); color:white; border:none; border-radius:100px; padding:13px; font-size:14px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; }
+.btn-cancel-modal { background:white; color:var(--muted); border:1.5px solid rgba(0,0,0,.1); border-radius:100px; padding:13px 20px; font-size:14px; cursor:pointer; font-family:'DM Sans',sans-serif; }
+.modal-rating { display:flex; gap:8px; margin-bottom:20px; }
+.star-btn { font-size:24px; cursor:pointer; opacity:.3; transition:opacity .15s; background:none; border:none; }
+.star-btn.lit { opacity:1; }
+
+/* ── EMPTY STATE ── */
+.empty { text-align:center; padding:80px 20px; }
+.empty-icon { font-size:56px; margin-bottom:16px; }
+.empty h3 { font-family:'Playfair Display',serif; font-size:24px; margin-bottom:8px; }
+.empty p { color:var(--muted); font-size:14px; line-height:1.7; max-width:360px; margin:0 auto 24px; }
+
+/* ── ADD RECIPE FORM ── */
+.add-form-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:500; display:flex; align-items:flex-start; justify-content:center; padding:40px 20px; overflow-y:auto; opacity:0; pointer-events:none; transition:opacity .2s; }
+.add-form-overlay.open { opacity:1; pointer-events:all; }
+.add-form { background:white; border-radius:24px; padding:36px; max-width:600px; width:100%; }
+.add-form h2 { font-family:'Playfair Display',serif; font-size:28px; margin-bottom:6px; }
+.add-form-sub { font-size:13px; color:var(--muted); margin-bottom:28px; }
+.form-row { margin-bottom:18px; }
+.form-label { font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:.5px; color:var(--dark); display:block; margin-bottom:6px; }
+.form-input { width:100%; padding:11px 14px; border:1.5px solid rgba(0,0,0,.1); border-radius:10px; font-size:13px; font-family:'DM Sans',sans-serif; outline:none; transition:border-color .2s; background:white; }
+.form-input:focus { border-color:var(--leaf-light); }
+.form-row-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px; }
+.form-type-btns { display:flex; gap:8px; }
+.form-type-btn { flex:1; padding:10px; border:1.5px solid rgba(0,0,0,.1); border-radius:10px; font-size:12px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; background:white; transition:all .15s; text-align:center; }
+.form-type-btn.selected { background:var(--leaf-pale); border-color:var(--leaf-light); color:var(--leaf); }
+.form-actions { display:flex; gap:10px; margin-top:24px; }
+
+/* ── PRINT STYLES ── */
+@media print {
+  nav, .sidebar, .section-header-actions, .book-card-actions, .own-recipe-actions, .tabs { display:none!important; }
+  body { background:white; }
+  .page { grid-template-columns:1fr; padding:20px; }
+  .book-card { break-inside:avoid; }
+}
+
+@media (max-width:900px) {
+  .page { grid-template-columns:1fr; padding:20px 20px 60px; }
+  .sidebar { position:static; }
+  nav { padding:14px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">APB <em>🌿</em></div>
+  
+  <a href="apb-nearby.html" class="nav-link">Find Food</a>
+  <a href="apb-recipes-feed.html" class="nav-link">Recipes</a>
+  <a href="apb-blog.html" class="nav-link">Blog</a>
+  <a href="apb-products.html" class="nav-link">Products</a>
+  <a href="apb-recipe-book.html" class="nav-link active">My Book</a>
+  <div class="nav-user">
+    <div class="nav-avatar">D</div>
+    <span class="nav-name">Diane</span>
+  </div>
+</nav>
+
+<!-- PAGE -->
+<div class="page">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="user-card">
+      <div class="user-card-avatar">🌿</div>
+      <div class="user-card-name">Diane's Recipe Book</div>
+      <div class="user-card-sub">Member since Jan 2026 · Day 47 🔥</div>
+      <div class="user-stats">
+        <div class="user-stat"><div class="user-stat-num">12</div><div class="user-stat-lbl">Saved recipes</div></div>
+        <div class="user-stat"><div class="user-stat-num">3</div><div class="user-stat-lbl">My recipes</div></div>
+        <div class="user-stat"><div class="user-stat-num">8</div><div class="user-stat-lbl">With notes</div></div>
+        <div class="user-stat"><div class="user-stat-num">1</div><div class="user-stat-lbl">Featured</div></div>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="sidebar-nav-item active" onclick="showTab('saved')">
+        <span class="icon">📖</span> Saved Recipes <span class="count">12</span>
+      </div>
+      <div class="sidebar-nav-item" onclick="showTab('mine')">
+        <span class="icon">✍️</span> My Recipes <span class="count">3</span>
+      </div>
+      <div class="sidebar-nav-item" onclick="showTab('notes')">
+        <span class="icon">📝</span> With Notes <span class="count">8</span>
+      </div>
+      <div class="sidebar-nav-item" onclick="showTab('collections')">
+        <span class="icon">🗂️</span> Collections <span class="count">2</span>
+      </div>
+    </div>
+
+    <button class="add-recipe-btn" onclick="openAddForm()">
+      ✍️ Add My Own Recipe
+    </button>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-content">
+
+    <!-- SECTION HEADER -->
+    <div class="section-header">
+      <h2 id="section-title">Saved <em>Recipes</em></h2>
+      <div class="section-header-actions">
+        <input class="search-input" type="text" placeholder="Search your book…" oninput="filterBook(this.value)">
+        <select class="sort-select" onchange="sortBook(this.value)">
+          <option value="recent">Recently saved</option>
+          <option value="az">A → Z</option>
+          <option value="source">By source</option>
+          <option value="notes">Has notes first</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('saved',this)">All Saved</button>
+      <button class="tab" onclick="showTab('external',this)">From Web</button>
+      <button class="tab" onclick="showTab('community',this)">Community</button>
+      <button class="tab" onclick="showTab('mine',this)">Mine</button>
+    </div>
+
+    <!-- ─── SAVED RECIPES GRID ─── -->
+    <div class="book-grid" id="book-grid">
+
+      <!-- EXTERNAL: Plantiful Kiki   Cheese Sauce -->
+      <div class="book-card" data-type="external" data-source="Plantiful Kiki" data-title="Vegan Cheese Sauce">
+        <div class="book-card-img" style="background:linear-gradient(135deg,#fff8e1,#fce4ec);">
+          🧀
+          <div class="book-card-type external">External Recipe</div>
+          <div class="book-card-source">Plantiful Kiki</div>
+          <div class="book-card-notes-flag" title="Has notes">📝</div>
+        </div>
+        <div class="book-card-body">
+          <div class="book-card-cat">Sauces & Dressings</div>
+          <div class="book-card-title">Vegan Cheese Sauce (The Yummiest Ever)</div>
+          <div class="book-card-meta"><span>Plantiful Kiki</span><span>Saved Jan 14</span></div>
+          <div class="book-card-notes">
+            <strong>My Notes</strong>
+            Made this 4x already. Use Yukon gold potatoes   they don't need peeling and the texture is silkier. Add a squeeze of lemon at the end.
+          </div>
+          <div class="book-card-tags"><span class="tag">Oil-Free</span><span class="tag">Nut-Free</span><span class="tag">Favorite ♡</span></div>
+          <div class="book-card-actions">
+            <a class="btn-go" href="https://plantifulkiki.com/the-yummiest-cheese-sauce-ever/" target="_blank">View on Plantiful Kiki ↗</a>
+            <button class="btn-icon" title="Edit notes" onclick="openNotes('Vegan Cheese Sauce', 'Made this 4x already. Use Yukon gold potatoes   they don\'t need peeling and the texture is silkier. Add a squeeze of lemon at the end.')">📝</button>
+            <button class="btn-icon" title="Remove from book" onclick="removeCard(this)">🗑</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXTERNAL: Plantiful Kiki   Hungarian Mushroom Soup -->
+      <div class="book-card" data-type="external" data-source="Plantiful Kiki" data-title="Hungarian Mushroom Soup">
+        <div class="book-card-img" style="background:linear-gradient(135deg,#e8eaf6,#f3e5f5);">
+          🍄
+          <div class="book-card-type external">External Recipe</div>
+          <div class="book-card-source">Plantiful Kiki</div>
+          <div class="book-card-notes-flag">📝</div>
+        </div>
+        <div class="book-card-body">
+          <div class="book-card-cat">Soups & Salads</div>
+          <div class="book-card-title">Hungarian Mushroom Soup</div>
+          <div class="book-card-meta"><span>Plantiful Kiki</span><span>Saved Jan 17</span></div>
+          <div class="book-card-notes">
+            <strong>My Notes</strong>
+            Serve over mashed potatoes   game changer. Doubled the mushrooms last time. Kids didn't even know it was plant-based.
+          </div>
+          <div class="book-card-tags"><span class="tag">Oil-Free</span><span class="tag">Quick</span></div>
+          <div class="book-card-actions">
+            <a class="btn-go" href="https://plantifulkiki.com/hungarian-mushroom-soup/" target="_blank">View on Plantiful Kiki ↗</a>
+            <button class="btn-icon" onclick="openNotes('Hungarian Mushroom Soup','Serve over mashed potatoes   game changer. Doubled the mushrooms last time.')">📝</button>
+            <button class="btn-icon" onclick="removeCard(this)">🗑</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXTERNAL: Plantiful Kiki   Nana's Chili -->
+      <div class="book-card" data-type="external" data-source="Plantiful Kiki" data-title="Nana's Chili">
+        <div class="book-card-img" style="background:linear-gradient(135deg,#fce4ec,#ffccbc);">
+          🌶️
+          <div class="book-card-type external">External Recipe</div>
+          <div class="book-card-source">Plantiful Kiki</div>
+        </div>
+        <div class="book-card-body">
+          <div class="book-card-cat">Main Plates</div>
+          <div class="book-card-title">Nana's Chili</div>
+          <div class="book-card-meta"><span>Plantiful Kiki</span><span>Saved Jan 20</span></div>
+          <div class="book-card-tags"><span class="tag">Oil-Free</span><span class="tag">High Protein</span><span class="tag">Family</span></div>
+          <div class="book-card-actions">
+            <a class="btn-go" href="https://plantifulkiki.com/nanas-chili/" target="_blank">View on Plantiful Kiki ↗</a>
+            <button class="btn-icon" onclick="openNotes('Nana\'s Chili','')">📝</button>
+            <button class="btn-icon" onclick="removeCard(this)">🗑</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXTERNAL: SmartyPlants   Red Lentil Soup -->
+      <div class="book-card" data-type="external" data-source="SmartyPlants" data-title="Red Lentil Soup">
+        <div class="book-card-img" style="background:linear-gradient(135deg,#fff3e0,#ffe0b2);">
+          🍲
+          <div class="book-card-type external">External Recipe</div>
+          <div class="book-card-source">SmartyPlants</div>
+          <div class="book-card-notes-flag">📝</div>
+        </div>
+        <div class="book-card-body">
+          <div class="book-card-cat">Soups & Salads</div>
+          <div class="book-card-title">Red Lentil Soup with Garlic and Rosemary</div>
+          <div class="book-card-meta"><span>SmartyPlants</span><span>Saved Feb 3</span></div>
+          <div class="book-card-notes">
+            <strong>My Notes</strong>
+            The whole garlic cloves are key   don't skip them. Blends into the broth beautifully. Makes great leftovers, thickens overnight.
+          </div>
+          <div class="book-card-tags"><span class="tag">Oil-Free</span><span class="tag">Meal Prep</span></div>
+          <div class="book-card-actions">
+            <a class="btn-go" href="https://smartyplants.org/recipes/red-lentil-soup-with-garlic-and-rosemary" target="_blank">View on SmartyPlants ↗</a>
+            <button class="btn-icon" onclick="openNotes('Red Lentil Soup','The whole garlic cloves are key   don\'t skip them.')">📝</button>
+            <button class="btn-icon" onclick="removeCard(this)">🗑</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXTERNAL: SmartyPlants   Tofu Scramble -->
+      <div class="book-card" data-type="external" data-source="SmartyPlants" data-title="Tofu Scramble">
+        <div class="book-card-img" style="background:linear-gradient(135deg,#fff8e1,#f0f4c3);">
+          🍳
+          <div class="book-card-type external">External Recipe</div>
+          <div class="book-card-source">SmartyPlants</div>
+        </div>
+        <div class="book-card-body">
+          <div class="book-card-cat">Breakfast</div>
+          <div class="book-card-title">Tofu Scramble</div>
+          <div class="book-card-meta"><span>SmartyPlants</span><span>Saved Feb 8</span></div>
+          <div class="book-card-tags"><span class="tag">Oil-Free</span><span class="tag">High Protein</span></div>
+          <div class="book-card-actions">
+            <a class="btn-go" href="https://www.smartyplants.org/recipes/tofu-scramble" target="_blank">View on SmartyPlants ↗</a>
+            <button class="btn-icon" onclick="openNotes('Tofu Scramble','')">📝</button>
+            <button class="btn-icon" onclick="removeCard(this)">🗑</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXTERNAL: SmartyPlants   Nice Cream -->
+      <div class="book-card" data-type="external" data-source="SmartyPlants" data-title="Peanut Butter Nice Cream">
+        <div class="book-card-img" style="background:linear-gradient(135deg,#e8eaf6,#ede7f6);">
+          🍦
+          <div class="book-card-type external">External Recipe</div>
+          <div class="book-card-source">SmartyPlants</div>
+          <div class="book-card-notes-flag">📝</div>
+        </div>
+        <div class="book-card-body">
+          <div class="book-card-cat">Desserts</div>
+          <div class="book-card-title">Peanut Butter Nice Cream</div>
+          <div class="book-card-meta"><span>SmartyPlants</span><span>Saved Feb 11</span></div>
+          <div class="book-card-notes">
+            <strong>My Notes</strong>
+            Freeze bananas at least 24hrs. Top with a sprinkle of cacao nibs and a drizzle of date syrup. Kids go absolutely wild for this.
+          </div>
+          <div class="book-card-tags"><span class="tag">Dessert</span><span class="tag">Kid-Friendly</span></div>
+          <div class="book-card-actions">
+            <a class="btn-go" href="https://www.smartyplants.org/public/recipes/peanut-butter-nice-cream" target="_blank">View on SmartyPlants ↗</a>
+            <button class="btn-icon" onclick="openNotes('Peanut Butter Nice Cream','Freeze bananas at least 24hrs. Top with cacao nibs and date syrup.')">📝</button>
+            <button class="btn-icon" onclick="removeCard(this)">🗑</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMMUNITY RECIPE -->
+      <div class="book-card" data-type="community" data-source="Community" data-title="Smoky Lentil Sweet Potato Bowl">
+        <div class="book-card-img" style="background:linear-gradient(135deg,#d8f3dc,#b7e4c7);">
+          🍛
+          <div class="book-card-type community">APB Community</div>
+          <div class="book-card-source">by Maria R.</div>
+          <div class="book-card-notes-flag">📝</div>
+        </div>
+        <div class="book-card-body">
+          <div class="book-card-cat">Main Plates</div>
+          <div class="book-card-title">Smoky Lentil & Sweet Potato Bowl</div>
+          <div class="book-card-meta"><span>APB Community · Maria R.</span><span>Saved Feb 15</span></div>
+          <div class="book-card-notes">
+            <strong>My Notes</strong>
+            ★★★★★ Made this twice this week. The smoked paprika is everything. I add a spoonful of tahini drizzle at the end.
+          </div>
+          <div class="book-card-tags"><span class="tag">Oil-Free</span><span class="tag">High Fiber</span></div>
+          <div class="book-card-actions">
+            <a class="btn-go internal" href="#" onclick="alert('Opens full recipe inside APB   no external link needed, full content is stored in the app.')">View in APB</a>
+            <button class="btn-icon" onclick="openNotes('Smoky Lentil Bowl','★★★★★ Made this twice. Smoked paprika is everything.')">📝</button>
+            <button class="btn-icon" onclick="removeCard(this)">🗑</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /book-grid -->
+
+    <!-- ─── MY OWN RECIPES ─── -->
+    <div id="my-recipes-section" style="margin-top:48px;">
+      <div class="section-header">
+        <h2>My <em>Own Recipes</em></h2>
+        <div class="section-header-actions">
+          <button class="btn-sm submit" onclick="openAddForm()">+ Add Recipe</button>
+        </div>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:24px;">Recipes you've written yourself. Full content is stored in APB. You can edit, share, or submit to the community.</p>
+
+      <!-- Own recipe 1   private -->
+      <div class="own-recipe-card">
+        <div class="own-recipe-header">
+          <div class="own-recipe-emoji">🫘</div>
+          <div class="own-recipe-info">
+            <div class="own-recipe-title">Mom's Black Bean Soup</div>
+            <div class="own-recipe-meta">Added Mar 2 · 6 servings · 45 min · Main Plates</div>
+          </div>
+          <div class="own-recipe-actions">
+            <button class="btn-sm edit" onclick="alert('Edit recipe   opens full recipe editor')">✏ Edit</button>
+            
+            <button class="btn-sm share" onclick="shareRecipe('Mom\'s Black Bean Soup')">↗ Share</button>
+            <button class="btn-sm submit" onclick="submitToCommunity('Mom\'s Black Bean Soup')">Submit to APB</button>
+          </div>
+        </div>
+        <div class="own-recipe-body">A rich, smoky black bean soup adapted from my mother's recipe. Oil-free and WFPBNO compliant   I swapped the oil sauté for water-sauté and added extra cumin and smoked paprika. The secret is a splash of apple cider vinegar at the very end.</div>
+        <div class="own-recipe-ingredients">
+          <div class="ingredient">2 cans black beans</div>
+          <div class="ingredient">1 medium onion, diced</div>
+          <div class="ingredient">3 garlic cloves, minced</div>
+          <div class="ingredient">1 red bell pepper</div>
+          <div class="ingredient">2 tsp smoked paprika</div>
+          <div class="ingredient">1 tsp cumin</div>
+          <div class="ingredient">4 cups vegetable broth</div>
+          <div class="ingredient">1 tbsp apple cider vinegar</div>
+        </div>
+        <div class="own-recipe-status">
+          <span class="status-badge private">🔒 Private</span>
+          <span style="color:var(--muted);font-size:11px;">Only you can see this. Submit to share with the APB community.</span>
+        </div>
+      </div>
+
+      <!-- Own recipe 2   submitted, awaiting review -->
+      <div class="own-recipe-card">
+        <div class="own-recipe-header">
+          <div class="own-recipe-emoji">🥗</div>
+          <div class="own-recipe-info">
+            <div class="own-recipe-title">Rainbow Quinoa Power Bowl</div>
+            <div class="own-recipe-meta">Added Feb 20 · 2 servings · 20 min · Main Plates</div>
+          </div>
+          <div class="own-recipe-actions">
+            <button class="btn-sm edit" onclick="alert('Edit recipe')">✏ Edit</button>
+            
+            <button class="btn-sm share" onclick="shareRecipe('Rainbow Quinoa Bowl')">↗ Share</button>
+          </div>
+        </div>
+        <div class="own-recipe-body">A vibrant, nourishing bowl that comes together in 20 minutes. Fluffy quinoa topped with roasted red pepper, cucumber, shredded beet, edamame, and a lemon-tahini dressing. Fully oil-free   the tahini gives all the richness you need.</div>
+        <div class="own-recipe-ingredients">
+          <div class="ingredient">1 cup cooked quinoa</div>
+          <div class="ingredient">½ cup shredded beet</div>
+          <div class="ingredient">½ cup edamame</div>
+          <div class="ingredient">½ cup cucumber, diced</div>
+          <div class="ingredient">1 roasted red pepper</div>
+          <div class="ingredient">2 tbsp tahini</div>
+          <div class="ingredient">Juice of 1 lemon</div>
+          <div class="ingredient">Fresh herbs to serve</div>
+        </div>
+        <div class="own-recipe-status">
+          <span class="status-badge submitted">⏳ Under Review</span>
+          <span style="color:var(--muted);font-size:11px;">Submitted to APB community · Admin reviewing · Usually 24-48 hrs</span>
+        </div>
+      </div>
+
+      <!-- Own recipe 3   FEATURED -->
+      <div class="own-recipe-card" style="border-color:var(--leaf);">
+        <div class="own-recipe-header">
+          <div class="own-recipe-emoji">🍵</div>
+          <div class="own-recipe-info">
+            <div class="own-recipe-title">Spiced Golden Milk Oatmeal</div>
+            <div class="own-recipe-meta">Added Jan 28 · 1 serving · 10 min · Breakfast</div>
+          </div>
+          <div class="own-recipe-actions">
+            <button class="btn-sm edit" onclick="alert('Edit recipe')">✏ Edit</button>
+            
+            <button class="btn-sm share" onclick="shareRecipe('Golden Milk Oatmeal')">↗ Share</button>
+          </div>
+        </div>
+        <div class="own-recipe-body">Creamy oats cooked in turmeric-spiced plant milk with ginger, cinnamon, and black pepper (always with turmeric!). Topped with sliced banana, a few pumpkin seeds, and a drizzle of pure maple syrup. My most-made breakfast.</div>
+        <div class="own-recipe-ingredients">
+          <div class="ingredient">½ cup rolled oats</div>
+          <div class="ingredient">1 cup oat milk</div>
+          <div class="ingredient">1 tsp ground turmeric</div>
+          <div class="ingredient">½ tsp ground ginger</div>
+          <div class="ingredient">½ tsp cinnamon</div>
+          <div class="ingredient">Pinch black pepper</div>
+          <div class="ingredient">1 banana, sliced</div>
+          <div class="ingredient">1 tsp maple syrup</div>
+        </div>
+        <div class="own-recipe-status">
+          <span class="status-badge featured">⭐ Featured on APB</span>
+          <span style="color:var(--muted);font-size:11px;">Shown on APB homepage · 1,247 saves · ★ 4.9</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main-content -->
+</div><!-- /page -->
+
+<!-- ─── NOTES MODAL ─── -->
+<div class="modal-overlay" id="notes-modal" onclick="closeModal(event)">
+  <div class="modal">
+    <h3>📝 My Notes</h3>
+    <div class="modal-recipe-name" id="modal-recipe-name">Recipe name</div>
+
+    <div style="margin-bottom:16px;">
+      <div class="modal-rating" id="star-rating">
+        <button class="star-btn lit" onclick="setRating(1)">★</button>
+        <button class="star-btn lit" onclick="setRating(2)">★</button>
+        <button class="star-btn lit" onclick="setRating(3)">★</button>
+        <button class="star-btn lit" onclick="setRating(4)">★</button>
+        <button class="star-btn" onclick="setRating(5)">★</button>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label>My personal notes</label>
+      <textarea id="modal-notes" placeholder="Substitutions I made, tips, modifications, how the family liked it…"></textarea>
+    </div>
+
+    <div class="form-row">
+      <label>Quick tags</label>
+      <div class="modal-tags">
+        <button class="modal-tag-btn selected" onclick="toggleTag(this)">Favorite ♡</button>
+        <button class="modal-tag-btn" onclick="toggleTag(this)">Made it ✓</button>
+        <button class="modal-tag-btn" onclick="toggleTag(this)">Want to try</button>
+        <button class="modal-tag-btn" onclick="toggleTag(this)">Kid-approved</button>
+        <button class="modal-tag-btn" onclick="toggleTag(this)">Meal prep</button>
+        <button class="modal-tag-btn" onclick="toggleTag(this)">Quick</button>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-save-modal" onclick="saveNotes()">Save Notes</button>
+      <button class="btn-cancel-modal" onclick="closeNotes()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── ADD OWN RECIPE FORM ─── -->
+<div class="add-form-overlay" id="add-form" onclick="closeAddForm(event)">
+  <div class="add-form">
+    <h2>✍️ Add Your Recipe</h2>
+    <div class="add-form-sub">Your own original recipe, stored privately in APB. You choose when and if to share it with the community.</div>
+
+    <div class="form-row">
+      <label>Recipe title *</label>
+      <input class="form-input" type="text" placeholder="e.g. Mom's Black Bean Soup">
+    </div>
+    <div class="form-row-2">
+      <div>
+        <label>Category</label>
+        <select class="form-input">
+          <option>Main Plates</option><option>Breakfast</option><option>Soups & Salads</option>
+          <option>Sauces & Dressings</option><option>Snacks</option><option>Sides</option><option>Desserts</option>
+        </select>
+      </div>
+      <div>
+        <label>Serves</label>
+        <input class="form-input" type="text" placeholder="e.g. 4 servings">
+      </div>
+    </div>
+    <div class="form-row-2">
+      <div>
+        <label>Prep time</label>
+        <input class="form-input" type="text" placeholder="e.g. 15 min">
+      </div>
+      <div>
+        <label>Cook time</label>
+        <input class="form-input" type="text" placeholder="e.g. 30 min">
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Ingredients (one per line)</label>
+      <textarea class="form-input" rows="5" placeholder="1 cup red lentils&#10;2 sweet potatoes, cubed&#10;1 can diced tomatoes&#10;…"></textarea>
+    </div>
+    <div class="form-row">
+      <label>Instructions</label>
+      <textarea class="form-input" rows="5" placeholder="1. Heat a pot over medium heat…&#10;2. Add onion and garlic…"></textarea>
+    </div>
+    <div class="form-row">
+      <label>My story / notes (optional)</label>
+      <textarea class="form-input" rows="3" placeholder="Where this recipe came from, tips, substitutions…"></textarea>
+    </div>
+    <div class="form-row">
+      <label>Visibility</label>
+      <div class="form-type-btns">
+        <div class="form-type-btn selected" onclick="selectType(this)">🔒 Private (just me)</div>
+        <div class="form-type-btn" onclick="selectType(this)">🌍 Submit to APB Community</div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-save-modal" onclick="saveOwnRecipe()">Save Recipe</button>
+      <button class="btn-cancel-modal" onclick="closeAddFormBtn()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── TAB / FILTER ──
+function showTab(type, btn) {
+  if (btn) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  const cards = document.querySelectorAll('#book-grid .book-card');
+  cards.forEach(c => {
+    if (type === 'saved' || type === 'all') { c.style.display = ''; return; }
+    c.style.display = c.dataset.type === type ? '' : 'none';
+  });
+  const sidebar = document.querySelectorAll('.sidebar-nav-item');
+  sidebar.forEach(s => s.classList.remove('active'));
+  const titles = { saved:'Saved <em>Recipes</em>', mine:'My <em>Own Recipes</em>', notes:'Recipes With <em>Notes</em>', collections:'My <em>Collections</em>' };
+  document.getElementById('section-title').innerHTML = titles[type] || titles.saved;
+}
+
+function filterBook(q) {
+  const lc = q.toLowerCase();
+  document.querySelectorAll('#book-grid .book-card').forEach(c => {
+    const title = c.dataset.title?.toLowerCase() || '';
+    const source = c.dataset.source?.toLowerCase() || '';
+    c.style.display = (!q || title.includes(lc) || source.includes(lc)) ? '' : 'none';
+  });
+}
+
+function sortBook(val) {
+  const grid = document.getElementById('book-grid');
+  const cards = [...grid.querySelectorAll('.book-card')];
+  if (val === 'az') {
+    cards.sort((a,b) => (a.dataset.title||'').localeCompare(b.dataset.title||''));
+  } else if (val === 'source') {
+    cards.sort((a,b) => (a.dataset.source||'').localeCompare(b.dataset.source||''));
+  } else if (val === 'notes') {
+    cards.sort((a,b) => (b.querySelector('.book-card-notes') ? 1 : 0) - (a.querySelector('.book-card-notes') ? 1 : 0));
+  }
+  cards.forEach(c => grid.appendChild(c));
+}
+
+// ── NOTES MODAL ──
+let currentRating = 4;
+function openNotes(title, existingNotes) {
+  document.getElementById('modal-recipe-name').textContent = title;
+  document.getElementById('modal-notes').value = existingNotes || '';
+  document.getElementById('notes-modal').classList.add('open');
+}
+function closeNotes() {
+  document.getElementById('notes-modal').classList.remove('open');
+}
+function closeModal(e) {
+  if (e.target === document.getElementById('notes-modal')) closeNotes();
+}
+function setRating(n) {
+  currentRating = n;
+  document.querySelectorAll('.star-btn').forEach((s,i) => s.classList.toggle('lit', i < n));
+}
+function toggleTag(btn) {
+  btn.classList.toggle('selected');
+}
+function saveNotes() {
+  const notes = document.getElementById('modal-notes').value;
+  alert(`Notes saved! ✓\n\nIn the live app, this writes to your saved_recipes table in Supabase:\n• notes: "${notes.slice(0,60)}…"\n• rating: ${currentRating} stars\n• updated_at: now`);
+  closeNotes();
+}
+
+// ── ADD OWN RECIPE ──
+function openAddForm() {
+  document.getElementById('add-form').classList.add('open');
+}
+function closeAddForm(e) {
+  if (e.target === document.getElementById('add-form')) document.getElementById('add-form').classList.remove('open');
+}
+function closeAddFormBtn() {
+  document.getElementById('add-form').classList.remove('open');
+}
+function selectType(btn) {
+  document.querySelectorAll('.form-type-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+function saveOwnRecipe() {
+  alert('Recipe saved to your book! ✓\n\nIn the live app, this writes a new row to the recipes table in Supabase with author_id = your user ID, is_private = true (or submitted for review if you chose community).');
+  document.getElementById('add-form').classList.remove('open');
+}
+
+// ── ACTIONS ──
+function removeCard(btn) {
+  const card = btn.closest('.book-card');
+  const title = card.dataset.title;
+  if (confirm(`Remove "${title}" from your Recipe Book?\n\nThis removes your saved link and notes. The original recipe on the creator's site is unaffected.`)) {
+    card.style.transition = 'opacity .3s, transform .3s';
+    card.style.opacity = '0';
+    card.style.transform = 'scale(0.95)';
+    setTimeout(() => card.remove(), 300);
+  }
+}
+function shareRecipe(title) {
+  alert(`Share "${title}"\n\nIn the live app this generates:\n• A shareable deep link: apb.app/recipe/abc123\n• An image card for social sharing`);
+}
+function submitToCommunity(title) {
+  alert(`Submit "${title}" to the APB community?\n\nYour recipe will be reviewed by an admin (usually 24-48 hrs). If approved, it will appear in the community recipe feed and other members can save, rate, and comment on it.\n\nTop-rated community recipes get featured on the APB homepage.`);
+}
+</script>
+</body>
+</html>

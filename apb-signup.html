@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APB — Join Free</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --leaf:#2d6a4f; --leaf-mid:#40916c; --leaf-light:#52b788; --leaf-pale:#d8f3dc; --leaf-xpale:#f0faf2;
+  --sun:#e9c46a; --cream:#fefae0; --dark:#141414; --muted:#6b7c72;
+}
+body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--dark); min-height:100vh; display:grid; grid-template-columns:1fr 1fr; }
+
+/* LEFT PANEL */
+.left { background:linear-gradient(160deg,var(--leaf) 0%,var(--leaf-mid) 60%,#1a4731 100%); display:flex; flex-direction:column; justify-content:space-between; padding:48px; position:relative; overflow:hidden; }
+.left-blob { position:absolute; border-radius:50%; opacity:.1; pointer-events:none; }
+.left-logo { font-family:'Playfair Display',serif; font-size:22px; color:rgba(255,255,255,.85); position:relative; z-index:1; }
+.left-logo em { font-style:italic; color:rgba(255,255,255,.6); }
+.left-content { position:relative; z-index:1; }
+.left-eyebrow { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:rgba(255,255,255,.6); margin-bottom:16px; }
+.left-headline { font-family:'Playfair Display',serif; font-size:clamp(30px,2.8vw,46px); color:white; line-height:1.15; margin-bottom:16px; }
+.left-headline em { font-style:italic; color:var(--sun); }
+.left-sub { font-size:14px; color:rgba(255,255,255,.65); line-height:1.8; max-width:360px; }
+.benefits { display:flex; flex-direction:column; gap:12px; margin-top:28px; }
+.benefit { display:flex; align-items:flex-start; gap:10px; }
+.benefit-check { width:20px; height:20px; min-width:20px; border-radius:50%; background:rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center; font-size:11px; margin-top:2px; }
+.benefit-text { font-size:13px; color:rgba(255,255,255,.8); line-height:1.5; }
+.benefit-text strong { color:white; }
+.left-free-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.2); border-radius:100px; padding:8px 16px; font-size:13px; color:white; font-weight:500; }
+
+/* STEPS INDICATOR */
+.steps-indicator { display:flex; gap:8px; margin-bottom:28px; }
+.step-dot { width:8px; height:8px; border-radius:50%; background:rgba(0,0,0,.1); transition:all .2s; }
+.step-dot.active { background:var(--leaf); width:24px; border-radius:100px; }
+.step-dot.done { background:var(--leaf-light); }
+.step-label { font-size:12px; color:var(--muted); margin-bottom:20px; }
+
+/* RIGHT PANEL */
+.right { display:flex; align-items:center; justify-content:center; padding:48px; overflow-y:auto; }
+.form-wrap { width:100%; max-width:420px; }
+.form-title { font-family:'Playfair Display',serif; font-size:30px; margin-bottom:6px; }
+.form-title em { font-style:italic; color:var(--leaf); }
+.form-sub { font-size:14px; color:var(--muted); margin-bottom:28px; }
+.form-sub a { color:var(--leaf); text-decoration:none; font-weight:500; }
+
+/* GOOGLE */
+.btn-google { width:100%; display:flex; align-items:center; justify-content:center; gap:10px; padding:13px; border:1.5px solid rgba(0,0,0,.12); border-radius:12px; background:white; font-size:14px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .15s; margin-bottom:18px; }
+.btn-google:hover { border-color:var(--leaf-light); }
+.google-icon { width:18px; height:18px; }
+.divider { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+.divider-line { flex:1; height:1px; background:rgba(0,0,0,.08); }
+.divider-text { font-size:12px; color:var(--muted); }
+
+/* FORM STEPS */
+.form-step { display:none; }
+.form-step.active { display:block; }
+
+/* FIELDS */
+.form-group { margin-bottom:14px; }
+.form-row-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px; }
+.form-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:var(--dark); display:block; margin-bottom:5px; }
+.form-input { width:100%; padding:12px 15px; border:1.5px solid rgba(0,0,0,.1); border-radius:10px; font-size:14px; font-family:'DM Sans',sans-serif; outline:none; transition:border-color .2s, box-shadow .2s; background:white; color:var(--dark); }
+.form-input:focus { border-color:var(--leaf-light); box-shadow:0 0 0 3px rgba(82,183,136,.1); }
+.form-input.error { border-color:#dc2626; }
+.form-hint { font-size:11px; color:var(--muted); margin-top:4px; line-height:1.5; }
+.input-error { font-size:12px; color:#dc2626; margin-top:4px; display:none; }
+.input-error.show { display:block; }
+.input-wrap { position:relative; }
+.input-wrap .form-input { padding-right:44px; }
+.toggle-pw { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:15px; color:var(--muted); }
+
+/* PASSWORD STRENGTH */
+.pw-strength { height:3px; border-radius:100px; background:#f0f0f0; margin-top:8px; overflow:hidden; }
+.pw-strength-bar { height:100%; border-radius:100px; transition:width .3s, background .3s; width:0%; }
+.pw-strength-label { font-size:11px; margin-top:4px; }
+
+/* WFPBNO EXPERIENCE */
+.experience-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
+.exp-btn { padding:10px 12px; border:1.5px solid rgba(0,0,0,.1); border-radius:10px; font-size:12px; cursor:pointer; font-family:'DM Sans',sans-serif; background:white; text-align:left; transition:all .15s; }
+.exp-btn:hover { border-color:var(--leaf-light); }
+.exp-btn.selected { border-color:var(--leaf); background:var(--leaf-xpale); color:var(--leaf); }
+.exp-btn-icon { font-size:18px; display:block; margin-bottom:4px; }
+.exp-btn-label { font-weight:500; font-size:12px; display:block; }
+.exp-btn-sub { font-size:10px; color:var(--muted); margin-top:2px; display:block; }
+.exp-btn.selected .exp-btn-sub { color:var(--leaf-mid); }
+
+/* INTERESTS */
+.interests-grid { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+.interest-btn { padding:7px 14px; border-radius:100px; border:1.5px solid rgba(0,0,0,.1); font-size:12px; cursor:pointer; font-family:'DM Sans',sans-serif; background:white; transition:all .15s; }
+.interest-btn.selected { background:var(--leaf); color:white; border-color:var(--leaf); }
+
+/* ALERTS */
+.alert { border-radius:10px; padding:12px 16px; font-size:13px; line-height:1.6; margin-bottom:14px; display:none; }
+.alert.show { display:flex; gap:8px; align-items:flex-start; }
+.alert-error { background:#fef2f2; color:#991b1b; border:1px solid #fecaca; }
+.alert-success { background:var(--leaf-pale); color:#1b4332; border:1px solid #a7f3d0; }
+
+/* BUTTONS */
+.btn-next { width:100%; background:var(--leaf); color:white; border:none; border-radius:12px; padding:14px; font-size:15px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .2s; display:flex; align-items:center; justify-content:center; gap:8px; margin-top:4px; }
+.btn-next:hover { background:var(--leaf-mid); transform:translateY(-1px); }
+.btn-next:disabled { opacity:.6; cursor:default; transform:none; }
+.btn-back { width:100%; background:transparent; color:var(--muted); border:1.5px solid rgba(0,0,0,.1); border-radius:12px; padding:13px; font-size:14px; cursor:pointer; font-family:'DM Sans',sans-serif; margin-top:8px; }
+.btn-spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,.3); border-top-color:white; border-radius:50%; animation:spin .7s linear infinite; display:none; }
+.btn-next.loading .btn-spinner { display:block; }
+
+/* SUCCESS STATE */
+.success-state { text-align:center; padding:40px 20px; }
+.success-icon { font-size:64px; margin-bottom:20px; }
+.success-title { font-family:'Playfair Display',serif; font-size:28px; margin-bottom:10px; }
+.success-title em { font-style:italic; color:var(--leaf); }
+.success-sub { font-size:14px; color:var(--muted); line-height:1.8; max-width:320px; margin:0 auto 24px; }
+.success-check-email { background:var(--leaf-xpale); border:1px solid var(--leaf-pale); border-radius:12px; padding:16px; font-size:13px; color:var(--leaf); line-height:1.6; margin-bottom:20px; }
+
+/* FOOTER */
+.form-footer { text-align:center; margin-top:20px; font-size:13px; color:var(--muted); }
+.form-footer a { color:var(--leaf); text-decoration:none; font-weight:500; }
+.terms { font-size:11px; color:var(--muted); text-align:center; margin-top:14px; line-height:1.6; }
+.terms a { color:var(--muted); text-decoration:underline; }
+
+@keyframes spin { to { transform:rotate(360deg); } }
+
+@media (max-width:768px) {
+  body { grid-template-columns:1fr; }
+  .left { display:none; }
+  .right { padding:32px 24px; align-items:flex-start; padding-top:40px; }
+  .experience-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- LEFT -->
+<div class="left">
+  <div class="left-blob" style="width:500px;height:500px;background:white;top:-150px;right:-150px;"></div>
+  <div class="left-blob" style="width:300px;height:300px;background:var(--sun);bottom:-80px;left:-80px;"></div>
+
+  <div class="left-logo">APB <em>🌿</em></div>
+
+  <div class="left-content">
+    <div class="left-eyebrow">🚨 Calling All Plant Based Humans</div>
+    <h2 class="left-headline">Join a community of <em>whole food,</em> plant-based humans.</h2>
+    <p class="left-sub">Free forever. Your community, your pantry, your recipe book. No credit card, no catch.</p>
+    <div class="benefits">
+      <div class="benefit"><div class="benefit-check">✓</div><div class="benefit-text"><strong>AI recipe suggestions</strong> from your pantry</div></div>
+      <div class="benefit"><div class="benefit-check">✓</div><div class="benefit-text"><strong>Find plant-friendly places</strong> anywhere you go</div></div>
+      <div class="benefit"><div class="benefit-check">✓</div><div class="benefit-text"><strong>Save and share</strong> recipes you love</div></div>
+      <div class="benefit"><div class="benefit-check">✓</div><div class="benefit-text"><strong>Rate restaurants</strong> for WFPB friendliness</div></div>
+      <div class="benefit"><div class="benefit-check">✓</div><div class="benefit-text"><strong>Community blog</strong> — read and contribute</div></div>
+    </div>
+  </div>
+
+  <div class="left-free-badge">🌱 Free forever</div>
+</div>
+
+<!-- RIGHT -->
+<div class="right">
+  <div class="form-wrap">
+
+    <!-- STEP INDICATORS -->
+    <div class="steps-indicator">
+      <div class="step-dot active" id="dot-1"></div>
+      <div class="step-dot" id="dot-2"></div>
+      <div class="step-dot" id="dot-3"></div>
+    </div>
+    <div class="step-label" id="step-label">Step 1 of 3 — Your account</div>
+
+    <div class="alert alert-error" id="alert-error"></div>
+    <div class="alert alert-success" id="alert-success"></div>
+
+    <!-- ── STEP 1: Account details ── -->
+    <div class="form-step active" id="step-1">
+      <h1 class="form-title">Join <em>APB</em> free</h1>
+      <p class="form-sub">Already have an account? <a href="apb-signin.html">Sign in →</a></p>
+
+      <button class="btn-google" onclick="signUpWithGoogle()">
+        <svg class="google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continue with Google
+      </button>
+      <div class="divider"><div class="divider-line"></div><div class="divider-text">or sign up with email</div><div class="divider-line"></div></div>
+
+
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input class="form-input" type="text" id="username" placeholder="plantifulDiane" autocomplete="username" oninput="checkUsername(this.value)">
+        <div class="form-hint" id="username-hint">Shown on your posts and recipes. Letters, numbers, and underscores only.</div>
+        <div class="input-error" id="username-error"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="email" placeholder="you@email.com" autocomplete="email" required>
+        <div class="input-error" id="email-error"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="input-wrap">
+          <input class="form-input" type="password" id="password" placeholder="At least 8 characters" autocomplete="new-password" oninput="checkPasswordStrength(this.value)" required>
+          <button type="button" class="toggle-pw" onclick="togglePassword('password',this)">👁</button>
+        </div>
+        <div class="pw-strength"><div class="pw-strength-bar" id="pw-bar"></div></div>
+        <div class="pw-strength-label" id="pw-label"></div>
+        <div class="input-error" id="password-error"></div>
+      </div>
+
+      <button class="btn-next" onclick="goToStep2()">
+        <span>Continue →</span>
+        <div class="btn-spinner"></div>
+      </button>
+
+      <div class="terms">By joining you agree to our <a href="https://kreeadiv.github.io/apb/terms.html" target="_blank">Terms of Service</a> and <a href="https://kreeadiv.github.io/apb/privacy.html" target="_blank">Privacy Policy</a>.</div>
+    </div>
+
+    <!-- ── STEP 2: Plant-based experience ── -->
+    <div class="form-step" id="step-2">
+      <h1 class="form-title">Your <em>journey</em></h1>
+      <p class="form-sub" style="margin-bottom:20px;">Tell us where you are — APB personalizes your dashboard and recommendations to match.</p>
+
+      <div class="form-label" style="margin-bottom:10px;">Where are you on your plant-based journey?</div>
+      <div class="experience-grid">
+        <button class="exp-btn" onclick="selectExp('new',this)">
+          <span class="exp-btn-icon">🌱</span>
+          <span class="exp-btn-label">Just starting</span>
+          <span class="exp-btn-sub">Curious about plant-based eating</span>
+        </button>
+        <button class="exp-btn" onclick="selectExp('learning',this)">
+          <span class="exp-btn-icon">📖</span>
+          <span class="exp-btn-label">Still learning</span>
+          <span class="exp-btn-sub">A few months in</span>
+        </button>
+        <button class="exp-btn" onclick="selectExp('established',this)">
+          <span class="exp-btn-icon">🌿</span>
+          <span class="exp-btn-label">Well established</span>
+          <span class="exp-btn-sub">Eating whole food plant-based for a while</span>
+        </button>
+        <button class="exp-btn" onclick="selectExp('veteran',this)">
+          <span class="exp-btn-icon">⭐</span>
+          <span class="exp-btn-label">Veteran</span>
+          <span class="exp-btn-sub">Years of whole food plant-based living</span>
+        </button>
+      </div>
+
+      <div class="form-label" style="margin-top:16px;margin-bottom:10px;">What brings you to APB? <span style="font-weight:400;color:var(--muted);">(pick all that apply)</span></div>
+      <div class="interests-grid" id="interests-grid">
+        <button class="interest-btn" onclick="toggleInterest(this)">🍽 Recipes</button>
+        <button class="interest-btn" onclick="toggleInterest(this)">🗺 Find food nearby</button>
+        <button class="interest-btn" onclick="toggleInterest(this)">✍️ Community</button>
+        <button class="interest-btn" onclick="toggleInterest(this)">⚖️ Weight loss</button>
+        <button class="interest-btn" onclick="toggleInterest(this)">❤️ Heart health</button>
+        <button class="interest-btn" onclick="toggleInterest(this)">🩸 Reverse disease</button>
+        <button class="interest-btn" onclick="toggleInterest(this)">🌍 Environment</button>
+        <button class="interest-btn" onclick="toggleInterest(this)">🐾 Animals</button>
+      </div>
+
+      <button class="btn-next" onclick="goToStep3()">Continue →</button>
+      <button class="btn-back" onclick="goToStep(1)">← Back</button>
+    </div>
+
+    <!-- ── STEP 3: Location & submit ── -->
+    <div class="form-step" id="step-3">
+      <h1 class="form-title">Almost <em>there</em></h1>
+      <p class="form-sub" style="margin-bottom:20px;">Your location helps APB surface nearby restaurants, local community activity, and seasonal content.</p>
+
+      <div class="form-group">
+        <label class="form-label">City <span style="font-weight:400;color:var(--muted);">(optional)</span></label>
+        <input class="form-input" type="text" id="city" placeholder="Monroe, NC">
+        <div class="form-hint">Used only to personalize your local feed. Never shared publicly.</div>
+      </div>
+
+      <div class="form-group" style="margin-top:8px;">
+        <label class="form-label" style="margin-bottom:10px;">Membership</label>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div id="plan-free" class="exp-btn selected" onclick="selectPlan('free')" style="cursor:pointer;">
+            <span class="exp-btn-icon">🌱</span>
+            <span class="exp-btn-label">Free — $0</span>
+            <span class="exp-btn-sub">Browse, save, rate, and contribute.</span>
+          </div>
+          <div id="plan-removeads" class="exp-btn" onclick="selectPlan('removeads')" style="cursor:pointer;">
+            <span class="exp-btn-icon">🔕</span>
+            <span class="exp-btn-label">Remove Ads — $4.99 once</span>
+            <span class="exp-btn-sub">Everything free, no ads ever. One-time, never expires.</span>
+          </div>
+          <div id="plan-premium" class="exp-btn" onclick="selectPlan('premium')" style="cursor:pointer;">
+            <span class="exp-btn-icon">🤖</span>
+            <span class="exp-btn-label">Premium — $3.99/mo or $29.99/yr</span>
+            <span class="exp-btn-sub">No ads + AI ingredient-to-recipe suggestions. Cancel anytime.</span>
+          </div>
+        </div>
+        <div class="form-hint" style="margin-top:8px;" id="plan-hint">Free forever. You can upgrade anytime from your account settings.</div>
+      </div>
+
+      <button class="btn-next" id="create-btn" onclick="createAccount()">
+        <span class="btn-text">Create My Account 🌱</span>
+        <div class="btn-spinner"></div>
+      </button>
+      <button class="btn-back" onclick="goToStep(2)">← Back</button>
+
+      <div class="terms" style="margin-top:14px;">By creating an account you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>. APB is free and supported by ads. Premium removes ads for $3.99/mo.</div>
+    </div>
+
+    <!-- ── SUCCESS ── -->
+    <div class="form-step" id="step-success">
+      <div class="success-state">
+        <div class="success-icon">🎉</div>
+        <h2 class="success-title">Welcome to <em>APB!</em></h2>
+        <p class="success-sub">You are now part of the APB community. Check your email to confirm your account.</p>
+        <div class="success-check-email">
+          📬 We sent a confirmation email to <strong id="confirm-email-display"></strong>. Click the link in the email to activate your account, then sign in.
+        </div>
+        <button class="btn-next" onclick="window.location.href='apb-signin.html'">Sign In Now →</button>
+        <div class="form-footer" style="margin-top:12px;">Didn't receive it? <a href="#" onclick="resendEmail()">Resend confirmation</a></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Redirect if already signed in
+sb.auth.getSession().then(({ data: { session } }) => {
+  if (session) window.location.href = '../../index.html';
+});
+
+// ── STATE ────────────────────────────────────────────────────────
+let selectedExp = null;
+let selectedInterests = [];
+let selectedPlan = 'free';
+let signupEmail = '';
+
+// ── STEP NAVIGATION ──────────────────────────────────────────────
+function goToStep(n) {
+  document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+  document.getElementById(`step-${n}`).classList.add('active');
+  document.getElementById('step-label').textContent = `Step ${n} of 3 — ${['Your account','Your journey','Almost there'][n-1]}`;
+  for (let i = 1; i <= 3; i++) {
+    const dot = document.getElementById(`dot-${i}`);
+    dot.classList.remove('active','done');
+    if (i < n) dot.classList.add('done');
+    else if (i === n) dot.classList.add('active');
+  }
+  clearErrors();
+}
+
+function goToStep2() {
+  const firstName = document.getElementById('first-name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const username = document.getElementById('username').value.trim();
+
+  clearErrors();
+  let valid = true;
+  if (!firstName) { showFieldError('firstname-error','First name is required'); valid = false; }
+  if (!email || !email.includes('@')) { showFieldError('email-error','Please enter a valid email'); valid = false; }
+  if (password.length < 8) { showFieldError('password-error','Password must be at least 8 characters'); valid = false; }
+  if (username && !/^[a-zA-Z0-9_]+$/.test(username)) { showFieldError('username-error','Only letters, numbers, and underscores'); valid = false; }
+  if (!valid) return;
+  goToStep(2);
+}
+
+function goToStep3() { goToStep(3); }
+
+// ── ACCOUNT CREATION ─────────────────────────────────────────────
+async function createAccount() {
+  const btn = document.getElementById('create-btn');
+  btn.classList.add('loading'); btn.disabled = true;
+  clearErrors();
+
+  const firstName = document.getElementById('first-name').value.trim();
+  const lastName = document.getElementById('last-name').value.trim();
+  const username = document.getElementById('username').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const city = document.getElementById('city').value.trim();
+  signupEmail = email;
+
+  // Create auth user in Supabase
+  const { data, error } = await sb.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        first_name: firstName,
+        last_name: lastName,
+        username: username || firstName.toLowerCase(),
+        city,
+        wfpbno_experience: selectedExp,
+        interests: selectedInterests,
+        is_premium: selectedPlan === 'premium',
+      }
+    }
+  });
+
+  btn.classList.remove('loading'); btn.disabled = false;
+
+  if (error) {
+    if (error.message.includes('already registered')) {
+      showError('This email is already registered. <a href="apb-signin.html">Sign in instead →</a>');
+    } else {
+      showError(error.message);
+    }
+    return;
+  }
+
+  // Write to profiles table
+  // This also happens via a Supabase database trigger on auth.users insert,
+  // but we write here too as a fallback
+  if (data.user) {
+    await sb.from('profiles').upsert({
+      id: data.user.id,
+      email,
+      first_name: firstName,
+      last_name: lastName,
+      username: username || firstName.toLowerCase(),
+      city,
+      wfpbno_experience: selectedExp,
+      interests: selectedInterests,
+      is_premium: false, // premium set after Stripe payment
+      created_at: new Date().toISOString()
+    });
+  }
+
+  // Show success state
+  document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step-success').classList.add('active');
+  document.getElementById('confirm-email-display').textContent = email;
+  document.getElementById('step-label').textContent = 'Account created!';
+  document.querySelectorAll('.step-dot').forEach(d => { d.classList.remove('active'); d.classList.add('done'); });
+}
+
+async function signUpWithGoogle() {
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin + '/src/pages/apb-auth-callback.html' }
+  });
+  if (error) showError('Google sign-up failed. Please try again.');
+}
+
+async function resendEmail() {
+  if (!signupEmail) return;
+  await sb.auth.resend({ type: 'signup', email: signupEmail });
+  showSuccess('Confirmation email resent! Check your inbox.');
+}
+
+// ── FIELD HELPERS ────────────────────────────────────────────────
+function selectExp(val, btn) {
+  selectedExp = val;
+  document.querySelectorAll('.exp-btn').forEach(b => {
+    if (b.closest('#step-2')) b.classList.remove('selected');
+  });
+  btn.classList.add('selected');
+}
+
+function toggleInterest(btn) {
+  btn.classList.toggle('selected');
+  const label = btn.textContent.trim().replace(/^.+?\s/,'');
+  if (btn.classList.contains('selected')) {
+    if (!selectedInterests.includes(label)) selectedInterests.push(label);
+  } else {
+    selectedInterests = selectedInterests.filter(i => i !== label);
+  }
+}
+
+function selectPlan(plan) {
+  selectedPlan = plan;
+  document.getElementById('plan-free').classList.toggle('selected', plan === 'free');
+  document.getElementById('plan-removeads').classList.toggle('selected', plan === 'removeads');
+  document.getElementById('plan-premium').classList.toggle('selected', plan === 'premium');
+  const hints = {
+    free: 'Free forever. Upgrade anytime from your account settings.',
+    removeads: 'You\'ll be redirected to complete your one-time $4.99 payment after account creation.',
+    premium: 'You\'ll be redirected to complete payment after account creation. Cancel anytime.'
+  };
+  document.getElementById('plan-hint').textContent = hints[plan];
+}
+
+let usernameTimer;
+function checkUsername(val) {
+  clearTimeout(usernameTimer);
+  const hint = document.getElementById('username-hint');
+  if (!val) { hint.textContent = 'Shown on your posts and recipes.'; return; }
+  if (!/^[a-zA-Z0-9_]+$/.test(val)) { hint.textContent = '⚠ Only letters, numbers, and underscores'; hint.style.color = '#dc2626'; return; }
+  hint.style.color = 'var(--muted)';
+  hint.textContent = 'Checking availability…';
+  usernameTimer = setTimeout(async () => {
+    const { data } = await sb.from('profiles').select('id').eq('username', val).single();
+    hint.textContent = data ? '✗ Username taken' : '✓ Username available';
+    hint.style.color = data ? '#dc2626' : 'var(--leaf)';
+  }, 500);
+}
+
+function checkPasswordStrength(pw) {
+  const bar = document.getElementById('pw-bar');
+  const label = document.getElementById('pw-label');
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (pw.length >= 12) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  const levels = [
+    { w:'20%', color:'#dc2626', text:'Too short' },
+    { w:'40%', color:'#f97316', text:'Weak' },
+    { w:'60%', color:'#eab308', text:'Fair' },
+    { w:'80%', color:'#22c55e', text:'Good' },
+    { w:'100%', color:'#16a34a', text:'Strong 💪' },
+  ];
+  const l = levels[Math.min(score, 4)];
+  bar.style.width = l.w; bar.style.background = l.color;
+  label.textContent = pw ? l.text : '';
+  label.style.color = l.color;
+}
+
+function togglePassword(id, btn) {
+  const input = document.getElementById(id);
+  if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+  else { input.type = 'password'; btn.textContent = '👁'; }
+}
+
+function showFieldError(id, msg) {
+  const el = document.getElementById(id);
+  if (el) { el.textContent = msg; el.classList.add('show'); }
+}
+
+function showError(msg) {
+  const el = document.getElementById('alert-error');
+  el.innerHTML = msg; el.classList.add('show');
+}
+
+function showSuccess(msg) {
+  const el = document.getElementById('alert-success');
+  el.textContent = msg; el.classList.add('show');
+}
+
+function clearErrors() {
+  document.getElementById('alert-error').classList.remove('show');
+  document.getElementById('alert-success').classList.remove('show');
+  document.querySelectorAll('.input-error').forEach(e => { e.textContent = ''; e.classList.remove('show'); });
+}
+</script>
+</body>
+</html>

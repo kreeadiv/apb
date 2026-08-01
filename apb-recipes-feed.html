@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APB   Recipes</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --leaf:#2d6a4f; --leaf-mid:#40916c; --leaf-light:#52b788; --leaf-pale:#d8f3dc; --leaf-xpale:#f0faf2;
+  --sun:#e9c46a; --sun-deep:#c8963e; --cream:#fefae0; --dark:#141414; --muted:#6b7c72;
+  --card:#ffffff; --radius:16px;
+}
+html { scroll-behavior:smooth; }
+body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--dark); }
+
+/* NAV */
+nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); backdrop-filter:blur(12px); padding:14px 48px; display:flex; align-items:center; gap:24px; border-bottom:1px solid rgba(45,106,79,0.1); }
+.logo { font-family:'Playfair Display',serif; font-size:20px; color:var(--leaf); margin-right:auto; }
+.logo em { font-style:italic; color:var(--leaf-light); }
+.nav-link { font-size:13px; color:var(--muted); text-decoration:none; transition:color .2s; }
+.nav-link:hover { color:var(--leaf); }
+.nav-link.active { color:var(--leaf); font-weight:500; }
+.nav-avatar { width:32px; height:32px; border-radius:50%; background:var(--leaf); color:white; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:500; }
+
+/* PAGE TABS   main navigation between sections */
+.page-tabs { display:flex; gap:0; border-bottom:2px solid rgba(0,0,0,.08); padding:0 48px; background:white; }
+.page-tab { padding:16px 24px; font-size:14px; font-weight:500; color:var(--muted); cursor:pointer; border:none; background:none; font-family:'DM Sans',sans-serif; border-bottom:2px solid transparent; margin-bottom:-2px; transition:all .15s; }
+.page-tab:hover { color:var(--leaf); }
+.page-tab.active { color:var(--leaf); border-bottom-color:var(--leaf); }
+.tab-count { font-size:11px; background:var(--leaf-pale); color:var(--leaf); padding:2px 7px; border-radius:100px; margin-left:6px; }
+.page-tab.active .tab-count { background:var(--leaf); color:white; }
+
+/* SECTION */
+.section { display:none; }
+.section.active { display:block; }
+
+/* ── SECTION 1: AI SUGGESTIONS ── */
+.ai-section { padding:48px; background:linear-gradient(160deg, #1a2e1a 0%, #0d1a0d 100%); min-height:300px; }
+.ai-header { display:flex; align-items:flex-start; justify-content:space-between; gap:24px; margin-bottom:32px; flex-wrap:wrap; }
+.ai-header-text h2 { font-family:'Playfair Display',serif; font-size:clamp(24px,3vw,36px); color:white; margin-bottom:8px; }
+.ai-header-text h2 em { font-style:italic; color:var(--sun); }
+.ai-header-text p { font-size:14px; color:rgba(255,255,255,.55); line-height:1.7; max-width:480px; }
+.pantry-summary { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:12px; padding:14px 18px; display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+.pantry-summary-label { font-size:11px; text-transform:uppercase; letter-spacing:.8px; color:rgba(255,255,255,.4); }
+.pantry-items-preview { display:flex; gap:6px; flex-wrap:wrap; }
+.pantry-chip { font-size:11px; background:rgba(82,183,136,.15); color:var(--leaf-light); padding:3px 9px; border-radius:100px; border:1px solid rgba(82,183,136,.2); }
+.pantry-chip.low { background:rgba(233,196,106,.15); color:var(--sun); border-color:rgba(233,196,106,.2); }
+
+.ai-generate-btn { background:var(--leaf-light); color:white; border:none; border-radius:100px; padding:13px 28px; font-size:14px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; display:flex; align-items:center; gap:8px; transition:all .2s; white-space:nowrap; }
+.ai-generate-btn:hover { background:var(--leaf-mid); transform:translateY(-1px); }
+.ai-generate-btn:disabled { opacity:.5; cursor:default; transform:none; }
+
+.ai-results { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:18px; margin-top:8px; }
+.ai-recipe-card { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:var(--radius); padding:20px; cursor:pointer; transition:all .2s; }
+.ai-recipe-card:hover { background:rgba(255,255,255,.1); transform:translateY(-2px); }
+.ai-recipe-emoji { font-size:36px; margin-bottom:12px; }
+.ai-recipe-title { font-family:'Playfair Display',serif; font-size:18px; color:white; margin-bottom:6px; line-height:1.3; }
+.ai-recipe-uses { font-size:11px; color:rgba(255,255,255,.4); margin-bottom:10px; }
+.ai-recipe-meta { display:flex; gap:12px; font-size:11px; color:rgba(255,255,255,.5); margin-bottom:14px; }
+.ai-recipe-tags { display:flex; gap:5px; flex-wrap:wrap; }
+.ai-tag { font-size:10px; background:rgba(82,183,136,.12); color:var(--leaf-light); padding:2px 8px; border-radius:100px; border:1px solid rgba(82,183,136,.15); }
+.ai-card-footer { display:flex; gap:8px; margin-top:14px; padding-top:12px; border-top:1px solid rgba(255,255,255,.08); }
+.btn-view-full { flex:1; background:var(--leaf); color:white; border:none; border-radius:8px; padding:8px; font-size:12px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; }
+.btn-save-ai { background:rgba(255,255,255,.08); color:rgba(255,255,255,.7); border:1px solid rgba(255,255,255,.12); border-radius:8px; padding:8px 12px; font-size:13px; cursor:pointer; }
+
+.ai-loading { text-align:center; padding:48px 20px; color:rgba(255,255,255,.5); }
+.ai-loading-icon { font-size:40px; margin-bottom:12px; animation:spin 2s linear infinite; display:inline-block; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.ai-empty { text-align:center; padding:48px 20px; }
+.ai-empty p { color:rgba(255,255,255,.4); font-size:14px; margin-bottom:20px; }
+
+/* ── SECTION 2: IN-APP RECIPES ── */
+.inapp-header { padding:36px 48px 24px; background:white; border-bottom:1px solid rgba(0,0,0,.07); display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+.inapp-header h2 { font-family:'Playfair Display',serif; font-size:28px; }
+.inapp-header h2 em { font-style:italic; color:var(--leaf); }
+.inapp-header-actions { display:flex; gap:10px; align-items:center; }
+.search-pill { display:flex; background:var(--leaf-xpale); border-radius:100px; overflow:hidden; border:1.5px solid var(--leaf-pale); }
+.search-pill input { padding:9px 16px; font-size:13px; font-family:'DM Sans',sans-serif; border:none; background:transparent; outline:none; width:200px; }
+.inapp-filter-bar { display:flex; gap:6px; padding:16px 48px; background:white; border-bottom:1px solid rgba(0,0,0,.06); flex-wrap:wrap; }
+.filter-pill { padding:7px 16px; border-radius:100px; font-size:12px; font-weight:500; border:1.5px solid rgba(0,0,0,.1); background:white; cursor:pointer; font-family:'DM Sans',sans-serif; color:var(--muted); transition:all .15s; }
+.filter-pill.active { background:var(--leaf); color:white; border-color:var(--leaf); }
+.inapp-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:18px; padding:28px 48px 80px; }
+
+/* IN-APP RECIPE CARD */
+.recipe-card { background:white; border-radius:var(--radius); border:1px solid rgba(0,0,0,.07); overflow:hidden; display:flex; flex-direction:column; cursor:pointer; transition:transform .2s, box-shadow .2s; }
+.recipe-card:hover { transform:translateY(-3px); box-shadow:0 10px 32px rgba(0,0,0,.09); }
+.recipe-card-img { height:140px; display:flex; align-items:center; justify-content:center; font-size:52px; position:relative; }
+.recipe-card-badge { position:absolute; bottom:8px; left:8px; font-size:9px; font-weight:600; padding:3px 8px; border-radius:100px; }
+.badge-community { background:var(--leaf); color:white; }
+.badge-featured { background:var(--sun); color:var(--dark); }
+.badge-new { background:#fee2e2; color:#991b1b; }
+.recipe-card-wfpb { position:absolute; bottom:8px; right:8px; background:var(--leaf-pale); color:var(--leaf); font-size:9px; font-weight:600; padding:3px 8px; border-radius:100px; }
+.recipe-card-body { padding:14px; flex:1; display:flex; flex-direction:column; }
+.recipe-cat { font-size:10px; text-transform:uppercase; letter-spacing:.8px; color:var(--leaf); font-weight:500; margin-bottom:5px; }
+.recipe-title { font-family:'Playfair Display',serif; font-size:17px; line-height:1.25; margin-bottom:6px; }
+.recipe-desc { font-size:12px; color:var(--muted); line-height:1.65; flex:1; margin-bottom:10px; }
+.recipe-meta { display:flex; gap:12px; font-size:11px; color:var(--muted); margin-bottom:8px; }
+.recipe-rating { display:flex; align-items:center; gap:4px; font-size:11px; }
+.recipe-stars { color:var(--sun); }
+.recipe-tags { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:12px; }
+.rtag { font-size:10px; background:var(--leaf-pale); color:var(--leaf); padding:2px 8px; border-radius:100px; }
+.rtag.oil-free { background:#e8f5e9; color:#2e7d32; }
+.rtag.gf { background:#fff8e1; color:var(--sun-deep); }
+.recipe-card-footer { border-top:1px solid #f5f5f5; padding-top:12px; display:flex; gap:6px; }
+.btn-recipe-view { flex:1; background:var(--leaf); color:white; border:none; border-radius:8px; padding:8px; font-size:12px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; }
+.btn-recipe-save { background:var(--leaf-pale); color:var(--leaf); border:none; border-radius:8px; padding:8px 11px; font-size:13px; cursor:pointer; }
+
+/* ── SECTION 3: EXTERNAL FEED ── */
+.external-header { padding:36px 48px 24px; }
+.external-header h2 { font-family:'Playfair Display',serif; font-size:28px; margin-bottom:8px; }
+.external-header h2 em { font-style:italic; color:var(--leaf); }
+.external-header p { font-size:14px; color:var(--muted); line-height:1.7; max-width:560px; margin-bottom:20px; }
+.source-strip { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+.source-badge { display:flex; align-items:center; gap:7px; background:white; border:1px solid rgba(0,0,0,.08); border-radius:100px; padding:7px 14px; font-size:12px; font-weight:500; text-decoration:none; color:var(--dark); transition:all .2s; }
+.source-badge:hover { border-color:var(--leaf-light); color:var(--leaf); }
+.source-dot { width:8px; height:8px; border-radius:50%; }
+.notice { background:var(--leaf-xpale); border:1px solid var(--leaf-pale); border-radius:10px; padding:12px 16px; font-size:12px; color:var(--muted); display:flex; gap:8px; margin:0 48px 24px; }
+.ext-filter-bar { display:flex; gap:6px; padding:0 48px 24px; flex-wrap:wrap; }
+.ext-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:18px; padding:0 48px 80px; }
+
+/* EXTERNAL RECIPE CARD */
+.ext-card { background:white; border-radius:var(--radius); border:1px solid rgba(0,0,0,.07); overflow:hidden; display:flex; flex-direction:column; transition:transform .2s, box-shadow .2s; }
+.ext-card:hover { transform:translateY(-3px); box-shadow:0 10px 32px rgba(0,0,0,.09); }
+.ext-card-img { height:130px; display:flex; align-items:center; justify-content:center; font-size:48px; position:relative; }
+.ext-source-badge { position:absolute; top:8px; left:8px; font-size:9px; font-weight:500; padding:3px 8px; border-radius:100px; }
+.ext-wfpb { position:absolute; bottom:8px; right:8px; background:var(--leaf); color:white; font-size:9px; padding:3px 8px; border-radius:100px; font-weight:500; }
+.ext-card-body { padding:14px; flex:1; display:flex; flex-direction:column; }
+.ext-cat { font-size:10px; text-transform:uppercase; letter-spacing:.8px; color:var(--leaf); font-weight:500; margin-bottom:5px; }
+.ext-title { font-family:'Playfair Display',serif; font-size:16px; line-height:1.25; margin-bottom:6px; }
+.ext-desc { font-size:12px; color:var(--muted); line-height:1.65; flex:1; margin-bottom:8px; }
+.ext-meta { font-size:11px; color:var(--muted); margin-bottom:8px; }
+.ext-tags { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:12px; }
+.ext-tag { font-size:10px; background:var(--leaf-pale); color:var(--leaf); padding:2px 8px; border-radius:100px; }
+.ext-card-footer { border-top:1px solid #f5f5f5; padding-top:12px; display:flex; gap:6px; }
+.btn-ext-view { flex:1; background:var(--leaf); color:white; border:none; border-radius:8px; padding:8px; font-size:11px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:4px; }
+.btn-ext-save { background:var(--leaf-pale); color:var(--leaf); border:none; border-radius:8px; padding:8px 11px; font-size:13px; cursor:pointer; }
+
+/* ── RECIPE DETAIL MODAL ── */
+.detail-overlay { position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:500; display:flex; align-items:flex-start; justify-content:center; padding:32px 20px; overflow-y:auto; opacity:0; pointer-events:none; transition:opacity .2s; }
+.detail-overlay.open { opacity:1; pointer-events:all; }
+.detail-modal { background:white; border-radius:24px; max-width:680px; width:100%; margin:auto; overflow:hidden; }
+.detail-hero { height:200px; display:flex; align-items:center; justify-content:center; font-size:80px; position:relative; }
+.detail-hero-actions { position:absolute; top:16px; right:16px; display:flex; gap:8px; }
+.detail-hero-btn { background:rgba(255,255,255,.9); border:none; border-radius:100px; padding:8px 14px; font-size:12px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; display:flex; align-items:center; gap:5px; backdrop-filter:blur(4px); }
+.detail-close { position:absolute; top:16px; left:16px; background:rgba(255,255,255,.9); border:none; border-radius:50%; width:32px; height:32px; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.detail-body { padding:28px 32px; }
+.detail-category { font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--leaf); font-weight:500; margin-bottom:8px; }
+.detail-title { font-family:'Playfair Display',serif; font-size:clamp(22px,3vw,32px); line-height:1.15; margin-bottom:8px; }
+.detail-author { font-size:13px; color:var(--muted); margin-bottom:16px; }
+.detail-stats { display:flex; gap:20px; padding:14px 0; border-top:1px solid #f0f0f0; border-bottom:1px solid #f0f0f0; margin-bottom:20px; flex-wrap:wrap; }
+.detail-stat { text-align:center; }
+.detail-stat-val { font-family:'Playfair Display',serif; font-size:20px; color:var(--leaf); }
+.detail-stat-lbl { font-size:10px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); }
+.detail-desc { font-size:14px; color:var(--muted); line-height:1.8; margin-bottom:24px; }
+.detail-section-label { font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.8px; color:var(--dark); margin-bottom:12px; }
+.ingredients-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:24px; }
+.ingredient { display:flex; gap:8px; font-size:13px; align-items:flex-start; padding:6px 0; border-bottom:1px solid #f8f8f8; }
+.ingredient::before { content:'·'; color:var(--leaf-light); font-size:16px; line-height:1.1; }
+.steps-list { display:flex; flex-direction:column; gap:14px; margin-bottom:24px; }
+.step { display:flex; gap:14px; }
+.step-num { width:28px; height:28px; min-width:28px; border-radius:50%; background:var(--leaf); color:white; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; margin-top:2px; }
+.step-text { font-size:13px; line-height:1.7; color:var(--dark); padding-top:4px; }
+.detail-tags { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:20px; }
+.detail-tag { font-size:11px; background:var(--leaf-pale); color:var(--leaf); padding:4px 12px; border-radius:100px; }
+.detail-actions { display:flex; gap:10px; padding-top:16px; border-top:1px solid #f0f0f0; flex-wrap:wrap; }
+.btn-detail-primary { flex:1; background:var(--leaf); color:white; border:none; border-radius:100px; padding:12px; font-size:13px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; min-width:120px; }
+.btn-detail-secondary { background:var(--leaf-pale); color:var(--leaf); border:none; border-radius:100px; padding:12px 20px; font-size:13px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; }
+.wfpb-check { display:flex; align-items:center; gap:8px; background:var(--leaf-xpale); border-radius:10px; padding:10px 14px; margin-bottom:20px; font-size:13px; color:var(--leaf); }
+
+/* PRINT STYLES */
+@media print {
+  nav, .page-tabs, .detail-hero-actions, .detail-close, .detail-actions, .inapp-filter-bar, .inapp-header-actions { display:none!important; }
+  .detail-overlay { position:static; opacity:1; pointer-events:all; padding:0; background:white; }
+  .detail-modal { border-radius:0; box-shadow:none; max-width:100%; }
+  body { background:white; }
+}
+
+@media (max-width:768px) {
+  nav, .page-tabs, .inapp-header, .inapp-filter-bar, .inapp-grid, .external-header, .ext-filter-bar, .ext-grid, .notice { padding-left:20px; padding-right:20px; }
+  .ai-section { padding:32px 20px; }
+  .ingredients-grid { grid-template-columns:1fr; }
+  .detail-body { padding:20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">APB <em>🌿</em></div>
+  
+  <a href="apb-nearby.html" class="nav-link">Find Food</a>
+  <a href="apb-recipes-feed.html" class="nav-link active">Recipes</a>
+  <a href="apb-blog.html" class="nav-link">Blog</a>
+  <a href="apb-products.html" class="nav-link">Products</a>
+  <a href="apb-recipe-book.html" class="nav-link">My Book</a>
+  <div class="nav-avatar">D</div>
+</nav>
+
+<!-- PAGE TABS -->
+<div class="page-tabs">
+  <button class="page-tab" onclick="showSection('ai',this)">✨ Recipe Suggestions <span class="tab-count">3</span></button>
+  <button class="page-tab" onclick="showSection('inapp',this)">🌱 APB Recipes <span class="tab-count">12</span></button>
+  <button class="page-tab active" onclick="showSection('external',this)">🔗 From the Web <span class="tab-count">26</span></button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 1: AI SUGGESTIONS
+══════════════════════════════════════════ -->
+<div class="section" id="section-ai">
+  <div class="ai-section">
+    <div class="ai-header">
+      <div class="ai-header-text">
+        <h2>What can you make <em>tonight?</em></h2>
+        <p>Tell APB what ingredients you have on hand and we'll suggest recipes you can make right now.</p>
+      </div>
+      <button class="ai-generate-btn" id="ai-gen-btn" onclick="generateAIRecipes()">
+        ✨ Get Suggestions
+      </button>
+    </div>
+
+    <div class="pantry-summary">
+      <div>
+        <div class="pantry-summary-label">Your ingredients</div>
+        <div class="pantry-items-preview">
+          <span class="pantry-chip">Red Lentils</span>
+          <span class="pantry-chip">Brown Rice</span>
+          <span class="pantry-chip">Sweet Potatoes</span>
+          <span class="pantry-chip">Chickpeas</span>
+          <span class="pantry-chip">Nutritional Yeast</span>
+          <span class="pantry-chip">Rolled Oats</span>
+          <span class="pantry-chip">Tahini</span>
+          <span class="pantry-chip">Garlic</span>
+          <span class="pantry-chip">Onion</span>
+          <span class="pantry-chip">Canned Tomatoes</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="ai-results-area" style="margin-top:28px;">
+      <div class="ai-empty">
+        <p>Choose or enter your ingredients above, then tap "Get Suggestions" and APB will suggest recipes that work with what you have.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 2: IN-APP RECIPES
+══════════════════════════════════════════ -->
+<div class="section" id="section-inapp">
+  <div class="inapp-header">
+    <div>
+      <h2>APB <em>Community Recipes</em></h2>
+      <p style="font-size:13px;color:var(--muted);margin-top:4px;">Full recipes stored in APB   ingredients and steps included.</p>
+    </div>
+    <div class="inapp-header-actions">
+      <div class="search-pill">
+        <input type="text" placeholder="Search recipes…" oninput="filterInApp(this.value)">
+      </div>
+      <button style="background:var(--leaf);color:white;border:none;border-radius:100px;padding:9px 18px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;" onclick="alert('Sign in to submit your recipe to the APB community!')">+ Submit Recipe</button>
+    </div>
+  </div>
+
+  <div class="inapp-filter-bar">
+    <button class="filter-pill active" onclick="filterInAppCat('all',this)">All</button>
+    <button class="filter-pill" onclick="filterInAppCat('breakfast',this)">Breakfast</button>
+    <button class="filter-pill" onclick="filterInAppCat('main',this)">Main Plates</button>
+    <button class="filter-pill" onclick="filterInAppCat('soup',this)">Soups</button>
+    <button class="filter-pill" onclick="filterInAppCat('sauce',this)">Sauces</button>
+    <button class="filter-pill" onclick="filterInAppCat('snack',this)">Snacks</button>
+    <button class="filter-pill" onclick="filterInAppCat('dessert',this)">Desserts</button>
+    <button class="filter-pill" onclick="filterInAppCat('featured',this)">⭐ Featured</button>
+  </div>
+
+  <div class="inapp-grid" id="inapp-grid">
+    <!-- Cards rendered by JS from INAPP_RECIPES -->
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 3: EXTERNAL FEED
+══════════════════════════════════════════ -->
+<div class="section active" id="section-external">
+  <div class="external-header">
+    <h2>Recipes from <em>the Web</em></h2>
+    <p>Curated links to the best WFPB recipes from trusted creators. We show the title, description, and tags   the full recipe lives on the creator's site. Click to visit. Sign in to save and rate.</p>
+    <div class="source-strip">
+      <a href="https://plantifulkiki.com" target="_blank" class="source-badge"><div class="source-dot" style="background:var(--leaf-light);"></div>Plantiful Kiki</a>
+      <a href="https://www.smartyplants.org/recipes" target="_blank" class="source-badge"><div class="source-dot" style="background:var(--sun);"></div>SmartyPlants</a>
+      <a href="https://nutritionfacts.org" target="_blank" class="source-badge"><div class="source-dot" style="background:#774936;"></div>NutritionFacts.org</a>
+      <a href="https://www.forksoverknives.com/recipes/" target="_blank" class="source-badge"><div class="source-dot" style="background:var(--leaf-mid);"></div>Forks Over Knives</a>
+    </div>
+  </div>
+
+  <div class="notice">
+    <span>🔗</span>
+    <span>All recipes below link to their original creators' websites   APB never reproduces their content. Click "View Full Recipe" to visit the source. Sign in to save to your Recipe Book and rate.</span>
+  </div>
+
+  <div class="ext-filter-bar">
+    <button class="filter-pill active" onclick="filterExt('all',this)">All</button>
+    <button class="filter-pill" onclick="filterExt('Breakfast',this)">Breakfast</button>
+    <button class="filter-pill" onclick="filterExt('Main Plates',this)">Main Plates</button>
+    <button class="filter-pill" onclick="filterExt('Soups & Salads',this)">Soups</button>
+    <button class="filter-pill" onclick="filterExt('Sauces & Dressings',this)">Sauces</button>
+    <button class="filter-pill" onclick="filterExt('Snacks',this)">Snacks</button>
+    <button class="filter-pill" onclick="filterExt('Desserts',this)">Desserts</button>
+    <button class="filter-pill" onclick="filterExt('video',this)">📺 Videos</button>
+  </div>
+
+  <div class="ext-grid" id="ext-grid">
+    <!-- Cards rendered by JS from EXTERNAL_RECIPES -->
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     RECIPE DETAIL MODAL
+══════════════════════════════════════════ -->
+<div class="detail-overlay" id="detail-overlay" onclick="if(event.target===this)closeDetail()">
+  <div class="detail-modal" id="detail-modal">
+    <!-- Populated by JS -->
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// DATA: IN-APP RECIPES (full content stored in APB)
+// ══════════════════════════════════════════
+const INAPP_RECIPES = [
+  {
+    id:'ia-001', cat:'main', catLabel:'Main Plates', emoji:'🍛',
+    bg:'linear-gradient(135deg,#d8f3dc,#b7e4c7)',
+    title:'Smoky Red Lentil Dal',
+    author:'by Maria R. · APB Community',
+    desc:'A deeply warming dal with smoked paprika, sweet potato, and red lentils. Ready in 30 minutes and meal-preps beautifully.',
+    time:'30 min', servings:'4',
+    badge:'featured', badgeLabel:'⭐ Featured',
+    tags:['oil-free','high-protein','meal-prep'],
+    wfpb: true,
+    ingredients:['1 cup red lentils, rinsed','2 sweet potatoes, peeled and cubed','1 can (14oz) diced tomatoes','1 medium onion, diced','3 garlic cloves, minced','1 tsp smoked paprika','1 tsp ground cumin','½ tsp ground turmeric','½ tsp ground coriander','3 cups vegetable broth (low sodium)','Juice of 1 lemon','Fresh cilantro to serve'],
+    steps:['Water-sauté onion and garlic in a large pot over medium heat for 5 minutes, adding broth by the tablespoon to prevent sticking.','Add smoked paprika, cumin, turmeric, and coriander. Stir for 1 minute until fragrant.','Add rinsed lentils, sweet potato cubes, diced tomatoes, and vegetable broth. Stir to combine.','Bring to a boil, then reduce heat and simmer uncovered for 20 minutes, stirring occasionally, until lentils are soft and sweet potato is tender.','Squeeze in lemon juice, taste and adjust seasoning. Serve over brown rice, garnished with fresh cilantro.']
+  },
+  {
+    id:'ia-002', cat:'breakfast', catLabel:'Breakfast', emoji:'🍵',
+    bg:'linear-gradient(135deg,#fff8e1,#fce4ec)',
+    title:'Golden Milk Oatmeal',
+    author:'by Diane · APB Community',
+    desc:'Creamy oats cooked in turmeric-spiced plant milk with ginger and cinnamon. Topped with banana, pumpkin seeds, and maple syrup.',
+    time:'10 min', servings:'1',
+    badge:'featured', badgeLabel:'⭐ Featured',
+    tags:['oil-free','breakfast','quick'],
+    wfpb: true,
+    ingredients:['½ cup rolled oats','1 cup oat milk (unsweetened)','1 tsp ground turmeric','½ tsp ground ginger','½ tsp ground cinnamon','Pinch of black pepper (activates turmeric)','1 ripe banana, sliced','1 tbsp pumpkin seeds','1 tsp pure maple syrup'],
+    steps:['Combine oat milk, turmeric, ginger, cinnamon, and black pepper in a small saucepan. Whisk together over medium heat until warm.','Add rolled oats and stir. Cook for 5 minutes, stirring frequently, until oats absorb the milk and reach your desired consistency.','Pour into a bowl and top with sliced banana, pumpkin seeds, and a drizzle of maple syrup. Serve immediately.']
+  },
+  {
+    id:'ia-003', cat:'soup', catLabel:'Soups', emoji:'🍲',
+    bg:'linear-gradient(135deg,#e8eaf6,#f3e5f5)',
+    title:'Chunky Vegetable Minestrone',
+    author:'by James K. · APB Community',
+    desc:'A hearty Italian-inspired soup loaded with cannellini beans, zucchini, kale, and whole wheat pasta. One pot, under 40 minutes.',
+    time:'38 min', servings:'6',
+    badge:'community', badgeLabel:'Community',
+    tags:['oil-free','high-fiber','family-friendly'],
+    wfpb: true,
+    ingredients:['1 can (15oz) cannellini beans, drained','1 can (14oz) diced tomatoes','2 medium zucchini, diced','2 cups kale, roughly chopped','1 medium onion, diced','3 garlic cloves, minced','2 medium carrots, sliced','2 celery stalks, sliced','½ cup whole wheat small pasta (ditalini or elbow)','4 cups vegetable broth','1 tsp dried oregano','1 tsp dried basil','Salt and pepper to taste'],
+    steps:['Water-sauté onion, carrot, celery, and garlic in a large pot over medium heat for 7 minutes.','Add diced tomatoes, vegetable broth, oregano, and basil. Bring to a boil.','Add zucchini and pasta. Cook for 10 minutes until pasta is nearly al dente.','Add cannellini beans and kale. Simmer for 5 more minutes until kale is wilted and pasta is cooked through.','Season with salt and pepper. Serve hot with a squeeze of lemon if desired.']
+  },
+  {
+    id:'ia-004', cat:'sauce', catLabel:'Sauces & Dressings', emoji:'🫙',
+    bg:'linear-gradient(135deg,#fff3e0,#fce4ec)',
+    title:'Oil-Free Tahini Dressing',
+    author:'by Sandra M. · APB Community',
+    desc:'A creamy, tangy tahini dressing that goes with everything   grain bowls, salads, roasted vegetables. No oil, just whole food goodness.',
+    time:'5 min', servings:'8',
+    badge:'community', badgeLabel:'Community',
+    tags:['oil-free','quick','versatile','raw'],
+    wfpb: true,
+    ingredients:['¼ cup tahini (100% sesame, no oil added)','Juice of 1 large lemon','2 tbsp apple cider vinegar','1 tbsp pure maple syrup','1 small garlic clove, minced','3-4 tbsp warm water (to thin)','Salt to taste'],
+    steps:['Combine tahini, lemon juice, apple cider vinegar, maple syrup, and garlic in a small bowl or jar.','Whisk together   the mixture will seize up at first, keep whisking.','Add warm water one tablespoon at a time, whisking until you reach a pourable but creamy consistency.','Taste and adjust   more lemon for tang, more maple for sweetness, more water for thinner consistency. Store refrigerated for up to 1 week.']
+  },
+  {
+    id:'ia-005', cat:'main', catLabel:'Main Plates', emoji:'🥗',
+    bg:'linear-gradient(135deg,#d8f3dc,#e8f5e9)',
+    title:'Rainbow Quinoa Power Bowl',
+    author:'by Diane · APB Community',
+    desc:'A vibrant bowl with fluffy quinoa, shredded beet, edamame, roasted red pepper, cucumber, and oil-free tahini dressing. Lunch or dinner in 20 minutes.',
+    time:'20 min', servings:'2',
+    badge:'featured', badgeLabel:'⭐ Featured',
+    tags:['oil-free','high-protein','gluten-free','quick'],
+    wfpb: true,
+    ingredients:['1 cup cooked quinoa (cooled)','½ cup shredded raw beet','½ cup shelled edamame (thawed if frozen)','½ cup cucumber, diced','1 roasted red pepper, sliced','2 cups mixed greens','2 tbsp Oil-Free Tahini Dressing (see sauce recipes)','Fresh herbs to garnish (parsley or cilantro)','Black sesame seeds to garnish'],
+    steps:['Divide cooked, cooled quinoa between two bowls as the base.','Arrange shredded beet, edamame, cucumber, roasted red pepper, and mixed greens over the quinoa in sections   each ingredient in its own color zone for the rainbow effect.','Drizzle generously with Oil-Free Tahini Dressing.','Garnish with fresh herbs and black sesame seeds. Serve immediately.']
+  },
+  {
+    id:'ia-006', cat:'breakfast', catLabel:'Breakfast', emoji:'🫐',
+    bg:'linear-gradient(135deg,#e8eaf6,#dce8ff)',
+    title:'Blueberry Banana Overnight Oats',
+    author:'by Priya T. · APB Community',
+    desc:'Five ingredients, five minutes prep, zero cooking. A creamy no-cook overnight oat bowl that\'s ready the moment you wake up.',
+    time:'5 min + overnight', servings:'1',
+    badge:'community', badgeLabel:'Community',
+    tags:['oil-free','no-cook','meal-prep','breakfast'],
+    wfpb: true,
+    ingredients:['½ cup rolled oats','¾ cup oat milk (unsweetened)','1 ripe banana, mashed','½ cup fresh or frozen blueberries','1 tsp chia seeds','½ tsp vanilla extract (alcohol-free)','Pinch of cinnamon'],
+    steps:['Mash the banana in a jar or container until smooth.','Add oat milk, vanilla, and cinnamon to the mashed banana and stir well.','Add rolled oats and chia seeds. Stir until fully combined.','Top with blueberries. Cover and refrigerate overnight (at least 6 hours).','In the morning, stir, add a splash more oat milk if too thick, and enjoy cold or gently warmed.']
+  },
+  {
+    id:'ia-007', cat:'snack', catLabel:'Snacks', emoji:'🫘',
+    bg:'linear-gradient(135deg,#fff3e0,#ffe0b2)',
+    title:'Smoky Roasted Chickpeas',
+    author:'by James K. · APB Community',
+    desc:'Crunchy, addictive, and packed with protein. These oven-roasted chickpeas are seasoned with smoked paprika and cumin   the perfect WFPB snack.',
+    time:'35 min', servings:'4',
+    badge:'community', badgeLabel:'Community',
+    tags:['oil-free','high-protein','snack','kid-friendly'],
+    wfpb: true,
+    ingredients:['2 cans (15oz each) chickpeas, drained and rinsed','1 tsp smoked paprika','1 tsp ground cumin','½ tsp garlic powder','½ tsp onion powder','Salt to taste','1 tbsp apple cider vinegar (helps spices adhere without oil)'],
+    steps:['Preheat oven to 400°F (200°C). Drain and rinse chickpeas, then spread on a clean kitchen towel and pat very dry   the drier they are, the crunchier they get.','Toss completely dry chickpeas with apple cider vinegar, smoked paprika, cumin, garlic powder, onion powder, and salt in a large bowl.','Spread in a single layer on a parchment-lined baking sheet.','Roast for 30-35 minutes, shaking the pan halfway through, until golden and crispy.','Let cool completely on the pan   they crisp up further as they cool. Store in an open container at room temperature for up to 3 days.']
+  },
+  {
+    id:'ia-008', cat:'dessert', catLabel:'Desserts', emoji:'🍫',
+    bg:'linear-gradient(135deg,#3d1a0d,#6b2d0e)',
+    title:'Chocolate Banana Nice Cream',
+    author:'by Maria R. · APB Community',
+    desc:'Three ingredients. Two minutes. Pure joy. Frozen bananas blended with raw cacao powder into a rich, creamy soft-serve that tastes like it shouldn\'t be this good for you.',
+    time:'2 min (+ freeze bananas)', servings:'2',
+    badge:'featured', badgeLabel:'⭐ Featured',
+    tags:['oil-free','no-refined-sugar','dessert','kid-friendly'],
+    wfpb: true,
+    ingredients:['3 ripe bananas, peeled, sliced, and frozen overnight','2 tbsp raw cacao powder (or cocoa powder)','2 tbsp oat milk (or just enough to blend)','Optional: ½ tsp vanilla extract'],
+    steps:['Freeze peeled, sliced bananas for at least 8 hours or overnight. The riper the bananas, the sweeter and creamier the result.','Add frozen banana slices, cacao powder, and oat milk to a high-speed blender or food processor.','Blend, stopping to scrape down the sides, until completely smooth and creamy. Add oat milk one teaspoon at a time only if needed   too much makes it icy.','Serve immediately as soft-serve, or freeze for 30 more minutes for a scoopable texture. Top with banana slices or a sprinkle of cacao nibs.']
+  },
+  {
+    id:'ia-009', cat:'main', catLabel:'Main Plates', emoji:'🌮',
+    bg:'linear-gradient(135deg,#fce4ec,#ffccbc)',
+    title:'Black Bean Tacos with Mango Salsa',
+    author:'by Sandra M. · APB Community',
+    desc:'Corn tortillas filled with smoky black beans, crisp cabbage slaw, and a bright fresh mango salsa. Ready in 20 minutes   no oil anywhere.',
+    time:'20 min', servings:'3',
+    badge:'community', badgeLabel:'Community',
+    tags:['oil-free','gluten-free','quick','family-friendly'],
+    wfpb: true,
+    ingredients:['6 corn tortillas (100% corn, no lard)','1 can (15oz) black beans, drained','1 tsp ground cumin','1 tsp smoked paprika','1 mango, diced','½ red onion, finely diced','1 jalapeño, seeded and minced','Juice of 1 lime','Fresh cilantro, chopped','1 cup red cabbage, thinly shredded','Lime wedges to serve'],
+    steps:['Make the mango salsa: combine diced mango, red onion, jalapeño, lime juice, and cilantro. Season with salt and set aside.','Heat black beans in a pan over medium heat with cumin, smoked paprika, and a splash of water. Mash lightly   you want about half smooth, half whole beans.','Warm corn tortillas directly over a gas burner or in a dry skillet until lightly charred and pliable.','Assemble: spoon black beans onto each tortilla, top with red cabbage slaw, and finish with a generous heap of mango salsa. Serve with lime wedges.']
+  },
+  {
+    id:'ia-010', cat:'soup', catLabel:'Soups', emoji:'🥣',
+    bg:'linear-gradient(135deg,#e8f5e9,#c8e6c9)',
+    title:'Creamy Broccoli Soup',
+    author:'by Priya T. · APB Community',
+    desc:'Velvety smooth and deeply nourishing. This oil-free broccoli soup gets its creaminess from white beans and potato   not cream or cashews.',
+    time:'30 min', servings:'4',
+    badge:'community', badgeLabel:'Community',
+    tags:['oil-free','nut-free','creamy','comfort-food'],
+    wfpb: true,
+    ingredients:['2 large heads of broccoli, chopped (including stems)','1 can (15oz) white beans (cannellini), drained','1 medium potato, peeled and diced','1 medium onion, diced','3 garlic cloves, minced','3 cups vegetable broth','1 tbsp nutritional yeast','Juice of ½ lemon','Salt and white pepper to taste'],
+    steps:['Water-sauté onion and garlic in a large pot for 5 minutes over medium heat.','Add diced potato and vegetable broth. Bring to a boil and cook for 8 minutes until potato begins to soften.','Add broccoli florets and stems. Cook for 8 more minutes until completely tender.','Add white beans and nutritional yeast. Remove from heat.','Blend until completely smooth using an immersion blender or in batches in a regular blender. Add lemon juice, season with salt and white pepper, and serve.']
+  },
+  {
+    id:'ia-011', cat:'sauce', catLabel:'Sauces & Dressings', emoji:'🧀',
+    bg:'linear-gradient(135deg,#fff8e1,#fce4ec)',
+    title:'Potato & Carrot Cheese Sauce',
+    author:'by Diane · APB Community',
+    desc:'Inspired by Plantiful Kiki\'s famous sauce   a creamy, nut-free cheese sauce built on potato and carrot. Goes on nachos, pasta, broccoli, everything.',
+    time:'25 min', servings:'8',
+    badge:'featured', badgeLabel:'⭐ Featured',
+    tags:['oil-free','nut-free','versatile'],
+    wfpb: true,
+    ingredients:['2 medium Yukon gold potatoes, peeled and cubed','1 large carrot, chopped','¼ cup nutritional yeast','2 tbsp lemon juice','1 tsp garlic powder','1 tsp onion powder','½ tsp smoked paprika','½ tsp salt','¼ tsp turmeric (for color)','½ cup cooking water from the potatoes'],
+    steps:['Boil potato and carrot pieces together in a pot of water until completely tender, about 15 minutes. Reserve ½ cup of the cooking water before draining.','Transfer cooked potato and carrot to a high-speed blender. Add nutritional yeast, lemon juice, garlic powder, onion powder, smoked paprika, turmeric, and salt.','Add ¼ cup of the reserved cooking water and blend until completely silky smooth.','Add more cooking water a tablespoon at a time until you reach a thick, pourable consistency. Taste and adjust seasoning.','Use immediately or store refrigerated for up to 5 days. Reheat gently with a splash of water.']
+  },
+  {
+    id:'ia-012', cat:'snack', catLabel:'Snacks', emoji:'🌿',
+    bg:'linear-gradient(135deg,#d8f3dc,#b7e4c7)',
+    title:'Sweet Potato & Black Bean Dip',
+    author:'by James K. · APB Community',
+    desc:'A thick, smoky dip with roasted sweet potato and black beans. Better than hummus, great with raw veggies, and completely oil-free.',
+    time:'45 min', servings:'6',
+    badge:'new', badgeLabel:'New',
+    tags:['oil-free','high-fiber','snack','party-food'],
+    wfpb: true,
+    ingredients:['1 large sweet potato, roasted','1 can (15oz) black beans, drained','2 tbsp tahini','Juice of 1 lime','1 tsp smoked paprika','1 tsp ground cumin','1 garlic clove','Salt to taste','Fresh cilantro and lime wedges to serve'],
+    steps:['Roast sweet potato: pierce all over with a fork, bake at 400°F for 45 minutes until soft. Let cool slightly, then peel.','Add sweet potato flesh, black beans, tahini, lime juice, smoked paprika, cumin, and garlic to a food processor.','Blend until smooth   it will be thick. Add water one tablespoon at a time if needed.','Season with salt, taste, and adjust. Serve topped with fresh cilantro, a sprinkle of smoked paprika, and lime wedges alongside raw vegetables.']
+  }
+];
+
+// ══════════════════════════════════════════
+// DATA: EXTERNAL RECIPES (link out to creator sites)
+// ══════════════════════════════════════════
+const EXTERNAL_RECIPES = [
+  { id:'pk-001', source:'Plantiful Kiki', sourceDot:'#52b788', cat:'Sauces & Dressings', emoji:'🧀', bg:'linear-gradient(135deg,#fff8e1,#fce4ec)', title:'Vegan Cheese Sauce (The Yummiest Ever)', desc:'Potato-and-carrot blended into a silky, cheesy sauce that has thousands of five-star fans   including non-vegans and picky toddlers. APB founder tested and confirmed: it really is that good. Two versions: original with cashews, or nut-free with cannellini beans. Lasts up to 10 days in the fridge. APB tips: Bragg is the nutritional yeast brand we use and widely available. Do not freeze   reviewers report it loses its creamy texture.', meta:'⏱ 25 min · yields ~9 oz', url:'https://plantifulkiki.com/the-yummiest-cheese-sauce-ever/', tags:['Oil-Free','Nut-Free','Kid-Friendly','APB Tested'], apbTested:true },
+  { id:'pk-002', source:'Plantiful Kiki', sourceDot:'#52b788', cat:'Soups & Salads', emoji:'🍄', bg:'linear-gradient(135deg,#e8eaf6,#f3e5f5)', title:'Hungarian Mushroom Soup', desc:'A rich, deeply savory mushroom soup ready in 15 minutes. Perfect over mashed potatoes.', meta:'⏱ 15 min · 2 servings', url:'https://plantifulkiki.com/hungarian-mushroom-soup/', tags:['Oil-Free','Quick'] },
+  { id:'pk-003', source:'Plantiful Kiki', sourceDot:'#52b788', cat:'Main Plates', emoji:'🌶️', bg:'linear-gradient(135deg,#fce4ec,#ffccbc)', title:"Nana's Chili", desc:'Hearty family-style chili with kidney beans, tomatoes, and peppers. 22g protein per serving.', meta:'⏱ 40 min · 4-6 servings', url:'https://plantifulkiki.com/nanas-chili/', tags:['Oil-Free','High Protein','Family'] },
+  { id:'pk-004', source:'Plantiful Kiki', sourceDot:'#52b788', cat:'Main Plates', emoji:'🥦', bg:'linear-gradient(135deg,#e8f5e9,#c8e6c9)', title:'Vegetable Stir Fry', desc:'A fast, colorful stir fry with shiitake mushrooms, broccoli, and a sweet-savory sauce. Ready in 20 minutes.', meta:'⏱ 20 min · 2 servings', url:'https://plantifulkiki.com/vegetable-stir-fry/', tags:['Oil-Free','Quick','GF option'] },
+  { id:'pk-005', source:'Plantiful Kiki', sourceDot:'#52b788', cat:'Snacks', emoji:'🌮', bg:'linear-gradient(135deg,#fff3e0,#fce4ec)', title:'Plant-Based Nachos', desc:'Crispy corn tortillas with cauliflower rice, cheese sauce, and black beans. Ready in 20 minutes.', meta:'⏱ 20 min · 1 serving', url:'https://plantifulkiki.com/plant-based-nachos/', tags:['Oil-Free','Quick','Kid-Friendly'] },
+  { id:'pk-006', source:'Plantiful Kiki', sourceDot:'#52b788', cat:'Breakfast', emoji:'🥣', bg:'linear-gradient(135deg,#e8f5e9,#f1f8e9)', title:'Coconut Almond Granola (GF)', desc:'5-ingredient granola with rolled oats, maple syrup, almonds, and coconut. Just 116 calories per serving.', meta:'⏱ 25 min · 14 servings', url:'https://plantifulkiki.com/coconut-almond-granola-gf/', tags:['Oil-Free','GF','Meal Prep'] },
+  { id:'pk-007', source:'Plantiful Kiki', sourceDot:'#52b788', cat:'Snacks', emoji:'🫙', bg:'linear-gradient(135deg,#e8eaf6,#ede7f6)', title:'Spinach Artichoke Dip', desc:'Creamy spinach artichoke dip built on potato-carrot base. Oil-free, nut-free, under 100 calories per serving.', meta:'⏱ 25 min · 8 servings', url:'https://plantifulkiki.com/spinach-artichoke-dip/', tags:['Oil-Free','Nut-Free'] },
+  { id:'pk-010', source:'Plantiful Kiki', sourceDot:'#52b788', cat:'Desserts', emoji:'🍫', bg:'linear-gradient(135deg,#3e2723,#4e342e)', title:'Double Chocolate Mug Cake', desc:'Hot, gooey chocolate cake in a mug   ready in under 5 minutes. Sometimes you just need a sweet treat and this is the one. APB tips: use white wheat flour and swap the sugar for 1 tbsp maple syrup. The chocolate chips give it that molten lava center   you could skip them but it would not be the same.', meta:'⏱ 5 min · 1 serving', url:'https://plantifulkiki.com/double-chocolate-mug-cake/', tags:['Oil-Free','Dessert','Quick','APB Tested'], apbTested:true },
+  { id:'pk-009', source:'Plantiful Kiki', sourceDot:'#52b788', cat:'Breakfast', emoji:'🧇', bg:'linear-gradient(135deg,#ffe0b2,#fff3e0)', title:'Vanilla Pumpkin Spice Waffles', desc:'Oats, pumpkin puree, bananas, and pumpkin pie spice blended smooth and cooked in a waffle iron. Cozy, naturally sweet, freezer-friendly. APB tips: always make a double batch   they freeze and reheat beautifully. The batter can stick, so a light spray on your waffle iron helps.', meta:'⏱ 13 min · 10-12 waffles', url:'https://plantifulkiki.com/vanilla-pumpkin-spice-waffles/', tags:['Oil-Free','Breakfast','APB Tested','Freezer-Friendly'], apbTested:true },
+  { id:'pk-008', source:'Plantiful Kiki', sourceDot:'#52b788', cat:'Main Plates', emoji:'🍕', bg:'linear-gradient(135deg,#ffccbc,#ffe0b2)', title:'Whole Wheat Plant-Based Pizza', desc:'Oil-free whole wheat dough made with applesauce, topped with roasted veggies and cheese sauce.', meta:'⏱ 55 min · 6-8 servings', url:'https://plantifulkiki.com/pizza/', tags:['Oil-Free','Family','Weekend'] },
+  { id:'sp-000', source:'SmartyPlants', sourceDot:'#e9c46a', cat:'Breakfast', emoji:'🥜', bg:'linear-gradient(135deg,#fff8e1,#fce4b2)', title:'Peanut Butter Granola', desc:'Oats coated in blended peanut butter, maple syrup, and Medjool dates, baked low and slow. APB tip: smaller pan = soft and chewy like a no-bake cookie. Happy accident, highly recommended.', meta:'⏱ 10 min prep · 4 cups', url:'https://smartyplants.org/recipes/peanut-butter-granola', tags:['Oil-Free','Snack','APB Tested'], apbTested:true },
+  { id:'sp-001', source:'SmartyPlants', sourceDot:'#e9c46a', cat:'Breakfast', emoji:'🍳', bg:'linear-gradient(135deg,#fff8e1,#f0f4c3)', title:'Tofu Scramble', desc:'Savory, protein-packed tofu scramble with mushrooms, spinach, tomatoes, and nutritional yeast.', meta:'⏱ 25 min · 2 servings', url:'https://www.smartyplants.org/recipes/tofu-scramble', tags:['Oil-Free','High Protein'] },
+  { id:'sp-002', source:'SmartyPlants', sourceDot:'#e9c46a', cat:'Soups & Salads', emoji:'🍲', bg:'linear-gradient(135deg,#fff3e0,#ffe0b2)', title:'Red Lentil Soup with Garlic and Rosemary', desc:'Silky, fragrant red lentil soup with whole roasted garlic cloves and fresh rosemary.', meta:'⏱ 40 min · 4-6 servings', url:'https://smartyplants.org/recipes/red-lentil-soup-with-garlic-and-rosemary', tags:['Oil-Free','High Fiber','Meal Prep'] },
+  { id:'sp-003', source:'SmartyPlants', sourceDot:'#e9c46a', cat:'Desserts', emoji:'🍦', bg:'linear-gradient(135deg,#e8eaf6,#ede7f6)', title:'Peanut Butter Nice Cream', desc:'Frozen bananas blended with peanut butter and plant milk. 3 ingredients, 2 minutes, completely guilt-free.', meta:'⏱ 2 min · 2 servings', url:'https://www.smartyplants.org/public/recipes/peanut-butter-nice-cream', tags:['Oil-Free','Quick','Kid-Friendly'] },
+  { id:'sp-004', source:'SmartyPlants', sourceDot:'#e9c46a', cat:'Breakfast', emoji:'🥕', bg:'linear-gradient(135deg,#fff3e0,#ffe0b2)', title:'Carrot Cake Overnight Oats', desc:'Rolled oats with shredded carrot, cinnamon, walnuts, and maple syrup. Tastes like dessert for breakfast.', meta:'⏱ 5 min + overnight · 1 serving', url:'https://www.smartyplants.org/recipes/carrot-cake-overnight-oats', tags:['Oil-Free','No-Cook','Meal Prep'] },
+  { id:'sp-009', source:'SmartyPlants', sourceDot:'#e9c46a', cat:'Soups & Salads', emoji:'🥦', bg:'linear-gradient(135deg,#e8f5e9,#c8e6c9)', title:'Cream of Broccoli Soup with Crunchy Croutons', desc:'Everything in one pot, half blended into a cashew-and-miso cream, half left chunky. Discovered during the 28-Day Kickstart and instantly a favorite. APB tips: add 2 cubed potatoes for a heartier version, or blend it all smooth.', meta:'⏱ 40 min · 4 servings', url:'https://smartyplants.org/recipes/cream-of-broccoli-soup', tags:['Oil-Free','Comfort Food','APB Tested'], apbTested:true },
+  { id:'sp-010', source:'SmartyPlants', sourceDot:'#e9c46a', cat:'Sauces & Dressings', emoji:'🍖', bg:'linear-gradient(135deg,#fbe9e7,#ffccbc)', title:'Sweet & Sassy BBQ Sauce', desc:'Everything into one saucepan, simmer 10 minutes, done. Sweet, smoky, tangy, and completely oil-free. APB tips: triple the recipe and freeze in ice cube trays   perfect individual portions ready whenever you need them. Also check your tahini label since some brands have added oil.', meta:'⏱ 15 min · 1 cup', url:'https://smartyplants.org/recipes/sweet-and-sassy-bbq-Sauce', tags:['Oil-Free','Sauce','Freezer-Friendly','APB Tested'], apbTested:true },
+  { id:'sp-011', source:'SmartyPlants', sourceDot:'#e9c46a', cat:'Main Plates', emoji:'🍗', bg:'linear-gradient(135deg,#fff8e1,#ffe0b2)', title:'Chicken-Style Soy Curls', desc:'Whole soybeans dehydrated into strips, rehydrated and pan-seared until chewy with crispy edges   not a faux meat product, a real whole food. Great introduction to soy curls if you have never tried them. APB tips: toss with the Sweet & Sassy BBQ Sauce for an incredible sandwich or hearty main course. Butlers is the brand to look for   available at some grocery stores or on Amazon if you cannot find it locally.', meta:'⏱ 50 min · 4 servings', url:'https://smartyplants.org/recipes/chicken-style-soy-curls', tags:['Oil-Free','High Protein','APB Tested','Meat Alternative'], apbTested:true },
+  { id:'mm-001', source:'Monkey and Me', sourceDot:'#a5c4a1', cat:'Main Plates', emoji:'🍛', bg:'linear-gradient(135deg,#e8f5e9,#c8e6c9)', title:'Mix Saabut Dahl (Mixed Bean Curry)', desc:'A hearty Indian-inspired mixed bean curry loaded with black beans, cannellini beans, kidney beans, aromatic spices, ginger, and garlic. Cozy comfort food that warms you from the inside out. Whole food, oil free, gluten free.', meta:'⏱ 45 min · 4-6 servings', url:'https://monkeyandmekitchenadventures.com/mix-saabut-dahl-mixed-bean-curry/', tags:['Oil-Free','GF','High Protein','Comfort Food'] },
+  { id:'mm-002', source:'Monkey and Me', sourceDot:'#a5c4a1', cat:'Soups & Salads', emoji:'🫐', bg:'linear-gradient(135deg,#e3f2fd,#e8f5e9)', title:'Easy Summer Almond Blueberry Salad', desc:'Fresh arugula, blueberries, almonds, and green onions with a simple lemon tahini dressing. Light, vibrant, and ready in minutes. Oil free, refined sugar free, gluten free.', meta:'⏱ 15 min · 2-4 servings', url:'https://monkeyandmekitchenadventures.com/easy-summer-almond-blueberry-salad/', tags:['Oil-Free','GF','Quick','Salad'] },
+  { id:'mm-003', source:'Monkey and Me', sourceDot:'#a5c4a1', cat:'Main Plates', emoji:'🍚', bg:'linear-gradient(135deg,#fff8e1,#fce4b2)', title:'Fast and Easy Persian Saffron Bean and Rice Skillet', desc:'Golden saffron woven through creamy white beans and brown rice with tomato sauce and warming spices. A one-pan weeknight dinner that feels special without any fuss. Oil free, gluten free.', meta:'⏱ 30 min · 4 servings', url:'https://monkeyandmekitchenadventures.com/fast-and-easy-persian-saffron-bean-and-rice-skillet/', tags:['Oil-Free','GF','One Pan','Meal Prep'] },
+  { id:'mm-009', source:'Monkey and Me', sourceDot:'#a5c4a1', cat:'Desserts', emoji:'🍪', bg:'linear-gradient(135deg,#3e2723,#4e342e)', title:'Vegan Peanut Butter Chocolate Chip Cookies', desc:'Rolled oats, almond flour, natural peanut butter, maple syrup, and vegan chocolate chips. Oil free, gluten free, refined sugar free. APB tested and loved. Use natural peanut butter with no added oil. APB tip: when you open a new jar, stir the oil in thoroughly and then refrigerate to keep it from separating again. They freeze beautifully. If they soften in storage, pop them back in a 350F oven for a few minutes.', meta:'⏱ 20 min · about 18 cookies', url:'https://monkeyandmekitchenadventures.com/vegan-peanut-butter-chocolate-chip-cookies/', tags:['Oil-Free','GF','Dessert','APB Tested','Freezer-Friendly'], apbTested:true },
+  { id:'mm-004', source:'Monkey and Me', sourceDot:'#a5c4a1', cat:'Desserts', emoji:'🍫', bg:'linear-gradient(135deg,#3e2723,#4e342e)', title:'Chocolate Pecan Date Tahini Bars', desc:'Sweet Medjool dates and crunchy pecans layered with nutty tahini and topped with rich vegan chocolate. Completely oil free, refined sugar free, and gluten free. The kind of snack you crave.', meta:'⏱ 20 min + chill · 12 bars', url:'https://monkeyandmekitchenadventures.com/chocolate-pecan-date-tahini-bars/', tags:['Oil-Free','GF','Dessert','No-Bake'] },
+  { id:'mm-005', source:'Monkey and Me', sourceDot:'#a5c4a1', cat:'Soups & Salads', emoji:'🫒', bg:'linear-gradient(135deg,#f3e5f5,#e8eaf6)', title:'Mediterranean Celery Olive Salad', desc:'Crisp celery, marinated olives, chickpeas, and Medjool dates with a lemon tahini dressing. A satisfying balance of salty, sweet, and crunchy. Oil free, gluten free.', meta:'⏱ 15 min · 4 servings', url:'https://monkeyandmekitchenadventures.com/mediterranean-celery-olive-salad/', tags:['Oil-Free','GF','Quick','Salad'] },
+  { id:'mm-006', source:'Monkey and Me', sourceDot:'#a5c4a1', cat:'Main Plates', emoji:'🍚', bg:'linear-gradient(135deg,#e8f5e9,#e3f2fd)', title:'Healthy Greek Rice Bean and Olive Skillet', desc:'Fluffy brown rice with cannellini beans, cherry tomatoes, green olives, lemon, and nutritional yeast. Mediterranean comfort food that is hearty, bright, and completely oil free. Great for meal prep.', meta:'⏱ 35 min · 4 servings', url:'https://monkeyandmekitchenadventures.com/healthy-greek-rice-bean-and-olive-skillet/', tags:['Oil-Free','GF','One Pan','Meal Prep'] },
+  { id:'mm-007', source:'Monkey and Me', sourceDot:'#a5c4a1', cat:'Breakfast', emoji:'🧁', bg:'linear-gradient(135deg,#fce4ec,#fff3e0)', title:'Healthy Orange Cranberry Wheat Bran Muffins', desc:'Hearty wheat bran muffins with orange juice, dried cranberries, unsweetened applesauce, and maple syrup. Oil free, naturally sweetened, and perfect for meal prep mornings.', meta:'⏱ 35 min · 12 muffins', url:'https://monkeyandmekitchenadventures.com/healthy-orange-cranberry-wheat-bran-muffins/', tags:['Oil-Free','Breakfast','Meal Prep'] },
+  { id:'mm-008', source:'Monkey and Me', sourceDot:'#a5c4a1', cat:'Soups & Salads', emoji:'🌿', bg:'linear-gradient(135deg,#e8f5e9,#f1f8e9)', title:'Fresh Asparagus Pea Almond Salad', desc:'Tender asparagus, sweet peas, and toasted almonds with a lemon tahini dressing. Garden-fresh flavors in every bite. Oil free, gluten free, and ready in 15 minutes.', meta:'⏱ 15 min · 2-4 servings', url:'https://monkeyandmekitchenadventures.com/fresh-asparagus-pea-almond-salad/', tags:['Oil-Free','GF','Quick','Salad'] },
+  { id:'vid-001', type:'video', source:'Plantiful Kiki', sourceDot:'#52b788', cat:'video', emoji:'▶️', bg:'linear-gradient(135deg,#1a2e1a,#0d150d)', title:'Easy Meals For Weight Loss   The Starch Solution', desc:'Kiki walks through a full day of easy starch-solution-style plant-based meals for weight loss.', meta:'YouTube · Plantiful Kiki', url:'https://www.youtube.com/watch?v=u3PvrPe2p6g', tags:['Weight Loss','Meal Ideas','Beginner'] },
+  { id:'vid-002', type:'video', source:'Plantiful Kiki', sourceDot:'#52b788', cat:'video', emoji:'▶️', bg:'linear-gradient(135deg,#1a2e1a,#0d150d)', title:'Easy Meals For Maximum Weight Loss', desc:'Kiki answers community questions on maximizing weight loss through plant-based eating, with a full day of meals.', meta:'YouTube · Plantiful Kiki', url:'https://www.youtube.com/watch?v=Q30VfybAwPc', tags:['Weight Loss','Q&A'] },
+  { id:'vid-003', type:'video', source:'NutritionFacts.org', sourceDot:'#774936', cat:'video', emoji:'🔬', bg:'linear-gradient(135deg,#1a1a2e,#0d0d1f)', title:"Dr. Greger's NutritionFacts.org Video Library", desc:"Thousands of short, science-backed videos on whole food plant-based nutrition. The why behind whole food plant-based eating.", meta:'YouTube · NutritionFacts.org', url:'https://www.youtube.com/user/NutritionFactsOrg', tags:['Science','Nutrition','Dr. Greger'] }
+];
+
+// ══════════════════════════════════════════
+// SECTION SWITCHING
+// ══════════════════════════════════════════
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.page-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('section-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ══════════════════════════════════════════
+// RENDER IN-APP RECIPES
+// ══════════════════════════════════════════
+function renderInApp(recipes) {
+  document.getElementById('inapp-grid').innerHTML = recipes.map(r => `
+    <div class="recipe-card" data-cat="${r.cat}" onclick="openDetail('${r.id}')">
+      <div class="recipe-card-img" style="background:${r.bg}">
+        ${r.emoji}
+        <div class="recipe-card-badge badge-${r.badge}">${r.badgeLabel}</div>
+        ${r.wfpb ? '<div class="recipe-card-wfpb">WFPB ✓</div>' : ''}
+      </div>
+      <div class="recipe-card-body">
+        <div class="recipe-cat">${r.catLabel}</div>
+        <div class="recipe-title">${r.title}</div>
+        <div class="recipe-desc">${r.desc}</div>
+        <div class="recipe-meta"><span>⏱ ${r.time}</span><span>🍽 ${r.servings} serv.</span></div>
+
+        <div class="recipe-tags">${r.tags.map(t => `<span class="rtag ${t==='oil-free'?'oil-free':t==='gluten-free'||t==='GF'?'gf':''}">${t}</span>`).join('')}</div>
+        <div class="recipe-card-footer">
+          <button class="recipe-card-btn" style="flex:1;background:var(--leaf);color:white;border:none;border-radius:8px;padding:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;" onclick="event.stopPropagation();openDetail('${r.id}')">View Recipe</button>
+          <button class="btn-recipe-save" onclick="event.stopPropagation();window.location.href='apb-signin.html'">♡</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function filterInAppCat(cat, btn) {
+  document.querySelectorAll('.inapp-filter-bar .filter-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered = cat === 'all' ? INAPP_RECIPES
+    : cat === 'featured' ? INAPP_RECIPES.filter(r => r.badge === 'featured')
+    : INAPP_RECIPES.filter(r => r.cat === cat);
+  renderInApp(filtered);
+}
+
+function filterInApp(q) {
+  const lc = q.toLowerCase();
+  const filtered = !q ? INAPP_RECIPES : INAPP_RECIPES.filter(r =>
+    r.title.toLowerCase().includes(lc) || r.desc.toLowerCase().includes(lc) || r.tags.some(t => t.toLowerCase().includes(lc))
+  );
+  renderInApp(filtered);
+}
+
+// ══════════════════════════════════════════
+// RECIPE DETAIL MODAL
+// ══════════════════════════════════════════
+let currentDetailId = null;
+function openDetail(id) {
+  currentDetailId = id;
+  const r = INAPP_RECIPES.find(r => r.id === id);
+  if (!r) return;
+  document.getElementById('detail-modal').innerHTML = `
+    <div class="detail-hero" style="background:${r.bg}">
+      ${r.emoji}
+      <button class="detail-close" onclick="closeDetail()">✕</button>
+      <div class="detail-hero-actions">
+        
+        <button class="detail-hero-btn" onclick="shareRecipe('${r.title}')">↗ Share</button>
+        <button class="detail-hero-btn" onclick="window.location.href='apb-signin.html'">♡ Save</button>
+      </div>
+    </div>
+    <div class="detail-body">
+      <div class="detail-category">${r.catLabel}</div>
+      <div class="detail-title">${r.title}</div>
+      <div class="detail-author">${r.author}</div>
+      <div class="wfpb-check">🌱 WFPB Compliant   whole food, plant-based, no oil, no refined ingredients</div>
+      <div class="detail-stats">
+        <div class="detail-stat"><div class="detail-stat-val">⏱ ${r.time}</div><div class="detail-stat-lbl">Total Time</div></div>
+        <div class="detail-stat"><div class="detail-stat-val">🍽 ${r.servings}</div><div class="detail-stat-lbl">Servings</div></div>
+
+      </div>
+      <div class="detail-tags">${r.tags.map(t => `<span class="detail-tag">${t}</span>`).join('')}</div>
+      <div class="detail-section-label">Ingredients</div>
+      <div class="ingredients-grid">${r.ingredients.map(i => `<div class="ingredient">${i}</div>`).join('')}</div>
+      <div class="detail-section-label">Instructions</div>
+      <div class="steps-list">${r.steps.map((s,i) => `<div class="step"><div class="step-num">${i+1}</div><div class="step-text">${s}</div></div>`).join('')}</div>
+      <div class="detail-actions">
+        <button class="btn-detail-primary" onclick="window.location.href='apb-signin.html'">♡ Save to Recipe Book</button>
+        
+        <button class="btn-detail-secondary" onclick="shareRecipe('${r.title}')">↗ Share</button>
+      </div>
+    </div>`;
+  document.getElementById('detail-overlay').classList.add('open');
+}
+
+function closeDetail() { document.getElementById('detail-overlay').classList.remove('open'); }
+function shareRecipe(title) { alert(`Share "${title}"\n\nIn the live app this generates a shareable deep link and social image card.`); }
+
+// Export AI-generated recipe as PDF (captures whatever is currently in the modal)
+function exportAIPDF() {
+  const body = document.querySelector('#detail-modal .detail-body');
+  if (!body) return;
+  const title = body.querySelector('.detail-title')?.textContent || 'APB_Recipe';
+  const filename = title.replace(/[^a-z0-9]/gi,'_').toLowerCase() + '_APB.pdf';
+  html2pdf().set({
+    margin:10, filename,
+    image:{ type:'jpeg', quality:.95 },
+    html2canvas:{ scale:2 },
+    jsPDF:{ unit:'mm', format:'a4', orientation:'portrait' }
+  }).from(body).save();
+}
+
+// ══════════════════════════════════════════
+// RENDER EXTERNAL RECIPES
+// ══════════════════════════════════════════
+function renderExternal(recipes) {
+  document.getElementById('ext-grid').innerHTML = recipes.map(r => `
+    <div class="ext-card" data-cat="${r.cat}">
+      <div class="ext-card-img" style="background:${r.bg}">
+        ${r.emoji}
+        <div class="ext-source-badge" style="background:rgba(255,255,255,.85);color:var(--dark);">${r.source}</div>
+        <div class="ext-wfpb">WFPB ✓</div>
+        ${r.apbTested ? '<div class="recipe-card-badge badge-community" style="bottom:auto;top:8px;left:8px;">✅ APB Tested</div>' : ''}
+      </div>
+      <div class="ext-card-body">
+        <div class="ext-cat">${r.cat === 'video' ? '📺 Video' : r.cat}</div>
+        <div class="ext-title">${r.title}</div>
+        <div class="ext-desc">${r.desc}</div>
+        <div class="ext-meta">${r.meta}</div>
+        <div class="ext-tags">${r.tags.map(t=>`<span class="ext-tag">${t}</span>`).join('')}</div>
+        <div class="ext-card-footer">
+          <a class="btn-ext-view" href="${r.url}" target="_blank">${r.type==='video'?'Watch on YouTube ↗':'View Full Recipe ↗'}</a>
+          <button class="btn-ext-save" onclick="window.location.href='apb-signin.html'">♡</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function filterExt(cat, btn) {
+  document.querySelectorAll('.ext-filter-bar .filter-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered = cat === 'all' ? EXTERNAL_RECIPES
+    : cat === 'video' ? EXTERNAL_RECIPES.filter(r => r.type === 'video')
+    : EXTERNAL_RECIPES.filter(r => r.cat === cat);
+  renderExternal(filtered);
+}
+
+// ══════════════════════════════════════════
+// AI RECIPE GENERATION
+// ══════════════════════════════════════════
+const ANTHROPIC_API_KEY = 'YOUR_ANTHROPIC_API_KEY';
+const pantryItems = ['red lentils','brown rice','sweet potatoes','chickpeas','nutritional yeast','rolled oats','tahini','garlic','onion','canned tomatoes'];
+
+async function generateAIRecipes() {
+  const btn = document.getElementById('ai-gen-btn');
+  const area = document.getElementById('ai-results-area');
+  btn.disabled = true;
+  btn.textContent = '✨ Generating…';
+  area.innerHTML = `<div class="ai-loading"><div class="ai-loading-icon">🌿</div><p>APB's AI is scanning your pantry and creating WFPB recipes…</p></div>`;
+
+  const prompt = `You are a WFPB recipe expert (Whole Food Plant Based No Oil). Based on these ingredients: ${pantryItems.join(', ')}, suggest some recipe ideas (as many as genuinely fit well).
+
+Respond ONLY with valid JSON in this exact format, no other text:
+[
+  {
+    "emoji": "🍛",
+    "title": "Recipe Name",
+    "uses": "Main ingredients used",
+    "time": "XX min",
+    "servings": "X",
+    "tags": ["oil-free","tag2"],
+    "teaser": "One sentence about why this recipe is great (max 15 words)"
+  }
+]
+
+Rules: all recipes must be 100% oil-free, whole food, plant-based. No processed ingredients.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        messages:[{ role:'user', content:prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text || '';
+    const clean = text.replace(/```json|```/g,'').trim();
+    const recipes = JSON.parse(clean);
+    renderAIRecipes(recipes);
+  } catch(e) {
+    area.innerHTML = `<div class="ai-empty"><p>Couldn't reach the AI right now. Add your Anthropic API key to enable this feature, or try again in a moment.</p></div>`;
+  }
+
+  btn.disabled = false;
+  btn.textContent = '✨ Regenerate';
+}
+
+function renderAIRecipes(recipes) {
+  const bgs = ['linear-gradient(135deg,#d8f3dc,#b7e4c7)','linear-gradient(135deg,#fff8e1,#fce4ec)','linear-gradient(135deg,#e8eaf6,#f3e5f5)'];
+  document.getElementById('ai-results-area').innerHTML = `
+    <div class="ai-results">
+      ${recipes.map((r,i) => `
+        <div class="ai-recipe-card" onclick="generateFullRecipe('${r.title.replace(/'/g,"\\'")}','${r.uses.replace(/'/g,"\\'")}')">
+          <div class="ai-recipe-emoji">${r.emoji}</div>
+          <div class="ai-recipe-title">${r.title}</div>
+          <div class="ai-recipe-uses">Uses: ${r.uses}</div>
+          <div class="ai-recipe-meta"><span>⏱ ${r.time}</span><span>🍽 ${r.servings} serv.</span></div>
+          <div class="ai-recipe-tags">${(r.tags||[]).map(t=>`<span class="ai-tag">${t}</span>`).join('')}</div>
+          <p style="font-size:12px;color:rgba(255,255,255,.6);margin-top:10px;line-height:1.6;">${r.teaser}</p>
+          <div class="ai-card-footer">
+            <button class="btn-view-full" onclick="event.stopPropagation();generateFullRecipe('${r.title.replace(/'/g,"\\'")}','${r.uses.replace(/'/g,"\\'")}')">Get Full Recipe →</button>
+            <button class="btn-save-ai" onclick="event.stopPropagation();window.location.href='apb-signin.html'">♡</button>
+          </div>
+        </div>`).join('')}
+    </div>
+    <p style="font-size:11px;color:rgba(255,255,255,.3);margin-top:16px;text-align:center;">Click any recipe card to generate the full ingredients and steps.</p>`;
+}
+
+async function generateFullRecipe(title, uses) {
+  // This calls Claude API again for the full recipe and opens it in the detail modal
+  // Reuses same openDetail pattern but with AI-generated content
+  const area = document.getElementById('ai-results-area');
+  const overlay = document.getElementById('detail-overlay');
+  const modal = document.getElementById('detail-modal');
+
+  modal.innerHTML = `<div style="padding:48px;text-align:center;"><div style="font-size:40px;margin-bottom:12px;animation:spin 2s linear infinite;display:inline-block;">🌿</div><p style="color:var(--muted);">Generating full recipe for ${title}…</p></div>`;
+  overlay.classList.add('open');
+
+  const prompt = `Create a complete WFPB (Whole Food Plant Based No Oil) recipe for: ${title}
+Using these ingredients: ${uses}
+
+Respond ONLY with valid JSON, no other text:
+{
+  "title": "${title}",
+  "description": "2 sentence description",
+  "time": "XX min",
+  "servings": "X",
+  "ingredients": ["amount ingredient", "amount ingredient"],
+  "steps": ["Step instruction.", "Step instruction."],
+  "tags": ["oil-free","tag2","tag3"]
+}
+
+All ingredients and steps must be 100% oil-free and whole food.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, messages:[{role:'user',content:prompt}] })
+    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text || '';
+    const r = JSON.parse(text.replace(/```json|```/g,'').trim());
+
+    modal.innerHTML = `
+      <div class="detail-hero" style="background:linear-gradient(135deg,#1a2e1a,#0d1a0d)">
+        <span style="font-size:80px;">🤖</span>
+        <button class="detail-close" onclick="closeDetail()">✕</button>
+        <div class="detail-hero-actions">
+          
+          <button class="detail-hero-btn" onclick="alert('Sign in to save!')">♡ Save</button>
+        </div>
+      </div>
+      <div class="detail-body">
+        <div class="detail-category">✨ APB Suggestion</div>
+        <div class="detail-title">${r.title}</div>
+        <div class="detail-author">Suggested by APB based on your ingredients</div>
+        <div class="wfpb-check">🌱 WFPB Compliant   whole food, plant-based, no oil</div>
+        <div class="detail-stats">
+          <div class="detail-stat"><div class="detail-stat-val">⏱ ${r.time}</div><div class="detail-stat-lbl">Total Time</div></div>
+          <div class="detail-stat"><div class="detail-stat-val">🍽 ${r.servings}</div><div class="detail-stat-lbl">Servings</div></div>
+        </div>
+        <div class="detail-desc">${r.description}</div>
+        <div class="detail-tags">${(r.tags||[]).map(t=>`<span class="detail-tag">${t}</span>`).join('')}</div>
+        <div class="detail-section-label">Ingredients</div>
+        <div class="ingredients-grid">${(r.ingredients||[]).map(i=>`<div class="ingredient">${i}</div>`).join('')}</div>
+        <div class="detail-section-label">Instructions</div>
+        <div class="steps-list">${(r.steps||[]).map((s,i)=>`<div class="step"><div class="step-num">${i+1}</div><div class="step-text">${s}</div></div>`).join('')}</div>
+        <div class="detail-actions">
+          <button class="btn-detail-primary" onclick="window.location.href='apb-signin.html'">♡ Save to Recipe Book</button>
+          
+        </div>
+      </div>`;
+  } catch(e) {
+    modal.innerHTML = `<div style="padding:48px;text-align:center;"><p style="color:var(--muted);">Couldn't generate the full recipe. Add your Anthropic API key to enable this feature.</p><button onclick="closeDetail()" style="margin-top:16px;background:var(--leaf);color:white;border:none;border-radius:100px;padding:10px 24px;cursor:pointer;">Close</button></div>`;
+  }
+}
+
+// ══════════════════════════════════════════
+// PDF EXPORT   html2pdf.js (free, no API cost)
+// Available to all registered users
+// ══════════════════════════════════════════
+function exportRecipePDF(recipe) {
+  // Build a clean, branded PDF-ready HTML string
+  const pdfContent = `
+    <div style="font-family:'DM Sans',Arial,sans-serif;max-width:600px;margin:0 auto;padding:40px;color:#141414;">
+
+      <!-- HEADER -->
+      <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:2px solid #d8f3dc;margin-bottom:24px;">
+        <div>
+          <div style="font-family:Georgia,serif;font-size:13px;color:#2d6a4f;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;">APB   Calling All Plant Based Humans</div>
+          <div style="font-size:10px;color:#6b7c72;">apb.app · WFPB Community Recipe</div>
+        </div>
+        <div style="font-size:32px;">${recipe.emoji}</div>
+      </div>
+
+      <!-- TITLE -->
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#52b788;font-weight:600;margin-bottom:8px;">${recipe.catLabel}</div>
+      <h1 style="font-family:Georgia,serif;font-size:28px;line-height:1.2;color:#141414;margin-bottom:6px;">${recipe.title}</h1>
+      <div style="font-size:12px;color:#6b7c72;margin-bottom:16px;">${recipe.author}</div>
+
+      <!-- WFPB BADGE -->
+      <div style="display:inline-flex;align-items:center;gap:6px;background:#d8f3dc;color:#1b4332;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:600;margin-bottom:20px;">
+        🌱 WFPB Compliant   Whole Food · Plant-Based
+      </div>
+
+      <!-- STATS ROW -->
+      <div style="display:flex;gap:32px;padding:14px 0;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;margin-bottom:24px;">
+        <div style="text-align:center;">
+          <div style="font-family:Georgia,serif;font-size:20px;color:#2d6a4f;">⏱ ${recipe.time}</div>
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#6b7c72;margin-top:2px;">Total Time</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-family:Georgia,serif;font-size:20px;color:#2d6a4f;">🍽 ${recipe.servings}</div>
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#6b7c72;margin-top:2px;">Servings</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-family:Georgia,serif;font-size:20px;color:#2d6a4f;">★ ${recipe.rating}</div>
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#6b7c72;margin-top:2px;">${recipe.ratingCount.toLocaleString()} made this</div>
+        </div>
+      </div>
+
+      <!-- INGREDIENTS -->
+      <div style="margin-bottom:24px;">
+        <h2 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#141414;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #f0f0f0;">Ingredients</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+          ${recipe.ingredients.map(i => `
+            <div style="display:flex;gap:8px;font-size:13px;padding:5px 0;border-bottom:1px solid #fafafa;align-items:flex-start;">
+              <span style="color:#52b788;font-size:16px;line-height:1.1;">·</span>
+              <span>${i}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- INSTRUCTIONS -->
+      <div style="margin-bottom:32px;">
+        <h2 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#141414;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #f0f0f0;">Instructions</h2>
+        ${recipe.steps.map((s, i) => `
+          <div style="display:flex;gap:14px;margin-bottom:14px;">
+            <div style="width:26px;height:26px;min-width:26px;border-radius:50%;background:#2d6a4f;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-top:2px;">${i+1}</div>
+            <div style="font-size:13px;line-height:1.7;color:#141414;padding-top:3px;">${s}</div>
+          </div>`).join('')}
+      </div>
+
+      <!-- TAGS -->
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:28px;">
+        ${recipe.tags.map(t => `<span style="font-size:10px;background:#d8f3dc;color:#2d6a4f;padding:3px 10px;border-radius:100px;">${t}</span>`).join('')}
+      </div>
+
+      <!-- FOOTER -->
+      <div style="border-top:1px solid #f0f0f0;padding-top:16px;display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:10px;color:#6b7c72;">Downloaded from APB · apb.app</div>
+        <div style="font-size:10px;color:#6b7c72;">🌿 Whole Food · Plant-Based · No Oil</div>
+      </div>
+    </div>`;
+
+  // Create a hidden container, render the HTML into it, export as PDF
+  const container = document.createElement('div');
+  container.innerHTML = pdfContent;
+  container.style.position = 'absolute';
+  container.style.left = '-9999px';
+  document.body.appendChild(container);
+
+  const filename = recipe.title.replace(/[^a-z0-9]/gi,'_').toLowerCase() + '_APB.pdf';
+
+  html2pdf()
+    .set({
+      margin: 0,
+      filename,
+      image: { type:'jpeg', quality:0.95 },
+      html2canvas: { scale:2, useCORS:true },
+      jsPDF: { unit:'mm', format:'a4', orientation:'portrait' }
+    })
+    .from(container)
+    .save()
+    .then(() => document.body.removeChild(container));
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+renderInApp(INAPP_RECIPES);
+renderExternal(EXTERNAL_RECIPES);
+</script>
+</body>
+</html>

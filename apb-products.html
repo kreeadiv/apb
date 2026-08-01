@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APB   Recommended Products</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --leaf:#2d6a4f; --leaf-mid:#40916c; --leaf-light:#52b788; --leaf-pale:#d8f3dc; --leaf-xpale:#f0faf2;
+  --sun:#e9c46a; --sun-deep:#c8963e; --soil:#a05c34; --soil-pale:#fdf0e8;
+  --cream:#fefae0; --dark:#141414; --muted:#6b7c72;
+  --card:#ffffff; --radius:16px;
+}
+html { scroll-behavior:smooth; }
+body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--dark); }
+
+/* NAV */
+nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); backdrop-filter:blur(12px); padding:14px 48px; display:flex; align-items:center; gap:24px; border-bottom:1px solid rgba(45,106,79,0.1); }
+.logo { font-family:'Playfair Display',serif; font-size:20px; color:var(--leaf); margin-right:auto; text-decoration:none; }
+.logo em { font-style:italic; color:var(--leaf-light); }
+.nav-link { font-size:13px; color:var(--muted); text-decoration:none; transition:color .2s; }
+.nav-link:hover { color:var(--leaf); }
+.nav-link.active { color:var(--leaf); font-weight:500; }
+.nav-avatar { width:32px; height:32px; border-radius:50%; background:var(--leaf); color:white; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:500; cursor:pointer; }
+
+/* PAGE TABS */
+.page-tabs { display:flex; gap:0; border-bottom:2px solid rgba(0,0,0,.08); padding:0 48px; background:white; }
+.page-tab { padding:16px 24px; font-size:14px; font-weight:500; color:var(--muted); cursor:pointer; border:none; background:none; font-family:'DM Sans',sans-serif; border-bottom:2px solid transparent; margin-bottom:-2px; transition:all .15s; }
+.page-tab:hover { color:var(--leaf); }
+.page-tab.active { color:var(--leaf); border-bottom-color:var(--leaf); }
+.tab-count { font-size:11px; background:var(--leaf-pale); color:var(--leaf); padding:2px 7px; border-radius:100px; margin-left:6px; }
+.page-tab.active .tab-count { background:var(--leaf); color:white; }
+
+/* SECTION */
+.section { display:none; }
+.section.active { display:block; }
+
+/* SECTION HEADER */
+.section-header { padding:32px 48px 20px; background:white; border-bottom:1px solid rgba(0,0,0,.07); display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+.section-header h2 { font-family:'Playfair Display',serif; font-size:28px; }
+.section-header h2 em { font-style:italic; color:var(--leaf); }
+.section-header p { font-size:13px; color:var(--muted); margin-top:5px; line-height:1.6; max-width:540px; }
+.btn-submit-product { background:var(--leaf); color:white; border:none; border-radius:100px; padding:10px 22px; font-size:13px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; white-space:nowrap; }
+.btn-submit-product:hover { background:var(--leaf-mid); }
+
+/* FILTER BAR */
+.filter-bar { display:flex; gap:6px; padding:16px 48px; background:white; border-bottom:1px solid rgba(0,0,0,.06); flex-wrap:wrap; align-items:center; }
+.filter-pill { padding:7px 16px; border-radius:100px; font-size:12px; font-weight:500; border:1.5px solid rgba(0,0,0,.1); background:white; cursor:pointer; font-family:'DM Sans',sans-serif; color:var(--muted); transition:all .15s; }
+.filter-pill.active { background:var(--leaf); color:white; border-color:var(--leaf); }
+.filter-pill:hover:not(.active) { border-color:var(--leaf); color:var(--leaf); }
+.search-pill { display:flex; background:var(--leaf-xpale); border-radius:100px; overflow:hidden; border:1.5px solid var(--leaf-pale); margin-left:auto; }
+.search-pill input { padding:8px 16px; font-size:13px; font-family:'DM Sans',sans-serif; border:none; background:transparent; outline:none; width:200px; }
+
+/* NOTICE */
+.notice { background:var(--leaf-xpale); border-bottom:1px solid var(--leaf-pale); padding:10px 48px; font-size:12px; color:var(--leaf-mid); }
+
+/* PRODUCT GRID */
+.product-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; padding:28px 48px 80px; }
+
+/* PRODUCT CARD */
+.product-card { background:white; border-radius:var(--radius); border:1px solid rgba(0,0,0,.07); overflow:hidden; display:flex; flex-direction:column; transition:transform .2s, box-shadow .2s; }
+.product-card:hover { transform:translateY(-3px); box-shadow:0 10px 32px rgba(0,0,0,.09); }
+.product-card-img { height:140px; display:flex; align-items:center; justify-content:center; font-size:60px; position:relative; }
+.product-badge { position:absolute; top:10px; left:10px; font-size:10px; font-weight:600; padding:3px 10px; border-radius:100px; }
+.badge-apb { background:var(--leaf); color:white; }
+.badge-community { background:var(--sun); color:#5c3d00; }
+.badge-verified { background:#e8f5e9; color:var(--leaf); border:1px solid var(--leaf-pale); }
+.product-body { padding:18px; flex:1; display:flex; flex-direction:column; gap:8px; }
+.product-category { font-size:10px; text-transform:uppercase; letter-spacing:.8px; color:var(--leaf); font-weight:500; }
+.product-name { font-family:'Playfair Display',serif; font-size:18px; line-height:1.3; }
+.product-brand { font-size:12px; color:var(--muted); margin-top:-4px; }
+.product-desc { font-size:12px; color:var(--muted); line-height:1.7; flex:1; }
+.product-tags { display:flex; gap:4px; flex-wrap:wrap; margin-top:4px; }
+.product-tag { font-size:10px; background:var(--leaf-xpale); color:var(--leaf); padding:2px 8px; border-radius:100px; border:1px solid var(--leaf-pale); }
+.product-footer { display:flex; align-items:center; justify-content:space-between; margin-top:12px; padding-top:12px; border-top:1px solid rgba(0,0,0,.06); }
+.product-meta { font-size:11px; color:var(--muted); }
+.product-where { font-size:11px; color:var(--leaf); font-weight:500; }
+.upvote-btn { display:inline-flex; align-items:center; gap:5px; background:var(--leaf-xpale); border:1.5px solid var(--leaf-pale); color:var(--leaf); border-radius:100px; padding:5px 14px; font-size:12px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .15s; }
+.upvote-btn:hover, .upvote-btn.voted { background:var(--leaf); color:white; border-color:var(--leaf); }
+
+/* MODAL */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:500; display:flex; align-items:center; justify-content:center; padding:20px; opacity:0; pointer-events:none; transition:opacity .2s; }
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal { background:white; border-radius:20px; padding:28px; max-width:480px; width:100%; max-height:90vh; overflow-y:auto; }
+.modal h3 { font-family:'Playfair Display',serif; font-size:22px; margin-bottom:4px; }
+.modal-sub { font-size:13px; color:var(--muted); margin-bottom:22px; line-height:1.5; }
+.modal-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:var(--dark); margin-bottom:8px; margin-top:16px; }
+.modal-label:first-of-type { margin-top:0; }
+.modal-input { width:100%; padding:10px 14px; border:1.5px solid rgba(0,0,0,.1); border-radius:10px; font-size:13px; font-family:'DM Sans',sans-serif; outline:none; transition:border-color .2s; background:white; }
+.modal-input:focus { border-color:var(--leaf-light); }
+.modal-textarea { width:100%; padding:10px 14px; border:1.5px solid rgba(0,0,0,.1); border-radius:10px; font-size:13px; font-family:'DM Sans',sans-serif; min-height:80px; outline:none; resize:vertical; transition:border-color .2s; }
+.modal-textarea:focus { border-color:var(--leaf-light); }
+.category-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.cat-btn { padding:10px 12px; border:1.5px solid rgba(0,0,0,.1); border-radius:10px; font-size:12px; font-family:'DM Sans',sans-serif; cursor:pointer; background:white; text-align:left; transition:all .15s; display:flex; align-items:center; gap:8px; color:var(--muted); }
+.cat-btn:hover { border-color:var(--leaf); color:var(--leaf); }
+.cat-btn.selected { background:var(--leaf-xpale); border-color:var(--leaf); color:var(--leaf); font-weight:500; }
+.modal-actions { display:flex; gap:10px; margin-top:20px; }
+.btn-submit { flex:1; background:var(--leaf); color:white; border:none; border-radius:100px; padding:13px; font-size:14px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; }
+.btn-cancel { background:transparent; color:var(--muted); border:1.5px solid rgba(0,0,0,.1); border-radius:100px; padding:13px 20px; font-size:14px; cursor:pointer; font-family:'DM Sans',sans-serif; }
+.modal-note { margin-top:16px; padding:12px 14px; background:var(--leaf-xpale); border-radius:10px; font-size:12px; color:var(--muted); line-height:1.6; }
+
+/* CONFIRM BANNER */
+.confirm-banner { background:var(--leaf); color:white; border-radius:var(--radius); padding:18px 24px; display:flex; align-items:center; gap:16px; margin:20px 48px 0; }
+.confirm-banner-text strong { display:block; font-size:15px; margin-bottom:3px; }
+.confirm-banner-text p { font-size:13px; opacity:.85; }
+.confirm-close { background:none; border:none; color:white; font-size:22px; cursor:pointer; margin-left:auto; }
+
+@media (max-width:768px) {
+  nav, .page-tabs, .section-header, .filter-bar, .product-grid { padding-left:20px; padding-right:20px; }
+  .search-pill { margin-left:0; width:100%; }
+  .search-pill input { width:100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">APB <em>🌿</em></a>
+  <a href="apb-nearby.html" class="nav-link">Find Food</a>
+  <a href="apb-recipes-feed.html" class="nav-link">Recipes</a>
+  <a href="apb-blog.html" class="nav-link">Blog</a>
+  <a href="apb-products.html" class="nav-link active">Products</a>
+  <a href="apb-recipe-book.html" class="nav-link">My Book</a>
+  <div class="nav-avatar">D</div>
+</nav>
+
+<div class="notice">🌱 All products are community-recommended and APB-verified as WFPB-aligned. Always check labels   formulas change.</div>
+
+<!-- PAGE TABS -->
+<div class="page-tabs">
+  <button class="page-tab active" onclick="showSection('condiments',this)">🧂 Condiments & Sauces <span class="tab-count" id="count-condiments">3</span></button>
+  <button class="page-tab" onclick="showSection('staples',this)">🌾 Staples <span class="tab-count" id="count-staples">2</span></button>
+  <button class="page-tab" onclick="showSection('snacks',this)">🍫 Snacks & Treats <span class="tab-count" id="count-snacks">1</span></button>
+  <button class="page-tab" onclick="showSection('ingredients',this)">🫘 Specialty Ingredients <span class="tab-count" id="count-ingredients">2</span></button>
+</div>
+
+
+<!-- ══════════════════════════════════
+     CONDIMENTS & SAUCES
+══════════════════════════════════ -->
+<div class="section active" id="section-condiments">
+  <div class="section-header">
+    <div>
+      <h2>Condiments <em>& Sauces</em></h2>
+      <p>Oil-free, WFPB-aligned condiments and sauces recommended by the APB community. Check labels   some brands vary by product line.</p>
+    </div>
+    <button class="btn-submit-product" onclick="openSubmitModal('condiments')">+ Recommend a Product</button>
+  </div>
+  <div class="filter-bar">
+    <button class="filter-pill active" onclick="filterSection('condiments-grid','all',this)">All</button>
+    <button class="filter-pill" onclick="filterSection('condiments-grid','apb-tested',this)">APB Tested</button>
+    <button class="filter-pill" onclick="filterSection('condiments-grid','oil-free',this)">Oil-Free</button>
+    <div class="search-pill"><input type="text" placeholder="Search products…" oninput="searchGrid('condiments-grid',this.value)"></div>
+  </div>
+  <div class="product-grid" id="condiments-grid"></div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     STAPLES
+══════════════════════════════════ -->
+<div class="section" id="section-staples">
+  <div class="section-header">
+    <div>
+      <h2>Pantry <em>Staples</em></h2>
+      <p>Trusted brands for everyday WFPB cooking   grains, legumes, flours, and more.</p>
+    </div>
+    <button class="btn-submit-product" onclick="openSubmitModal('staples')">+ Recommend a Product</button>
+  </div>
+  <div class="filter-bar">
+    <button class="filter-pill active" onclick="filterSection('staples-grid','all',this)">All</button>
+    <button class="filter-pill" onclick="filterSection('staples-grid','apb-tested',this)">APB Tested</button>
+    <button class="filter-pill" onclick="filterSection('staples-grid','oil-free',this)">Oil-Free</button>
+    <div class="search-pill"><input type="text" placeholder="Search products…" oninput="searchGrid('staples-grid',this.value)"></div>
+  </div>
+  <div class="product-grid" id="staples-grid"></div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     SNACKS & TREATS
+══════════════════════════════════ -->
+<div class="section" id="section-snacks">
+  <div class="section-header">
+    <div>
+      <h2>Snacks <em>& Treats</em></h2>
+      <p>WFPB-friendly packaged snacks for when you need something quick. Always check the label   "plant-based" doesn't always mean oil-free.</p>
+    </div>
+    <button class="btn-submit-product" onclick="openSubmitModal('snacks')">+ Recommend a Product</button>
+  </div>
+  <div class="filter-bar">
+    <button class="filter-pill active" onclick="filterSection('snacks-grid','all',this)">All</button>
+    <button class="filter-pill" onclick="filterSection('snacks-grid','apb-tested',this)">APB Tested</button>
+    <button class="filter-pill" onclick="filterSection('snacks-grid','oil-free',this)">Oil-Free</button>
+    <div class="search-pill"><input type="text" placeholder="Search products…" oninput="searchGrid('snacks-grid',this.value)"></div>
+  </div>
+  <div class="product-grid" id="snacks-grid"></div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     SPECIALTY INGREDIENTS
+══════════════════════════════════ -->
+<div class="section" id="section-ingredients">
+  <div class="section-header">
+    <div>
+      <h2>Specialty <em>Ingredients</em></h2>
+      <p>Harder-to-find whole food ingredients with notes on where to get them   including locally in Monroe and Charlotte.</p>
+    </div>
+    <button class="btn-submit-product" onclick="openSubmitModal('ingredients')">+ Recommend a Product</button>
+  </div>
+  <div class="filter-bar">
+    <button class="filter-pill active" onclick="filterSection('ingredients-grid','all',this)">All</button>
+    <button class="filter-pill" onclick="filterSection('ingredients-grid','apb-tested',this)">APB Tested</button>
+    <button class="filter-pill" onclick="filterSection('ingredients-grid','local',this)">Available Locally</button>
+    <div class="search-pill"><input type="text" placeholder="Search ingredients…" oninput="searchGrid('ingredients-grid',this.value)"></div>
+  </div>
+  <div class="product-grid" id="ingredients-grid"></div>
+</div>
+
+
+<!-- SUBMIT MODAL -->
+<div class="modal-overlay" id="submit-modal" onclick="if(event.target===this)closeSubmitModal()">
+  <div class="modal">
+    <h3>🌱 Recommend a Product</h3>
+    <div class="modal-sub">Share a product you love with the APB community. All submissions are reviewed before going live.</div>
+
+    <div class="modal-label">Product Name</div>
+    <input class="modal-input" id="sub-name" type="text" placeholder="e.g. Bragg Nutritional Yeast">
+
+    <div class="modal-label">Brand</div>
+    <input class="modal-input" id="sub-brand" type="text" placeholder="e.g. Bragg">
+
+    <div class="modal-label">Category</div>
+    <div class="category-grid" id="cat-grid">
+      <button class="cat-btn" onclick="selectCat('condiments',this)">🧂 Condiments & Sauces</button>
+      <button class="cat-btn" onclick="selectCat('staples',this)">🌾 Staples</button>
+      <button class="cat-btn" onclick="selectCat('snacks',this)">🍫 Snacks & Treats</button>
+      <button class="cat-btn" onclick="selectCat('ingredients',this)">🫘 Specialty Ingredients</button>
+    </div>
+
+    <div class="modal-label">Why do you recommend it?</div>
+    <textarea class="modal-textarea" id="sub-desc" placeholder="e.g. Best nutritional yeast I've found   nutty, cheesy flavor and no added ingredients. Widely available at most grocery stores."></textarea>
+
+    <div class="modal-label">Where to find it</div>
+    <input class="modal-input" id="sub-where" type="text" placeholder="e.g. Harris Teeter, Whole Foods, Amazon, Trader Joe's">
+
+    <div class="modal-label">Is it oil-free? <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;color:var(--muted);">Check the ingredients list</span></div>
+    <div style="display:flex;gap:8px;">
+      <button class="cat-btn" onclick="selectOilFree(true,this)" style="flex:1;">✅ Yes, oil-free</button>
+      <button class="cat-btn" onclick="selectOilFree(false,this)" style="flex:1;">⚠️ Contains oil</button>
+    </div>
+
+    <div class="modal-label">Your Name or Initials</div>
+    <input class="modal-input" id="sub-author" type="text" placeholder="e.g. Dana M.">
+
+    <div class="modal-note">🔍 The APB team reviews all submissions. We check the label and verify the product is WFPB-aligned before it goes live   usually within 48 hours.</div>
+
+    <div class="modal-actions">
+      <button class="btn-submit" onclick="submitProduct()">Submit Product</button>
+      <button class="btn-cancel" onclick="closeSubmitModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────
+
+const PRODUCTS = {
+
+  condiments: [
+    {
+      id: 'c-001',
+      name: 'Nutritional Yeast',
+      brand: 'Bragg',
+      emoji: '🧀',
+      bg: '#fff8e1',
+      category: 'condiments',
+      tags: ['oil-free', 'apb-tested', 'b12-fortified'],
+      desc: 'The nutritional yeast APB uses and recommends. Nutty, cheesy flavor with no added oil or sugar. B12-fortified. Works in cheese sauces, soups, dressings, and sprinkled on just about anything.',
+      where: 'Harris Teeter, Whole Foods, Walmart, Amazon',
+      apbTested: true,
+      apbNote: 'APB founder tested   our go-to for the Yummiest Cheese Sauce and any recipe calling for nutritional yeast.',
+      upvotes: 0,
+      submittedBy: 'APB Team',
+    },
+    {
+      id: 'c-002',
+      name: 'Coconut Aminos',
+      brand: 'Bragg',
+      emoji: '🫙',
+      bg: '#fbe9e7',
+      category: 'condiments',
+      tags: ['oil-free', 'soy-free', 'gluten-free'],
+      desc: 'A soy sauce alternative made from coconut tree sap. Lower sodium, slightly sweeter, and completely oil-free. Great in stir fries, marinades, and dressings. Soy-free and gluten-free too.',
+      where: 'Whole Foods, Harris Teeter, Amazon',
+      apbTested: false,
+      upvotes: 0,
+      submittedBy: 'APB Community',
+    },
+    {
+      id: 'c-003',
+      name: 'Vegan Worcestershire Sauce',
+      brand: 'Annie\'s',
+      emoji: '🍶',
+      bg: '#f3e5f5',
+      category: 'condiments',
+      tags: ['oil-free', 'vegan', 'apb-tested'],
+      desc: 'The vegan Worcestershire called for in the APB-tested Sweet & Sassy BBQ Sauce. No anchovies, no oil. Deep, tangy flavor that works in marinades, sauces, and savory dishes.',
+      where: 'Whole Foods, Harris Teeter, Amazon',
+      apbTested: true,
+      apbNote: 'Used in the APB-tested Sweet & Sassy BBQ Sauce   works perfectly.',
+      upvotes: 0,
+      submittedBy: 'APB Team',
+    },
+  ],
+
+  staples: [
+    {
+      id: 's-001',
+      name: 'Rolled Oats (Old Fashioned)',
+      brand: 'Bob\'s Red Mill',
+      emoji: '🌾',
+      bg: '#fff3e0',
+      category: 'staples',
+      tags: ['oil-free', 'whole-grain', 'gluten-free-option'],
+      desc: 'A WFPB kitchen essential. Used in the APB-tested Peanut Butter Granola and Vanilla Pumpkin Spice Waffles. Bob\'s Red Mill uses whole grain oats with nothing added. Also available in a certified gluten-free version.',
+      where: 'Harris Teeter, Walmart, Costco, Amazon',
+      apbTested: true,
+      apbNote: 'Used in two APB-tested recipes. Costco carries a large bag at a great price.',
+      upvotes: 0,
+      submittedBy: 'APB Team',
+    },
+    {
+      id: 's-002',
+      name: 'White Wheat Flour',
+      brand: 'King Arthur',
+      emoji: '🫙',
+      bg: '#e8f5e9',
+      category: 'staples',
+      tags: ['oil-free', 'whole-grain', 'apb-tested'],
+      desc: 'White whole wheat flour   the whole grain goodness of regular whole wheat with a lighter taste and texture. APB uses this as a swap for all-purpose flour in recipes like the Double Chocolate Mug Cake. King Arthur is the most consistent brand.',
+      where: 'Harris Teeter, Walmart, Amazon',
+      apbTested: true,
+      apbNote: 'APB\'s go-to flour swap   used in the Double Chocolate Mug Cake instead of all-purpose flour.',
+      upvotes: 0,
+      submittedBy: 'APB Team',
+    },
+  ],
+
+  snacks: [
+    {
+      id: 'sn-001',
+      name: 'Medjool Dates',
+      brand: 'Various   look for "just dates"',
+      emoji: '🍬',
+      bg: '#fff8e1',
+      category: 'snacks',
+      tags: ['oil-free', 'whole-food', 'natural-sweetener'],
+      desc: 'The WFPB world\'s favorite natural sweetener and snack. One ingredient: dates. Soft, caramel-sweet, and satisfying on their own or stuffed with nut butter. Also used as a sugar substitute in baking. Look for brands with no added sugar or preservatives.',
+      where: 'Costco (best price), Harris Teeter, Whole Foods, Amazon',
+      apbTested: true,
+      apbNote: 'Used in the APB-tested Peanut Butter Granola. Costco carries a large tray at the best price per ounce.',
+      upvotes: 0,
+      submittedBy: 'APB Team',
+    },
+  ],
+
+  ingredients: [
+    {
+      id: 'i-001',
+      name: 'Soy Curls',
+      brand: 'Butler Foods',
+      emoji: '🍗',
+      bg: '#fff3e0',
+      category: 'ingredients',
+      tags: ['oil-free', 'apb-tested', 'high-protein', 'local-limited'],
+      desc: 'Whole soybeans dehydrated into strips   not a processed meat alternative, a real whole food. High protein, no additives, no oil. The base for the APB-tested Chicken-Style Soy Curls. Hard to find in stores locally but reliably available on Amazon.',
+      where: 'Amazon (most reliable), some Whole Foods locations',
+      apbTested: true,
+      apbNote: 'APB founder tested. Order on Amazon if you can\'t find them locally in Monroe or Charlotte.',
+      upvotes: 0,
+      submittedBy: 'APB Team',
+    },
+    {
+      id: 'i-002',
+      name: 'Pumpkin Puree (canned)',
+      brand: 'Libby\'s   100% pure pumpkin',
+      emoji: '🎃',
+      bg: '#fbe9e7',
+      category: 'ingredients',
+      tags: ['oil-free', 'whole-food', 'seasonal', 'apb-tested'],
+      desc: 'One ingredient: pumpkin. Used in the APB-tested Vanilla Pumpkin Spice Waffles. Make sure you\'re grabbing pure pumpkin puree, not pumpkin pie filling   they look similar on the shelf but pie filling has added sugar and spices.',
+      where: 'Available everywhere year-round   Harris Teeter, Walmart, Aldi',
+      apbTested: true,
+      apbNote: 'Used in the APB-tested waffles. Double-check the label   grab the 100% pure pumpkin, not the pie filling.',
+      upvotes: 0,
+      submittedBy: 'APB Team',
+    },
+  ],
+
+};
+
+// ── RENDER ────────────────────────────────────────────────────────────
+
+function renderProductCard(p) {
+  return `
+    <div class="product-card" data-tags="${p.tags.join(',')}" data-name="${p.name.toLowerCase()} ${p.brand.toLowerCase()}">
+      <div class="product-card-img" style="background:${p.bg};">
+        ${p.emoji}
+        ${p.apbTested ? '<span class="product-badge badge-apb">✅ APB Tested</span>' : '<span class="product-badge badge-community">👥 Community Pick</span>'}
+      </div>
+      <div class="product-body">
+        <div class="product-category">${p.category.charAt(0).toUpperCase() + p.category.slice(1)}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-brand">${p.brand}</div>
+        <div class="product-desc">${p.desc}</div>
+        ${p.apbNote ? `<div style="margin-top:6px;padding:8px 10px;background:var(--leaf-xpale);border-radius:8px;font-size:11px;color:var(--leaf);line-height:1.5;">💚 ${p.apbNote}</div>` : ''}
+        <div class="product-tags">${p.tags.slice(0,3).map(t => `<span class="product-tag">${t}</span>`).join('')}</div>
+        <div class="product-footer">
+          <div>
+            <div class="product-where">📍 ${p.where}</div>
+            <div class="product-meta" style="margin-top:3px;">by ${p.submittedBy}</div>
+          </div>
+          <button class="upvote-btn" onclick="upvote('${p.id}',this)">👍 <span>${p.upvotes}</span></button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function init() {
+  Object.entries(PRODUCTS).forEach(([cat, items]) => {
+    const grid = document.getElementById(`${cat}-grid`);
+    if (grid) grid.innerHTML = items.map(renderProductCard).join('');
+    const count = document.getElementById(`count-${cat}`);
+    if (count) count.textContent = items.length;
+  });
+}
+
+// ── TABS ─────────────────────────────────────────────────────────────
+
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── FILTER & SEARCH ──────────────────────────────────────────────────
+
+function filterSection(gridId, tag, btn) {
+  btn.closest('.filter-bar').querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll(`#${gridId} > *`).forEach(card => {
+    const tags = card.dataset.tags || '';
+    card.style.display = (tag === 'all' || tags.includes(tag)) ? '' : 'none';
+  });
+}
+
+function searchGrid(gridId, query) {
+  const q = query.toLowerCase();
+  document.querySelectorAll(`#${gridId} > *`).forEach(card => {
+    card.style.display = (card.dataset.name || '').includes(q) ? '' : 'none';
+  });
+}
+
+// ── UPVOTE ───────────────────────────────────────────────────────────
+
+const voted = new Set();
+function upvote(id, btn) {
+  if (voted.has(id)) return;
+  voted.add(id);
+  btn.classList.add('voted');
+  const countEl = btn.querySelector('span');
+  countEl.textContent = parseInt(countEl.textContent) + 1;
+  // In production: POST to Supabase
+}
+
+// ── SUBMIT MODAL ─────────────────────────────────────────────────────
+
+let submitCat = null;
+let submitOilFree = null;
+
+function openSubmitModal(defaultCat) {
+  submitCat = defaultCat || null;
+  submitOilFree = null;
+  ['sub-name','sub-brand','sub-desc','sub-where','sub-author'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.querySelectorAll('#submit-modal .cat-btn').forEach(b => b.classList.remove('selected'));
+  if (defaultCat) {
+    const map = { condiments:0, staples:1, snacks:2, ingredients:3 };
+    const btns = document.querySelectorAll('#cat-grid .cat-btn');
+    if (btns[map[defaultCat]]) btns[map[defaultCat]].classList.add('selected');
+  }
+  document.getElementById('submit-modal').classList.add('open');
+}
+
+function closeSubmitModal() {
+  document.getElementById('submit-modal').classList.remove('open');
+}
+
+function selectCat(cat, btn) {
+  submitCat = cat;
+  document.querySelectorAll('#cat-grid .cat-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function selectOilFree(val, btn) {
+  submitOilFree = val;
+  btn.parentElement.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function submitProduct() {
+  const name = document.getElementById('sub-name').value.trim();
+  const brand = document.getElementById('sub-brand').value.trim();
+  const desc = document.getElementById('sub-desc').value.trim();
+
+  if (!name) { alert('Please enter the product name.'); return; }
+  if (!brand) { alert('Please enter the brand.'); return; }
+  if (!submitCat) { alert('Please select a category.'); return; }
+  if (!desc) { alert('Please tell us why you recommend it.'); return; }
+
+  const submission = {
+    name, brand,
+    category: submitCat,
+    desc,
+    where: document.getElementById('sub-where').value.trim(),
+    oilFree: submitOilFree,
+    author: document.getElementById('sub-author').value.trim() || 'Anonymous',
+    submitted: new Date().toISOString(),
+    status: 'pending'
+  };
+
+  // In production: POST to Supabase submissions table
+  console.log('Product submission:', submission);
+
+  closeSubmitModal();
+
+  // Show confirmation
+  const existing = document.getElementById('submit-confirm');
+  if (existing) existing.remove();
+
+  const banner = document.createElement('div');
+  banner.id = 'submit-confirm';
+  banner.className = 'confirm-banner';
+  banner.innerHTML = `
+    <span style="font-size:32px;">🌱</span>
+    <div class="confirm-banner-text">
+      <strong>Thanks for recommending ${name}!</strong>
+      <p>The APB team will check the label and verify it's WFPB-aligned   usually within 48 hours.</p>
+    </div>
+    <button class="confirm-close" onclick="this.parentElement.remove()">×</button>
+  `;
+
+  const activeSection = document.querySelector('.section.active');
+  const header = activeSection.querySelector('.section-header');
+  header.insertAdjacentElement('afterend', banner);
+}
+
+// ── RUN ───────────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>

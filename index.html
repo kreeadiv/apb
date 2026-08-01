@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APB   Calling All Plant Based Humans</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --leaf: #2d6a4f;
+    --leaf-light: #52b788;
+    --leaf-pale: #d8f3dc;
+    --soil: #774936;
+    --sun: #e9c46a;
+    --cream: #fefae0;
+    --dark: #1a1a1a;
+    --muted: #6b7c72;
+    --card-bg: #ffffff;
+    --radius: 16px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--dark);
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 100;
+    background: rgba(254,250,224,0.92);
+    backdrop-filter: blur(12px);
+    padding: 14px 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(45,106,79,0.1);
+  }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--leaf); letter-spacing: -0.5px; }
+  .nav-logo span { color: var(--leaf-light); font-style: italic; }
+  .nav-links { display: flex; gap: 28px; align-items: center; }
+  .nav-links a { text-decoration: none; color: var(--muted); font-size: 14px; font-weight: 500; transition: color .2s; }
+  .nav-links a:hover { color: var(--leaf); }
+  .nav-cta { background: var(--leaf); color: white; padding: 9px 20px; border-radius: 100px; font-size: 14px; font-weight: 500; text-decoration: none; transition: background .2s; }
+  .nav-cta:hover { background: var(--leaf-light); color: white; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid; grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 100px 80px 60px;
+    position: relative; overflow: hidden;
+  }
+  .hero-bg-circle {
+    position: absolute; border-radius: 50%;
+    background: var(--leaf-pale); opacity: 0.5;
+  }
+  .hero-content { position: relative; z-index: 2; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--leaf-pale); color: var(--leaf); border-radius: 100px;
+    padding: 6px 14px; font-size: 12px; font-weight: 500; letter-spacing: .5px;
+    text-transform: uppercase; margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(42px, 5vw, 68px);
+    line-height: 1.1; color: var(--dark);
+    margin-bottom: 20px;
+  }
+  .hero h1 em { color: var(--leaf); font-style: italic; }
+  .hero-sub {
+    font-size: 18px; line-height: 1.7;
+    color: var(--muted); max-width: 460px; margin-bottom: 32px;
+  }
+  .hero-actions { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--leaf); color: white;
+    padding: 14px 28px; border-radius: 100px;
+    font-size: 15px; font-weight: 500; text-decoration: none;
+    transition: all .2s; border: none; cursor: pointer;
+  }
+  .btn-primary:hover { background: var(--leaf-light); transform: translateY(-1px); }
+  .btn-secondary {
+    color: var(--leaf); font-size: 15px; font-weight: 500;
+    text-decoration: none; display: flex; align-items: center; gap: 6px;
+    background: none; border: none; cursor: pointer;
+  }
+  .hero-visual { position: relative; z-index: 2; display: flex; justify-content: center; }
+  .hero-card-stack { position: relative; width: 340px; height: 420px; }
+  .hero-card {
+    position: absolute; background: white; border-radius: 20px;
+    padding: 24px; box-shadow: 0 8px 40px rgba(0,0,0,0.1);
+  }
+  .hero-card.main { width: 280px; left: 30px; top: 20px; z-index: 3; }
+  .hero-card.behind { width: 260px; left: 55px; top: 0; z-index: 2; background: var(--leaf-pale); transform: rotate(3deg); }
+  .hero-card.back { width: 250px; left: 70px; top: -10px; z-index: 1; background: var(--sun); opacity:.7; transform: rotate(-2deg); }
+  .hero-card-label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .hero-card-title { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--dark); margin-bottom: 12px; line-height: 1.3; }
+  .hero-card-meta { font-size: 12px; color: var(--muted); display: flex; gap: 12px; }
+  .hero-stars { color: var(--sun); font-size: 14px; letter-spacing: 2px; }
+  .ai-welcome-box {
+    background: linear-gradient(135deg, var(--leaf) 0%, var(--leaf-light) 100%);
+    color: white; border-radius: 14px; padding: 16px 20px; margin-top: 12px;
+    font-size: 14px; line-height: 1.6;
+  }
+  .ai-welcome-box strong { display: block; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; opacity: .7; margin-bottom: 6px; }
+
+  /* STATS BAR */
+  .stats-bar {
+    background: var(--dark); color: white;
+    padding: 28px 80px;
+    display: flex; justify-content: space-around; align-items: center;
+    flex-wrap: wrap; gap: 20px;
+  }
+  .stat { text-align: center; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 36px; color: var(--leaf-light); }
+  .stat-label { font-size: 12px; color: rgba(255,255,255,.5); letter-spacing: .5px; text-transform: uppercase; }
+
+  /* SECTIONS */
+  section { padding: 80px; }
+  .section-badge { font-size: 12px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--leaf); margin-bottom: 12px; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: clamp(32px, 4vw, 48px); line-height: 1.15; color: var(--dark); margin-bottom: 16px; }
+  .section-sub { font-size: 17px; color: var(--muted); max-width: 560px; line-height: 1.7; margin-bottom: 48px; }
+
+  /* FEATURES GRID */
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+  .feature-card {
+    background: white; border-radius: var(--radius); padding: 28px;
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: transform .2s, box-shadow .2s;
+  }
+  .feature-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.1); }
+  .feature-icon { width: 48px; height: 48px; border-radius: 12px; background: var(--leaf-pale); display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 16px; }
+  .feature-card h3 { font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 8px; }
+  .feature-card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+  /* DASHBOARD PREVIEW */
+  .dashboard-preview { background: var(--dark); border-radius: 24px; padding: 32px; margin-top: 48px; }
+  .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .dash-header h3 { color: white; font-family: 'Playfair Display', serif; font-size: 22px; }
+  .dash-greeting { color: var(--leaf-light); font-size: 14px; }
+  .dash-widgets { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .dash-widget { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; border: 1px solid rgba(255,255,255,0.08); }
+  .dash-widget-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,.4); margin-bottom: 8px; }
+  .dash-widget-val { font-size: 24px; font-family: 'Playfair Display', serif; color: white; }
+  .dash-widget-sub { font-size: 12px; color: var(--leaf-light); margin-top: 4px; }
+
+  /* PANTRY / RECIPE */
+  .pantry-section { background: var(--leaf-pale); }
+  .pantry-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+  .pantry-card { background: white; border-radius: var(--radius); padding: 28px; }
+  .pantry-card h3 { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 16px; }
+  .pantry-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+  .pantry-item:last-child { border-bottom: none; }
+  .pantry-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--leaf-light); }
+  .pantry-item-name { font-size: 14px; font-weight: 500; }
+  .pantry-item-cat { font-size: 12px; color: var(--muted); margin-left: auto; background: var(--leaf-pale); padding: 3px 10px; border-radius: 100px; }
+
+  /* NEARBY / RESTAURANT */
+  .nearby-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-top: 40px; }
+  .restaurant-card { background: white; border-radius: var(--radius); padding: 20px; border: 1px solid rgba(0,0,0,0.06); }
+  .restaurant-card h4 { font-size: 16px; font-weight: 500; margin-bottom: 4px; }
+  .restaurant-rating { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+  .rating-stars { color: var(--sun); }
+  .restaurant-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag { font-size: 11px; background: var(--leaf-pale); color: var(--leaf); padding: 3px 10px; border-radius: 100px; }
+  .tag.grocery { background: #fff3e0; color: #e65100; }
+
+  /* COMMUNITY */
+  .community-section { background: white; }
+  .blog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+  .blog-card { border: 1px solid rgba(0,0,0,0.07); border-radius: var(--radius); overflow: hidden; transition: transform .2s; }
+  .blog-card:hover { transform: translateY(-3px); }
+  .blog-img { height: 180px; background: var(--leaf-pale); display: flex; align-items: center; justify-content: center; font-size: 48px; }
+  .blog-body { padding: 20px; }
+  .blog-cat { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--leaf); font-weight: 500; margin-bottom: 8px; }
+  .blog-body h4 { font-family: 'Playfair Display', serif; font-size: 18px; margin-bottom: 8px; line-height: 1.3; }
+  .blog-body p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .blog-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; font-size: 12px; color: var(--muted); }
+
+  /* PRICING/ADS */
+  .pricing-section { background: var(--dark); color: white; }
+  .pricing-section .section-title { color: white; }
+  .pricing-section .section-sub { color: rgba(255,255,255,.5); }
+  .pricing-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 700px; }
+  .pricing-card { border-radius: var(--radius); padding: 32px; border: 1px solid rgba(255,255,255,.1); }
+  .pricing-card.free { background: rgba(255,255,255,.04); }
+  .pricing-card.premium { background: var(--leaf); }
+  .pricing-price { font-family: 'Playfair Display', serif; font-size: 48px; color: white; margin: 12px 0; }
+  .pricing-price span { font-size: 16px; font-family: 'DM Sans', sans-serif; opacity: .6; }
+  .pricing-card h3 { font-size: 14px; letter-spacing: 1px; text-transform: uppercase; opacity: .7; }
+  .pricing-feature { font-size: 14px; color: rgba(255,255,255,.7); padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap: 8px; }
+  .pricing-feature::before { content: '✓'; color: var(--leaf-light); }
+  .pricing-card.premium .pricing-feature::before { color: white; }
+
+  /* FOOTER */
+  footer { background: var(--dark); color: rgba(255,255,255,.4); text-align: center; padding: 40px; font-size: 13px; border-top: 1px solid rgba(255,255,255,.06); }
+  footer strong { color: var(--leaf-light); }
+
+  /* AI WELCOME animation */
+  .ai-welcome-text { min-height: 60px; }
+  .cursor { display: inline-block; width: 2px; height: 1em; background: rgba(255,255,255,.7); vertical-align: text-bottom; animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* SEARCH BAR */
+  .search-bar { display: flex; gap: 0; max-width: 560px; margin-bottom: 48px; }
+  .search-bar input { flex: 1; padding: 14px 20px; border: 2px solid var(--leaf-pale); border-right: none; border-radius: 100px 0 0 100px; font-size: 14px; font-family: 'DM Sans', sans-serif; background: white; outline: none; }
+  .search-bar input:focus { border-color: var(--leaf-light); }
+  .search-bar button { padding: 14px 24px; background: var(--leaf); color: white; border: none; border-radius: 0 100px 100px 0; cursor: pointer; font-size: 14px; font-family: 'DM Sans', sans-serif; }
+
+  @media (max-width: 768px) {
+    nav { padding: 14px 20px; }
+    .hero { grid-template-columns: 1fr; padding: 100px 24px 60px; }
+    .hero-visual { display: none; }
+    section { padding: 60px 24px; }
+    .stats-bar { padding: 28px 24px; }
+    .dash-widgets { grid-template-columns: 1fr; }
+    .pantry-grid { grid-template-columns: 1fr; }
+    .pricing-cards { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">APB <em>🌿</em></a>
+  <a href="apb-nearby.html" class="nav-link">Find Food</a>
+  <a href="apb-recipes-feed.html" class="nav-link">Recipes</a>
+  <a href="apb-blog.html" class="nav-link">Blog</a>
+  <a href="apb-products.html" class="nav-link">Products</a>
+  <a href="apb-recipe-book.html" class="nav-link">My Book</a>
+  <a href="apb-signup.html" class="nav-cta">Join Free</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" style="padding-top:120px;">
+  <div class="hero-bg-circle" style="width:600px;height:600px;right:-200px;top:-100px;"></div>
+  <div class="hero-bg-circle" style="width:300px;height:300px;left:-80px;bottom:0px;background:var(--sun);opacity:0.2;"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">🚨 APB   Calling All Plant Based Humans</div>
+    <h1>Welcome to the <em>whole food</em> revolution</h1>
+    <p class="hero-sub">The community-powered guide for whole food, plant-based living. Find plant-friendly restaurants, discover recipes, connect with humans who eat just like you.</p>
+
+    <div class="hero-actions">
+      <a href="src/pages/apb-signup.html" class="btn-primary">Join the Community →</a>
+      <button class="btn-secondary" onclick="scrollToId('features')">Explore features ↓</button>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="hero-card-stack">
+      <div class="hero-card back"></div>
+      <div class="hero-card behind"></div>
+      <div class="hero-card main">
+        <div class="hero-card-label">🌱 Welcome to APB</div>
+        <div class="ai-welcome-box">
+          <div class="ai-welcome-text" id="ai-welcome-text"></div>
+        </div>
+        <div style="margin-top:16px;">
+          <div class="hero-card-label">Today's Featured Recipe</div>
+          <div class="hero-card-title">Smoky Lentil & Sweet Potato Bowl</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+
+
+<!-- FEATURES -->
+<section id="features" style="background:white;">
+  <div class="section-badge">Everything you need</div>
+  <h2 class="section-title">Your complete plant-based companion</h2>
+  <p class="section-sub">From finding your next meal to discovering new recipes and community, APB is where plant-based humans connect.</p>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🗺️</div>
+      <h3>Find Food Nearby</h3>
+      <p>Search restaurants, grocers, and co-ops by plant-friendliness rating. Community-sourced and always current.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🥘</div>
+      <h3>Recipe Suggestions</h3>
+      <p>Browse hundreds of curated WFPB recipes from trusted creators. Save what you love to your personal recipe book.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📖</div>
+      <h3>Recipe Book</h3>
+      <p>Save recipes you love, add your own, and share with the community. Featured recipes land on the homepage.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📰</div>
+      <h3>Articles & Videos</h3>
+      <p>Preview and link out to WFPB content. Rate and comment in-app. Discover what the community is reading.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>Personal Dashboard</h3>
+      <p>Your home base in APB   see nearby restaurants, recipes you've saved, and community content based on what you engage with most.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">✍️</div>
+      <h3>Community Blog</h3>
+      <p>Read and write posts about plant-based living. Share wins, recipes, restaurant finds, and tips.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⭐</div>
+      <h3>Ratings & Reviews</h3>
+      <p>Rate restaurants, grocery stores, products, recipes, and content. Trust the community, not the algorithm.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🚨</div>
+      <h3>Report & Moderation</h3>
+      <p>Flag inappropriate content for admin review. Keep the community safe and welcoming for everyone.</p>
+    </div>
+  </div>
+
+  <!-- DASHBOARD PREVIEW -->
+  <div class="dashboard-preview">
+    <div class="dash-header">
+      <h3>Your Dashboard</h3>
+      <div class="dash-greeting" id="dash-greeting">Good morning, plant-powered human 🌱</div>
+    </div>
+    <div class="dash-widgets">
+      <div class="dash-widget">
+        <div class="dash-widget-label">Saved Recipes</div>
+        <div class="dash-widget-val">12</div>
+        <div class="dash-widget-sub">in your recipe book</div>
+      </div>
+      <div class="dash-widget">
+        <div class="dash-widget-label">Nearby Places</div>
+        <div class="dash-widget-val">34</div>
+        <div class="dash-widget-sub">within 5 miles</div>
+      </div>
+      <div class="dash-widget">
+        <div class="dash-widget-label">Community</div>
+        <div class="dash-widget-val">Blog</div>
+        <div class="dash-widget-sub">latest posts</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEARBY FOOD -->
+<section id="nearby">
+  <div class="section-badge">Find food near you</div>
+  <h2 class="section-title">Plant-friendly places, rated by humans like you</h2>
+  <p class="section-sub">Search restaurants and grocery stores by location. Community members rate how friendly each spot is to whole food, plant-based eaters.</p>
+
+  <div class="search-bar">
+    <input type="text" placeholder="Search restaurants, grocers, or type a food…" id="nearby-search">
+    <button onclick="searchNearby()">🔍 Search</button>
+  </div>
+
+  <div class="nearby-grid" id="nearby-grid">
+
+    <div class="restaurant-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;">
+        <h4>East Frank Superette & Kitchen</h4>
+        <span style="font-size:10px;background:var(--leaf-pale);color:var(--leaf);padding:3px 8px;border-radius:100px;white-space:nowrap;font-weight:500;">🌿 WFPB Friendly</span>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">209 E Franklin St, Monroe, NC · 0.2 mi</div>
+      
+      <div class="restaurant-tags"><span class="tag">Vegan Options</span><span class="tag">Open Daily</span><span class="tag">Monroe</span></div>
+      <p style="font-size:12px;color:var(--muted);margin-top:10px;">Rotating menu with strong veg-friendly options, artisanal groceries, local art, and coffee. Monroe's most plant-friendly dining spot.</p>
+    </div>
+
+    <div class="restaurant-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;">
+        <h4>Bountiful Blessings Farm Fresh Produce</h4>
+        <span style="font-size:10px;background:var(--leaf-pale);color:var(--leaf);padding:3px 8px;border-radius:100px;white-space:nowrap;font-weight:500;">🌱 WFPB Haven</span>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">4702 Concord Hwy, Monroe, NC · 4.1 mi</div>
+      
+      <div class="restaurant-tags"><span class="tag grocery">Market</span><span class="tag">Farm Fresh</span><span class="tag">Local</span></div>
+      <p style="font-size:12px;color:var(--muted);margin-top:10px;">Perfect 5.0 rating. Outstanding fresh produce, bulk grains, and legumes. The best place near Monroe to stock your plant-based pantry.</p>
+    </div>
+
+    <div class="restaurant-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;">
+        <h4>Sanctuary Bistro</h4>
+        <span style="font-size:10px;background:var(--leaf-pale);color:var(--leaf);padding:3px 8px;border-radius:100px;white-space:nowrap;font-weight:500;">🌿 WFPB Friendly</span>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">6414 Rea Rd, Charlotte, NC · 24.8 mi</div>
+      
+      <div class="restaurant-tags"><span class="tag">100% Vegan</span><span class="tag">Fine Dining</span><span class="tag">Reservations</span></div>
+      <p style="font-size:12px;color:var(--muted);margin-top:10px;">Charlotte's most acclaimed vegan restaurant. Famous mushroom dishes. Tell your server you eat whole food plant-based   they adapt dishes on request.</p>
+    </div>
+
+    <div class="restaurant-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;">
+        <h4>Whole Foods Market   Ballantyne</h4>
+        <span style="font-size:10px;background:var(--leaf-pale);color:var(--leaf);padding:3px 8px;border-radius:100px;white-space:nowrap;font-weight:500;">🌱 WFPB Haven</span>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">7221 Waverly Walk Ave, Charlotte, NC · 19.2 mi</div>
+      
+      <div class="restaurant-tags"><span class="tag grocery">Grocery</span><span class="tag">Bulk Bins</span><span class="tag">Organic</span></div>
+      <p style="font-size:12px;color:var(--muted);margin-top:10px;">Closest Whole Foods to Monroe. Organic produce, bulk bins for grains and legumes, plant milks, nutritional yeast. Upstairs dining area.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- PANTRY + RECIPES -->
+<section id="recipes" class="pantry-section">
+  <div class="section-badge">Your kitchen HQ</div>
+  <h2 class="section-title">Pantry & Recipe Book</h2>
+  <p class="section-sub">Track what you have, get AI-powered recipe suggestions, and build a living recipe book that's always yours.</p>
+
+  <div class="pantry-grid">
+    <div class="pantry-card">
+      <h3>🥘 Browse Recipes</h3>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:16px;">Hundreds of curated WFPB recipes from trusted creators   all personally reviewed by the APB team.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="padding:12px;background:var(--leaf-xpale);border-radius:10px;display:flex;align-items:center;gap:12px;">
+          <span style="font-size:24px;">🧀</span>
+          <div><div style="font-weight:500;font-size:14px;">Yummiest Cheese Sauce Ever</div><div style="font-size:11px;color:var(--muted);">Plantiful Kiki · ✅ APB Tested</div></div>
+        </div>
+        <div style="padding:12px;background:var(--leaf-xpale);border-radius:10px;display:flex;align-items:center;gap:12px;">
+          <span style="font-size:24px;">🍗</span>
+          <div><div style="font-weight:500;font-size:14px;">Chicken-Style Soy Curls</div><div style="font-size:11px;color:var(--muted);">SmartyPlants · ✅ APB Tested</div></div>
+        </div>
+        <div style="padding:12px;background:var(--leaf-xpale);border-radius:10px;display:flex;align-items:center;gap:12px;">
+          <span style="font-size:24px;">🥜</span>
+          <div><div style="font-weight:500;font-size:14px;">Peanut Butter Granola</div><div style="font-size:11px;color:var(--muted);">SmartyPlants · ✅ APB Tested</div></div>
+        </div>
+      </div>
+      <div style="margin-top:16px;">
+        <a href="apb-recipes-feed.html" class="btn-primary" style="font-size:13px;padding:10px 20px;display:inline-block;text-decoration:none;">Browse All Recipes →</a>
+      </div>
+    </div>
+
+    <div class="pantry-card">
+      <h3>📖 My Recipe Book</h3>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:16px;">Save any recipe you love   from the APB feed or anywhere on the web. Your personal collection, always with you.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="padding:12px;background:var(--leaf-xpale);border-radius:10px;display:flex;align-items:center;gap:12px;">
+          <span style="font-size:24px;">🥦</span>
+          <div><div style="font-weight:500;font-size:14px;">Cream of Broccoli Soup</div><div style="font-size:11px;color:var(--muted);">SmartyPlants · Saved</div></div>
+        </div>
+        <div style="padding:12px;background:var(--leaf-xpale);border-radius:10px;display:flex;align-items:center;gap:12px;">
+          <span style="font-size:24px;">🍫</span>
+          <div><div style="font-weight:500;font-size:14px;">Double Chocolate Mug Cake</div><div style="font-size:11px;color:var(--muted);">Plantiful Kiki · Saved</div></div>
+        </div>
+        <div style="padding:12px;background:var(--leaf-xpale);border-radius:10px;display:flex;align-items:center;gap:12px;">
+          <span style="font-size:24px;">🍖</span>
+          <div><div style="font-weight:500;font-size:14px;">Sweet & Sassy BBQ Sauce</div><div style="font-size:11px;color:var(--muted);">SmartyPlants · Saved</div></div>
+        </div>
+      </div>
+      <div style="margin-top:16px;">
+        <a href="apb-signup.html" class="btn-primary" style="font-size:13px;padding:10px 20px;display:inline-block;text-decoration:none;">Start My Recipe Book →</a>
+      </div>
+      <div style="margin-top:16px;font-size:13px;color:var(--muted);">✏️ Share · Add to Recipe Book · Edit</div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMUNITY -->
+<section id="community" class="community-section">
+  <div class="section-badge">Community</div>
+  <h2 class="section-title">Blogs, videos & articles</h2>
+  <p class="section-sub">Read what the community is sharing. Link out to articles and videos, then rate and comment in-app. Anyone can browse   only members contribute.</p>
+
+  <div class="blog-grid">
+    <div class="blog-card">
+      <div class="blog-img">🥦</div>
+      <div class="blog-body">
+        <div class="blog-cat">Community Blog</div>
+        <h4>30 Days of Whole Food Plant-Based: What I Learned</h4>
+        <p>After 30 days of strictly whole food, plant-based eating with no oil, here's what changed   and what surprised me most.</p>
+        <div class="blog-footer"><span>by Maria R. · 5 min read</span><span>★ 4.8 · 312 comments</span></div>
+      </div>
+    </div>
+    <div class="blog-card">
+      <div class="blog-img" style="background:#fff3e0;">📺</div>
+      <div class="blog-body">
+        <div class="blog-cat" style="color:var(--soil);">Video · External</div>
+        <h4>Dr. Greger: Why Oil Is Not A Health Food</h4>
+        <p>NutritionFacts.org breaks down the science. </p>
+        <div class="blog-footer"><span>nutritionfacts.org · 8 min</span></div>
+      </div>
+    </div>
+    <div class="blog-card">
+      <div class="blog-img" style="background:#e8f5e9;">📰</div>
+      <div class="blog-body">
+        <div class="blog-cat">Article Preview</div>
+        <h4>The Complete Guide to B12 on a Plant-Based Diet</h4>
+        <p>What you actually need to know   without the fear-mongering or the supplement industry spin.</p>
+        <div class="blog-footer"><span>Featured · Pinned by admin</span><span>★ 4.7 · 201 comments</span></div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:32px;padding:20px;background:var(--leaf-pale);border-radius:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <div>
+      <strong style="font-size:15px;">Have a blog post, recipe, or link to share?</strong>
+      <p style="font-size:13px;color:var(--muted);margin-top:4px;">Registered members can post and contribute. Sign up to post and contribute.</p>
+    </div>
+    <a href="src/pages/apb-signup.html" class="btn-primary" style="white-space:nowrap;">Join & Contribute →</a>
+  </div>
+</section>
+
+<!-- PRICING -->
+<!-- FOOTER -->
+<footer>
+  <p style="font-size:20px;margin-bottom:8px;">🌿</p>
+  <p><strong>APB   Calling All Plant Based Humans</strong></p>
+  <p style="margin-top:8px;">A community for whole food, plant-based living. Free to browse. Better together.</p>
+  <p style="margin-top:16px;">Available on iOS & Android · Built with 🤍 for the plant-based community</p>
+</footer>
+
+<script>
+  // AI Welcome Message Typewriter
+  const welcomeMessages = [
+    "You chose your health today   and that's worth celebrating. Every plant-based meal is an act of radical self-love. 🌱",
+    "Welcome back, champion. The research is clear: you're on the right side of the science. Keep going. 🥦",
+    "Tell APB what you're craving and we'll find something delicious. ✨",
+    "You're among 24,000 humans choosing whole, plant-based food. You belong here. 🌿"
+  ];
+  
+  let msgIdx = 0;
+  function typeMessage(text, el, cb) {
+    el.innerHTML = '';
+    let i = 0;
+    const span = document.createElement('span');
+    const cursor = document.createElement('span');
+    cursor.className = 'cursor';
+    el.appendChild(span);
+    el.appendChild(cursor);
+    const iv = setInterval(() => {
+      span.textContent += text[i++];
+      if (i >= text.length) { clearInterval(iv); setTimeout(cb, 2500); }
+    }, 35);
+  }
+  
+  function cycleMessages() {
+    const el = document.getElementById('ai-welcome-text');
+    if (!el) return;
+    typeMessage(welcomeMessages[msgIdx % welcomeMessages.length], el, () => {
+      msgIdx++;
+      cycleMessages();
+    });
+  }
+  
+  window.addEventListener('load', () => { setTimeout(cycleMessages, 500); });
+
+  // Dashboard greeting
+  const hour = new Date().getHours();
+  const greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  const greetEl = document.getElementById('dash-greeting');
+  if (greetEl) greetEl.textContent = `${greet}, plant-powered human 🌱`;
+
+  // Scroll helper
+  function scrollToId(id) {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Nearby search (demo)
+  function searchNearby() {
+    const q = document.getElementById('nearby-search').value;
+    if (q) alert(`Searching for "${q}" near you... Sign up for full location-based results!`);
+  }
+</script>
+</body>
+</html>

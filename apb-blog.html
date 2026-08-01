@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APB   Blog & Community</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --leaf:#2d6a4f; --leaf-mid:#40916c; --leaf-light:#52b788; --leaf-pale:#d8f3dc; --leaf-xpale:#f0faf2;
+  --sun:#e9c46a; --sun-deep:#c8963e; --soil:#a05c34; --soil-pale:#fdf0e8;
+  --cream:#fefae0; --dark:#141414; --muted:#6b7c72;
+  --card:#ffffff; --radius:16px;
+}
+html { scroll-behavior:smooth; }
+body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--dark); }
+
+/* NAV */
+nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); backdrop-filter:blur(12px); padding:14px 48px; display:flex; align-items:center; gap:24px; border-bottom:1px solid rgba(45,106,79,0.1); }
+.logo { font-family:'Playfair Display',serif; font-size:20px; color:var(--leaf); margin-right:auto; text-decoration:none; }
+.logo em { font-style:italic; color:var(--leaf-light); }
+.nav-link { font-size:13px; color:var(--muted); text-decoration:none; transition:color .2s; }
+.nav-link:hover { color:var(--leaf); }
+.nav-link.active { color:var(--leaf); font-weight:500; }
+.nav-avatar { width:32px; height:32px; border-radius:50%; background:var(--leaf); color:white; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:500; cursor:pointer; }
+
+/* PAGE TABS */
+.page-tabs { display:flex; gap:0; border-bottom:2px solid rgba(0,0,0,.08); padding:0 48px; background:white; }
+.page-tab { padding:16px 24px; font-size:14px; font-weight:500; color:var(--muted); cursor:pointer; border:none; background:none; font-family:'DM Sans',sans-serif; border-bottom:2px solid transparent; margin-bottom:-2px; transition:all .15s; }
+.page-tab:hover { color:var(--leaf); }
+.page-tab.active { color:var(--leaf); border-bottom-color:var(--leaf); }
+.tab-count { font-size:11px; background:var(--leaf-pale); color:var(--leaf); padding:2px 7px; border-radius:100px; margin-left:6px; }
+.page-tab.active .tab-count { background:var(--leaf); color:white; }
+
+/* SECTION */
+.section { display:none; }
+.section.active { display:block; }
+
+/* ── SECTION HEADER ── */
+.section-header { padding:36px 48px 24px; background:white; border-bottom:1px solid rgba(0,0,0,.07); display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+.section-header h2 { font-family:'Playfair Display',serif; font-size:28px; }
+.section-header h2 em { font-style:italic; color:var(--leaf); }
+.section-header p { font-size:13px; color:var(--muted); margin-top:5px; line-height:1.6; max-width:540px; }
+
+/* FILTER BAR */
+.filter-bar { display:flex; gap:6px; padding:16px 48px; background:white; border-bottom:1px solid rgba(0,0,0,.06); flex-wrap:wrap; align-items:center; }
+.filter-pill { padding:7px 16px; border-radius:100px; font-size:12px; font-weight:500; border:1.5px solid rgba(0,0,0,.1); background:white; cursor:pointer; font-family:'DM Sans',sans-serif; color:var(--muted); transition:all .15s; }
+.filter-pill.active { background:var(--leaf); color:white; border-color:var(--leaf); }
+.filter-pill:hover:not(.active) { border-color:var(--leaf); color:var(--leaf); }
+.search-pill { display:flex; background:var(--leaf-xpale); border-radius:100px; overflow:hidden; border:1.5px solid var(--leaf-pale); margin-left:auto; }
+.search-pill input { padding:8px 16px; font-size:13px; font-family:'DM Sans',sans-serif; border:none; background:transparent; outline:none; width:200px; }
+
+/* ── COMMUNITY BLOG CARDS ── */
+.blog-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:20px; padding:28px 48px 80px; }
+
+.blog-card { background:white; border-radius:var(--radius); border:1px solid rgba(0,0,0,.07); overflow:hidden; display:flex; flex-direction:column; transition:transform .2s, box-shadow .2s; }
+.blog-card:hover { transform:translateY(-3px); box-shadow:0 10px 32px rgba(0,0,0,.09); }
+.blog-card-img { height:160px; display:flex; align-items:center; justify-content:center; font-size:56px; position:relative; }
+.blog-card-tag { position:absolute; top:12px; left:12px; font-size:10px; font-weight:600; padding:3px 10px; border-radius:100px; }
+.tag-apb { background:var(--leaf); color:white; }
+.tag-external { background:var(--sun); color:#5c3d00; }
+.tag-video { background:#1a1a2e; color:#a78bfa; }
+.tag-featured { background:#fee2e2; color:#991b1b; }
+.blog-card-body { padding:18px; flex:1; display:flex; flex-direction:column; }
+.blog-source { font-size:10px; text-transform:uppercase; letter-spacing:.8px; color:var(--leaf); font-weight:500; margin-bottom:6px; }
+.blog-source.video { color:#7c3aed; }
+.blog-source.external { color:var(--soil); }
+.blog-title { font-family:'Playfair Display',serif; font-size:18px; line-height:1.3; margin-bottom:8px; }
+.blog-desc { font-size:12px; color:var(--muted); line-height:1.7; flex:1; }
+.blog-footer { display:flex; align-items:center; justify-content:space-between; margin-top:14px; padding-top:12px; border-top:1px solid rgba(0,0,0,.06); }
+.blog-meta { font-size:11px; color:var(--muted); }
+.blog-tags { display:flex; gap:4px; flex-wrap:wrap; margin-top:10px; }
+.blog-tag { font-size:10px; background:var(--leaf-xpale); color:var(--leaf); padding:2px 8px; border-radius:100px; border:1px solid var(--leaf-pale); }
+
+.read-btn { display:inline-flex; align-items:center; gap:6px; background:var(--leaf); color:white; text-decoration:none; border-radius:100px; padding:7px 16px; font-size:12px; font-weight:500; transition:background .15s; white-space:nowrap; }
+.read-btn:hover { background:var(--leaf-mid); }
+.read-btn.video-btn { background:#7c3aed; }
+.read-btn.video-btn:hover { background:#6d28d9; }
+
+/* ── FEATURED BANNER ── */
+.featured-banner { margin:28px 48px 0; background:linear-gradient(135deg,var(--leaf) 0%,var(--leaf-mid) 100%); border-radius:var(--radius); padding:28px 32px; display:flex; align-items:center; gap:24px; flex-wrap:wrap; color:white; }
+.featured-banner-text h3 { font-family:'Playfair Display',serif; font-size:22px; margin-bottom:6px; }
+.featured-banner-text p { font-size:13px; color:rgba(255,255,255,.75); line-height:1.6; max-width:480px; }
+.featured-banner-cta { margin-left:auto; }
+.featured-banner-cta a { background:white; color:var(--leaf); text-decoration:none; border-radius:100px; padding:10px 22px; font-size:13px; font-weight:500; display:inline-block; white-space:nowrap; }
+.featured-banner-cta a:hover { background:var(--leaf-pale); }
+
+/* ── WRITE FOR APB CALLOUT ── */
+.write-callout { margin:0 48px 28px; background:var(--soil-pale); border:1px solid rgba(160,92,52,.15); border-radius:var(--radius); padding:20px 24px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+.write-callout-text strong { font-size:15px; color:var(--soil); display:block; margin-bottom:3px; }
+.write-callout-text p { font-size:12px; color:var(--muted); line-height:1.5; }
+.write-callout a { background:var(--soil); color:white; text-decoration:none; border-radius:100px; padding:8px 18px; font-size:12px; font-weight:500; white-space:nowrap; margin-left:auto; }
+.write-callout a:hover { background:#8a4e2c; }
+
+/* ── VIDEO SECTION ── */
+.video-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:20px; padding:28px 48px 80px; }
+.video-card { background:white; border-radius:var(--radius); border:1px solid rgba(0,0,0,.07); overflow:hidden; transition:transform .2s, box-shadow .2s; }
+.video-card:hover { transform:translateY(-3px); box-shadow:0 10px 32px rgba(0,0,0,.09); }
+.video-thumb { height:170px; background:linear-gradient(135deg,#1a1a2e,#2d1b69); display:flex; align-items:center; justify-content:center; position:relative; }
+.video-play { font-size:52px; }
+.video-platform-badge { position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,.7); color:white; font-size:10px; font-weight:600; padding:3px 8px; border-radius:6px; }
+.video-channel-badge { position:absolute; top:10px; left:10px; background:rgba(124,58,237,.8); color:white; font-size:10px; padding:3px 10px; border-radius:100px; }
+.video-body { padding:18px; }
+.video-source-label { font-size:10px; text-transform:uppercase; letter-spacing:.8px; color:#7c3aed; font-weight:500; margin-bottom:6px; }
+.video-title { font-family:'Playfair Display',serif; font-size:17px; line-height:1.3; margin-bottom:8px; }
+.video-desc { font-size:12px; color:var(--muted); line-height:1.65; margin-bottom:14px; }
+.video-footer { display:flex; justify-content:space-between; align-items:center; }
+.video-tags { display:flex; gap:4px; flex-wrap:wrap; }
+.video-tag { font-size:10px; background:#f3f0ff; color:#7c3aed; padding:2px 8px; border-radius:100px; border:1px solid #e9d5ff; }
+
+/* ── SOURCES SECTION ── */
+.sources-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; padding:28px 48px 80px; }
+.source-card { background:white; border-radius:var(--radius); border:1px solid rgba(0,0,0,.07); padding:24px; display:flex; flex-direction:column; gap:12px; }
+.source-icon { font-size:40px; }
+.source-name { font-family:'Playfair Display',serif; font-size:20px; }
+.source-site { font-size:12px; color:var(--leaf); margin-top:-8px; }
+.source-desc { font-size:13px; color:var(--muted); line-height:1.65; }
+.source-badge { display:inline-flex; align-items:center; gap:5px; background:var(--leaf-xpale); border:1px solid var(--leaf-pale); color:var(--leaf); font-size:11px; font-weight:500; padding:4px 10px; border-radius:100px; width:fit-content; }
+.source-visit { margin-top:auto; display:inline-flex; align-items:center; gap:6px; color:var(--leaf); font-size:13px; font-weight:500; text-decoration:none; }
+.source-visit:hover { text-decoration:underline; }
+
+/* ── NOTICE BAR ── */
+.notice { background:var(--leaf-xpale); border-bottom:1px solid var(--leaf-pale); padding:10px 48px; font-size:12px; color:var(--leaf-mid); display:flex; align-items:center; gap:8px; }
+
+/* EMPTY STATE */
+.empty-state { text-align:center; padding:80px 20px; color:var(--muted); }
+.empty-state-icon { font-size:48px; margin-bottom:12px; }
+.empty-state p { font-size:14px; }
+
+@media (max-width:768px) {
+  nav, .page-tabs, .section-header, .filter-bar, .blog-grid, .video-grid, .sources-grid { padding-left:20px; padding-right:20px; }
+  .featured-banner, .write-callout { margin-left:20px; margin-right:20px; }
+  .search-pill { margin-left:0; width:100%; }
+  .search-pill input { width:100%; }
+  .featured-banner-cta { margin-left:0; }
+  .write-callout a { margin-left:0; }
+}
+
+@media print {
+  nav, .page-tabs, .filter-bar { display:none!important; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">APB <em>🌿</em></a>
+  <a href="apb-nearby.html" class="nav-link">Find Food</a>
+  <a href="apb-recipes-feed.html" class="nav-link">Recipes</a>
+  <a href="apb-blog.html" class="nav-link active">Blog</a>
+  <a href="apb-products.html" class="nav-link">Products</a>
+  <a href="apb-recipe-book.html" class="nav-link">My Book</a>
+  <div class="nav-avatar">D</div>
+</nav>
+
+<div class="notice">🌱 All external content links to the original creator's site   APB never reproduces their work. Click any card to read the full post.</div>
+
+<!-- PAGE TABS -->
+<div class="page-tabs">
+  <button class="page-tab active" onclick="showSection('blog',this)">✍️ APB Blog <span class="tab-count" id="count-blog">3</span></button>
+  <button class="page-tab" onclick="showSection('articles',this)">📰 Articles <span class="tab-count" id="count-articles">3</span></button>
+  <button class="page-tab" onclick="showSection('videos',this)">▶️ Videos <span class="tab-count" id="count-videos">3</span></button>
+  <button class="page-tab" onclick="showSection('sources',this)">🔗 Sources <span class="tab-count" id="count-sources">5</span></button>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     SECTION 1: APB BLOG
+══════════════════════════════════════════ -->
+<div class="section active" id="section-blog">
+
+  <div class="featured-banner">
+    <div>✍️</div>
+    <div class="featured-banner-text">
+      <h3>The APB Community Blog</h3>
+      <p>Real stories, tips, and discoveries from people eating whole food, plant-based. Written by the APB team and community members   all linking to the original post.</p>
+    </div>
+    <div class="featured-banner-cta">
+      <a href="apb-signup.html">Join to Contribute →</a>
+    </div>
+  </div>
+
+  <div class="section-header" style="padding-top:24px;">
+    <div>
+      <h2>Community <em>Blog</em></h2>
+      <p>Stories, guides, and honest experiences from people eating whole food plant-based. All posts link to the original source.</p>
+    </div>
+  </div>
+
+  <div class="filter-bar" id="blog-filter-bar">
+    <button class="filter-pill active" onclick="filterBlog('all',this)">All</button>
+    <button class="filter-pill" onclick="filterBlog('story',this)">Stories</button>
+    <button class="filter-pill" onclick="filterBlog('guide',this)">Guides</button>
+    <button class="filter-pill" onclick="filterBlog('beginner',this)">Beginner</button>
+    <button class="filter-pill" onclick="filterBlog('weight-loss',this)">Weight Loss</button>
+    <div class="search-pill"><input type="text" placeholder="Search posts…" oninput="searchBlog(this.value)"></div>
+  </div>
+
+  <div class="blog-grid" id="blog-grid"></div>
+
+  <div class="write-callout">
+    <div class="write-callout-text">
+      <strong>📝 Write for APB</strong>
+      <p>Publish your blog post on Substack, Medium, or your own site   then submit the link to be featured here. The community rates and discusses in-app.</p>
+    </div>
+    <a href="apb-signup.html">Submit a Post →</a>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     SECTION 2: ARTICLES
+══════════════════════════════════════════ -->
+<div class="section" id="section-articles">
+
+  <div class="section-header">
+    <div>
+      <h2>Articles & <em>Guides</em></h2>
+      <p>In-depth reads from trusted whole food, plant-based sources. Click any card to read the full article on the original site.</p>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-pill active" onclick="filterArticles('all',this)">All</button>
+    <button class="filter-pill" onclick="filterArticles('beginner',this)">Beginner</button>
+    <button class="filter-pill" onclick="filterArticles('getting-started',this)">Getting Started</button>
+    <button class="filter-pill" onclick="filterArticles('inspiration',this)">Inspiration</button>
+    <div class="search-pill"><input type="text" placeholder="Search articles…" oninput="searchArticles(this.value)"></div>
+  </div>
+
+  <div class="blog-grid" id="articles-grid"></div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     SECTION 3: VIDEOS
+══════════════════════════════════════════ -->
+<div class="section" id="section-videos">
+
+  <div class="section-header">
+    <div>
+      <h2>Videos & <em>Channels</em></h2>
+      <p>Curated video content from trusted WFPBNO creators. All videos open on YouTube.</p>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-pill active" onclick="filterVideos('all',this)">All</button>
+    <button class="filter-pill" onclick="filterVideos('beginner',this)">Beginner</button>
+    <button class="filter-pill" onclick="filterVideos('weight-loss',this)">Weight Loss</button>
+    <button class="filter-pill" onclick="filterVideos('science',this)">Science & Nutrition</button>
+    <div class="search-pill"><input type="text" placeholder="Search videos…" oninput="searchVideos(this.value)"></div>
+  </div>
+
+  <div class="video-grid" id="videos-grid"></div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     SECTION 4: SOURCES
+══════════════════════════════════════════ -->
+<div class="section" id="section-sources">
+
+  <div class="section-header">
+    <div>
+      <h2>Trusted <em>Sources</em></h2>
+      <p>The creators and organizations APB curates content from. All are WFPB-aligned and link to the original site.</p>
+    </div>
+  </div>
+
+  <div class="sources-grid" id="sources-grid"></div>
+
+</div>
+
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────
+
+// APB blog posts   written by you or community members, published externally, linked here.
+// To add a new post: publish it on Substack/Medium/your site, then add an entry here.
+// In production, these entries live in Supabase and are managed via the admin dashboard.
+const APB_BLOG_POSTS = [
+  {
+    id: "apb-blog-001",
+    title: "30 Days of Whole Food Plant-Based: What Actually Surprised Me",
+    title: "Welcome to the APB Blog: Here's Why We're Building This",
+    author: "APB Team",
+    date: "July 2026",
+    readTime: "4 min read",
+    category: "story",
+    tags: ["story", "about", "apb", "getting-started"],
+    emoji: "🌱",
+    bgColor: "#d8f3dc",
+    description: "The real reason APB exists: a vegan restaurant that left us feeling sick from oil, friends who always made us choose the restaurant, and a frustration that turned into an app. Plus, what this Substack is for.",
+    url: "https://apbcallingallplantbased.substack.com/p/welcome-to-the-apb-blog-heres-why",
+    source: "APB Blog",
+    type: "apb",
+    featured: true,
+  },
+  {
+    id: "apb-blog-002",
+    title: "The WFPB vs Vegan Distinction   Why It Matters",
+    author: "APB Team",
+    date: "June 2026",
+    readTime: "4 min read",
+    category: "guide",
+    tags: ["guide", "beginner", "explainer", "WFPBNO"],
+    emoji: "🥦",
+    bgColor: "#e8f5e9",
+    description: "A lot of people confuse vegan and WFPB. They're not the same thing. This piece explains the difference   and why the distinction matters.",
+    url: "https://apbcallingallplantbased.substack.com",
+    source: "APB Blog",
+    type: "apb",
+    featured: false,
+  },
+  {
+    id: "apb-blog-003",
+    title: "Eating Out WFPBNO in the South   A Survival Guide",
+    author: "APB Team",
+    date: "June 2026",
+    readTime: "5 min read",
+    category: "guide",
+    tags: ["guide", "eating-out", "restaurants", "south"],
+    emoji: "🍽️",
+    bgColor: "#fff3e0",
+    description: "Monroe, NC. Charlotte. The South. Not exactly famous for oil-free whole food eating. Here's how we navigate it   and what to order when you're out with family who definitely aren't plant-based.",
+    url: "https://apbcallingallplantbased.substack.com",
+    source: "APB Blog",
+    type: "apb",
+    featured: false,
+  },
+];
+
+// Articles from external sources (from seed-content.json)
+const ARTICLES = [
+  {
+    id: "art-001",
+    title: "What Is a Whole Food, Plant-Based Diet?",
+    source: "SmartyPlants",
+    sourceSite: "smartyplants.org",
+    type: "article",
+    tags: ["beginner", "explainer", "WFPB", "getting-started"],
+    emoji: "📰",
+    bgColor: "#e8f5e9",
+    description: "SmartyPlants' beginner-friendly explainer on what WFPB eating actually means   what's included, what's excluded, and why. The best first read for anyone starting out.",
+    url: "https://smartyplants.org/blog/what-is-a-whole-food-plant-based-diet",
+    date: "SmartyPlants",
+  },
+  {
+    id: "art-002",
+    title: "28-Day Kickstart Program",
+    source: "SmartyPlants",
+    sourceSite: "smartyplants.org",
+    type: "program",
+    tags: ["28-day", "kickstart", "beginner", "structured-program", "getting-started"],
+    emoji: "📅",
+    bgColor: "#fff3e0",
+    description: "28 days of breakfast, lunch, and dinner recipes with daily lessons on navigating plant-based life   restaurants, parties, protein myths, and more. Includes an online community.",
+    url: "https://smartyplants.org/28-day-kickstart",
+    date: "SmartyPlants",
+  },
+  {
+    id: "art-003",
+    title: "Kiki's Story: 70 lbs Lost, 3 Conditions Reversed",
+    source: "Plantiful Kiki",
+    sourceSite: "plantifulkiki.com",
+    type: "article",
+    tags: ["inspiration", "weight-loss", "transformation", "story"],
+    emoji: "✨",
+    bgColor: "#fce4ec",
+    description: "Kiki's full story: how she lost 70 lbs and reversed prediabetes, hypothyroid, and high blood pressure through high-carb, low-fat plant-based eating. Genuinely inspiring reading.",
+    url: "https://plantifulkiki.com/weight-loss-and-self-care/",
+    date: "Plantiful Kiki",
+  },
+];
+
+// Videos from external sources (from seed-content.json)
+const VIDEOS = [
+  {
+    id: "vid-001",
+    title: "Easy Meals For Weight Loss   The Starch Solution",
+    channel: "Plantiful Kiki",
+    platform: "YouTube",
+    tags: ["starch-solution", "weight-loss", "meal-ideas", "beginner"],
+    description: "Kiki walks through a full day of easy, starch-solution-style plant-based meals for weight loss. A great starting point for anyone new to WFPB eating.",
+    url: "https://www.youtube.com/watch?v=u3PvrPe2p6g",
+    emoji: "🥗",
+    bgEmoji: "🎬",
+  },
+  {
+    id: "vid-002",
+    title: "Easy Meals For Maximum Weight Loss   Q&A",
+    channel: "Plantiful Kiki",
+    platform: "YouTube",
+    tags: ["weight-loss", "Q&A", "meal-ideas", "starch-solution"],
+    description: "Kiki answers community questions on maximizing weight loss through plant-based eating, with a full day of meals shown along the way.",
+    url: "https://www.youtube.com/watch?v=Q30VfybAwPc",
+    emoji: "🍱",
+    bgEmoji: "🎬",
+  },
+  {
+    id: "vid-003",
+    title: "NutritionFacts.org   Full Video Library",
+    channel: "NutritionFacts.org",
+    platform: "YouTube",
+    tags: ["science", "nutrition", "Dr-Greger", "health", "WFPB"],
+    description: "Dr. Michael Greger's nonprofit channel covers the science of whole food plant-based nutrition. Thousands of short, evidence-based videos on every health topic imaginable.",
+    url: "https://www.youtube.com/user/NutritionFactsOrg",
+    emoji: "🔬",
+    bgEmoji: "📺",
+  },
+];
+
+// Trusted sources
+const SOURCES = [
+  {
+    id: "plantiful-kiki",
+    name: "Plantiful Kiki",
+    site: "plantifulkiki.com",
+    url: "https://plantifulkiki.com",
+    icon: "🌿",
+    type: "Recipe Blog & YouTube",
+    wfpbno: true,
+    description: "Kiki Nelson lost 70 lbs and reversed prediabetes, hypothyroid, and high blood pressure through a high-carb, low-fat plant-based diet. Her site features hundreds of free WFPB recipes. One of the most authentic WFPBNO voices online.",
+    contentTypes: ["Recipes", "YouTube Videos", "Personal Stories"],
+  },
+  {
+    id: "smartyplants",
+    name: "SmartyPlants",
+    site: "smartyplants.org",
+    url: "https://www.smartyplants.org",
+    icon: "🧠",
+    type: "Recipe Site & Program",
+    wfpbno: true,
+    description: "A brother-and-sister team of chefs and nutritionists offering hundreds of curated plant-based recipes, a 28-Day Kickstart program, and a weekly meal plan. Many free recipes available.",
+    contentTypes: ["Recipes", "Articles", "28-Day Program"],
+  },
+  {
+    id: "nutritionfacts",
+    name: "NutritionFacts.org",
+    site: "nutritionfacts.org",
+    url: "https://nutritionfacts.org",
+    icon: "🔬",
+    type: "Science & Videos",
+    wfpbno: true,
+    description: "Dr. Michael Greger's nonprofit featuring thousands of science-based videos and articles on whole food plant-based nutrition. No ads, no product sales   just the science.",
+    contentTypes: ["Videos", "Articles", "Research Summaries"],
+  },
+  {
+    id: "forksoverknives",
+    name: "Forks Over Knives",
+    site: "forksoverknives.com",
+    url: "https://www.forksoverknives.com",
+    icon: "🍴",
+    type: "Recipes & Articles",
+    wfpbno: true,
+    description: "One of the most recognized whole food plant-based resources, with hundreds of free oil-free recipes and WFPB lifestyle articles. Based on the landmark documentary of the same name.",
+    contentTypes: ["Recipes", "Articles", "Meal Plans"],
+  },
+];
+
+// ── RENDER FUNCTIONS ──────────────────────────────────────────────────
+
+function renderBlogCard(post) {
+  return `
+    <div class="blog-card" data-tags="${post.tags.join(',')}" data-title="${post.title.toLowerCase()}">
+      <div class="blog-card-img" style="background:${post.bgColor};">
+        ${post.emoji}
+        <span class="blog-card-tag ${post.type === 'apb' ? 'tag-apb' : 'tag-external'}">${post.type === 'apb' ? '✍️ APB Blog' : '🔗 External'}</span>
+        ${post.featured ? '<span class="blog-card-tag tag-featured" style="top:12px;right:12px;left:auto;">⭐ Featured</span>' : ''}
+      </div>
+      <div class="blog-card-body">
+        <div class="blog-source">${post.source}</div>
+        <div class="blog-title">${post.title}</div>
+        <div class="blog-desc">${post.description}</div>
+        <div class="blog-tags">${post.tags.slice(0,3).map(t => `<span class="blog-tag">${t}</span>`).join('')}</div>
+        <div class="blog-footer">
+          <span class="blog-meta">by ${post.author} · ${post.readTime}</span>
+          <a href="${post.url}" target="_blank" rel="noopener" class="read-btn">Read Post ↗</a>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderArticleCard(article) {
+  return `
+    <div class="blog-card" data-tags="${article.tags.join(',')}" data-title="${article.title.toLowerCase()}">
+      <div class="blog-card-img" style="background:${article.bgColor};">
+        ${article.emoji}
+        <span class="blog-card-tag tag-external">🔗 ${article.source}</span>
+      </div>
+      <div class="blog-card-body">
+        <div class="blog-source external">${article.source} · ${article.sourceSite}</div>
+        <div class="blog-title">${article.title}</div>
+        <div class="blog-desc">${article.description}</div>
+        <div class="blog-tags">${article.tags.slice(0,3).map(t => `<span class="blog-tag">${t}</span>`).join('')}</div>
+        <div class="blog-footer">
+          <span class="blog-meta">${article.date}</span>
+          <a href="${article.url}" target="_blank" rel="noopener" class="read-btn">Read Article ↗</a>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderVideoCard(video) {
+  return `
+    <div class="video-card" data-tags="${video.tags.join(',')}" data-title="${video.title.toLowerCase()}">
+      <div class="video-thumb">
+        <span class="video-play">${video.bgEmoji}</span>
+        <span class="video-platform-badge">${video.platform}</span>
+        <span class="video-channel-badge">${video.channel}</span>
+      </div>
+      <div class="video-body">
+        <div class="video-source-label">▶ ${video.channel}</div>
+        <div class="video-title">${video.title}</div>
+        <div class="video-desc">${video.description}</div>
+        <div class="video-footer">
+          <div class="video-tags">${video.tags.slice(0,2).map(t => `<span class="video-tag">${t}</span>`).join('')}</div>
+          <a href="${video.url}" target="_blank" rel="noopener" class="read-btn video-btn">Watch ↗</a>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderSourceCard(source) {
+  return `
+    <div class="source-card">
+      <div class="source-icon">${source.icon}</div>
+      <div>
+        <div class="source-name">${source.name}</div>
+        <div class="source-site">${source.site}</div>
+      </div>
+      ${source.wfpbno ? '<span class="source-badge">✅ WFPBNO Aligned</span>' : ''}
+      <div class="source-desc">${source.description}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        ${source.contentTypes.map(t => `<span class="blog-tag">${t}</span>`).join('')}
+      </div>
+      <a href="${source.url}" target="_blank" rel="noopener" class="source-visit">Visit ${source.name} ↗</a>
+    </div>`;
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────
+
+function init() {
+  document.getElementById('blog-grid').innerHTML = APB_BLOG_POSTS.map(renderBlogCard).join('');
+  document.getElementById('articles-grid').innerHTML = ARTICLES.map(renderArticleCard).join('');
+  document.getElementById('videos-grid').innerHTML = VIDEOS.map(renderVideoCard).join('');
+  document.getElementById('sources-grid').innerHTML = SOURCES.map(renderSourceCard).join('');
+
+  document.getElementById('count-blog').textContent = APB_BLOG_POSTS.length;
+  document.getElementById('count-articles').textContent = ARTICLES.length;
+  document.getElementById('count-videos').textContent = VIDEOS.length;
+  document.getElementById('count-sources').textContent = SOURCES.length;
+}
+
+// ── TAB SWITCHING ─────────────────────────────────────────────────────
+
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── FILTERING ─────────────────────────────────────────────────────────
+
+function filterCards(gridId, tag) {
+  document.querySelectorAll(`#${gridId} > *`).forEach(card => {
+    const tags = card.dataset.tags || '';
+    card.style.display = (tag === 'all' || tags.includes(tag)) ? '' : 'none';
+  });
+}
+
+function filterBlog(tag, btn) {
+  document.querySelectorAll('#blog-filter-bar .filter-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  filterCards('blog-grid', tag);
+}
+
+function filterArticles(tag, btn) {
+  document.querySelectorAll('#section-articles .filter-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  filterCards('articles-grid', tag);
+}
+
+function filterVideos(tag, btn) {
+  document.querySelectorAll('#section-videos .filter-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  filterCards('videos-grid', tag);
+}
+
+// ── SEARCH ────────────────────────────────────────────────────────────
+
+function searchCards(gridId, query) {
+  const q = query.toLowerCase();
+  document.querySelectorAll(`#${gridId} > *`).forEach(card => {
+    const title = card.dataset.title || '';
+    card.style.display = title.includes(q) ? '' : 'none';
+  });
+}
+
+function searchBlog(q) { searchCards('blog-grid', q); }
+function searchArticles(q) { searchCards('articles-grid', q); }
+function searchVideos(q) { searchCards('videos-grid', q); }
+
+// ── RUN ───────────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
