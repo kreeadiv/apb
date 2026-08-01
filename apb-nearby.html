@@ -14,6 +14,7 @@
   --tier-haven-bg:#d8f3dc;   --tier-haven-text:#1b4332;
   --tier-friendly-bg:#e8f5e9; --tier-friendly-text:#2d6a4f;
   --tier-possible-bg:#fff8e1; --tier-possible-text:#c8963e;
+  --tier-notwfpb-bg:#fee2e2; --tier-notwfpb-text:#991b1b;
   
 }
 html { scroll-behavior:smooth; }
@@ -173,6 +174,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
 .tier-vote-btn.sel-haven    { border-color:var(--tier-haven-text);   background:var(--tier-haven-bg); }
 .tier-vote-btn.sel-friendly { border-color:var(--tier-friendly-text); background:var(--tier-friendly-bg); }
 .tier-vote-btn.sel-possible { border-color:var(--tier-possible-text); background:var(--tier-possible-bg); }
+.tier-vote-btn.sel-notwfpb  { border-color:var(--tier-notwfpb-text);  background:var(--tier-notwfpb-bg); }
 .tvb-emoji { font-size:16px; margin-top:1px; }
 .tvb-title { font-size:13px; font-weight:500; }
 .tvb-desc { font-size:11px; color:var(--muted); margin-top:2px; }
@@ -896,7 +898,11 @@ window.addEventListener('load', () => {
     <input class="modal-textarea" id="submit-name" type="text" placeholder="e.g. Green Bowl Cafe" style="min-height:auto;padding:10px 14px;">
 
     <div class="modal-sec-label" style="margin-top:16px;">Address or City</div>
-    <input class="modal-textarea" id="submit-address" type="text" placeholder="e.g. 123 Main St, Monroe, NC" style="min-height:auto;padding:10px 14px;">
+    <div style="display:flex;gap:8px;">
+      <input class="modal-textarea" id="submit-address" type="text" placeholder="e.g. 123 Main St, Monroe, NC" style="min-height:auto;padding:10px 14px;flex:1;">
+      <button type="button" class="btn-use-location" id="submit-location-btn" onclick="useMyLocationForSubmit()" style="white-space:nowrap;background:var(--leaf-xpale);color:var(--leaf);border:1px solid var(--tier-haven-bg);border-radius:10px;padding:0 14px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;">📍 Near Me Now</button>
+    </div>
+    <div id="submit-location-status" style="font-size:11px;color:var(--muted);margin-top:4px;"></div>
 
     <div class="modal-sec-label" style="margin-top:16px;">Type of Place</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
@@ -911,6 +917,7 @@ window.addEventListener('load', () => {
       <button class="tier-vote-btn" onclick="selectSubmitTier('haven',this)"><span class="tvb-emoji">🌱</span><div><div class="tvb-title">WFPB Haven</div><div class="tvb-desc">Whole food, plant-based eating is central here. Oil-free options exist without asking.</div></div></button>
       <button class="tier-vote-btn" onclick="selectSubmitTier('friendly',this)"><span class="tvb-emoji">🌿</span><div><div class="tvb-title">WFPB Friendly</div><div class="tvb-desc">Not exclusively plant-based but genuinely accommodating. Good options with minimal modification.</div></div></button>
       <button class="tier-vote-btn" onclick="selectSubmitTier('possible',this)"><span class="tvb-emoji">🍃</span><div><div class="tvb-title">WFPB Possible</div><div class="tvb-desc">Not plant-friendly by design but workable. Requires modifications or piecing together from sides.</div></div></button>
+      <button class="tier-vote-btn" onclick="selectSubmitTier('notwfpb',this)"><span class="tvb-emoji">🚫</span><div><div class="tvb-title">Not WFPB</div><div class="tvb-desc">No suitable options for WFPB eating. Still worth listing so the community knows what to expect.</div></div></button>
     </div>
 
     <div class="modal-sec-label" style="margin-top:16px;">🌱 What to Order / Tips for WFPB Eaters <span class="modal-sec-sub">(optional but really helpful)</span></div>
@@ -943,8 +950,55 @@ function openSubmitModal() {
   });
   submitPlaceType = null;
   submitTier = null;
-  document.querySelectorAll('#submit-modal .tier-vote-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('#submit-modal .tier-vote-btn').forEach(b => b.className = 'tier-vote-btn');
+  const status = document.getElementById('submit-location-status');
+  if (status) status.textContent = '';
   document.getElementById('submit-modal').classList.add('open');
+}
+
+function useMyLocationForSubmit() {
+  const btn = document.getElementById('submit-location-btn');
+  const status = document.getElementById('submit-location-status');
+  const addressInput = document.getElementById('submit-address');
+
+  if (!navigator.geolocation) {
+    status.textContent = 'Location isn\'t supported on this device. Please type the address instead.';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '📍 Locating…';
+  status.textContent = '';
+
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${pos.coords.latitude},${pos.coords.longitude}&key=${GOOGLE_API_KEY}`)
+        .then(r => r.json())
+        .then(data => {
+          btn.disabled = false;
+          btn.textContent = '📍 Near Me Now';
+          if (data.results && data.results[0]) {
+            addressInput.value = data.results[0].formatted_address;
+            status.textContent = 'Address filled from your current location.';
+          } else {
+            status.textContent = 'Couldn\'t determine your address. Please type it in.';
+          }
+        })
+        .catch(() => {
+          btn.disabled = false;
+          btn.textContent = '📍 Near Me Now';
+          status.textContent = 'Couldn\'t reach the location service. Please type the address in.';
+        });
+    },
+    err => {
+      btn.disabled = false;
+      btn.textContent = '📍 Near Me Now';
+      status.textContent = err.code === 1
+        ? 'Location permission denied. Please type the address instead.'
+        : 'Couldn\'t get your location. Please type the address instead.';
+    },
+    { timeout: 10000, enableHighAccuracy: false }
+  );
 }
 
 function closeSubmitModal() {
@@ -959,8 +1013,8 @@ function selectPlaceType(type, btn) {
 
 function selectSubmitTier(tier, btn) {
   submitTier = tier;
-  btn.closest('div').querySelectorAll('.tier-vote-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
+  btn.closest('.tier-vote-grid').querySelectorAll('.tier-vote-btn').forEach(b => b.className = 'tier-vote-btn');
+  btn.className = `tier-vote-btn sel-${tier}`;
 }
 
 function submitPlace() {
