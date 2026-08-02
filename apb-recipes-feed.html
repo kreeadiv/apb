@@ -158,7 +158,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
 
 <!-- PAGE TABS -->
 <div class="page-tabs">
-  <button class="page-tab" onclick="showSection('inapp',this)">🌱 From the APB Community <span class="tab-count">12</span></button>
+  <button class="page-tab" onclick="showSection('inapp',this)">🌱 From the APB Community</button>
   <button class="page-tab active" onclick="showSection('external',this)">🔗 From the Web <span class="tab-count">32</span></button>
 </div>
 
@@ -169,7 +169,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
   <div class="inapp-header">
     <div>
       <h2>From the <em>APB Community</em></h2>
-      <p style="font-size:13px;color:var(--muted);margin-top:4px;">Full recipes shared by APB members   ingredients and steps included.</p>
+      <p style="font-size:13px;color:var(--muted);margin-top:4px;">Recipes shared by APB members — be the first to add yours.</p>
     </div>
     <div class="inapp-header-actions">
       <div class="search-pill">
@@ -246,164 +246,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
 // ══════════════════════════════════════════
 // DATA: IN-APP RECIPES (full content stored in APB)
 // ══════════════════════════════════════════
-const INAPP_RECIPES = [
-  {
-    id:'ia-001', cat:'main', catLabel:'Main Plates', emoji:'🍛',
-    bg:'linear-gradient(135deg,#d8f3dc,#b7e4c7)',
-    title:'Smoky Red Lentil Dal',
-    author:'by Maria R. · APB Community',
-    desc:'A deeply warming dal with smoked paprika, sweet potato, and red lentils. Ready in 30 minutes and meal-preps beautifully.',
-    time:'30 min', servings:'4',
-    badge:'featured', badgeLabel:'⭐ Featured',
-    tags:['oil-free','high-protein','meal-prep'],
-    wfpb: true,
-    ingredients:['1 cup red lentils, rinsed','2 sweet potatoes, peeled and cubed','1 can (14oz) diced tomatoes','1 medium onion, diced','3 garlic cloves, minced','1 tsp smoked paprika','1 tsp ground cumin','½ tsp ground turmeric','½ tsp ground coriander','3 cups vegetable broth (low sodium)','Juice of 1 lemon','Fresh cilantro to serve'],
-    steps:['Water-sauté onion and garlic in a large pot over medium heat for 5 minutes, adding broth by the tablespoon to prevent sticking.','Add smoked paprika, cumin, turmeric, and coriander. Stir for 1 minute until fragrant.','Add rinsed lentils, sweet potato cubes, diced tomatoes, and vegetable broth. Stir to combine.','Bring to a boil, then reduce heat and simmer uncovered for 20 minutes, stirring occasionally, until lentils are soft and sweet potato is tender.','Squeeze in lemon juice, taste and adjust seasoning. Serve over brown rice, garnished with fresh cilantro.']
-  },
-  {
-    id:'ia-002', cat:'breakfast', catLabel:'Breakfast', emoji:'🍵',
-    bg:'linear-gradient(135deg,#fff8e1,#fce4ec)',
-    title:'Golden Milk Oatmeal',
-    author:'by Diane · APB Community',
-    desc:'Creamy oats cooked in turmeric-spiced plant milk with ginger and cinnamon. Topped with banana, pumpkin seeds, and maple syrup.',
-    time:'10 min', servings:'1',
-    badge:'featured', badgeLabel:'⭐ Featured',
-    tags:['oil-free','breakfast','quick'],
-    wfpb: true,
-    ingredients:['½ cup rolled oats','1 cup oat milk (unsweetened)','1 tsp ground turmeric','½ tsp ground ginger','½ tsp ground cinnamon','Pinch of black pepper (activates turmeric)','1 ripe banana, sliced','1 tbsp pumpkin seeds','1 tsp pure maple syrup'],
-    steps:['Combine oat milk, turmeric, ginger, cinnamon, and black pepper in a small saucepan. Whisk together over medium heat until warm.','Add rolled oats and stir. Cook for 5 minutes, stirring frequently, until oats absorb the milk and reach your desired consistency.','Pour into a bowl and top with sliced banana, pumpkin seeds, and a drizzle of maple syrup. Serve immediately.']
-  },
-  {
-    id:'ia-003', cat:'soup', catLabel:'Soups', emoji:'🍲',
-    bg:'linear-gradient(135deg,#e8eaf6,#f3e5f5)',
-    title:'Chunky Vegetable Minestrone',
-    author:'by James K. · APB Community',
-    desc:'A hearty Italian-inspired soup loaded with cannellini beans, zucchini, kale, and whole wheat pasta. One pot, under 40 minutes.',
-    time:'38 min', servings:'6',
-    badge:'community', badgeLabel:'Community',
-    tags:['oil-free','high-fiber','family-friendly'],
-    wfpb: true,
-    ingredients:['1 can (15oz) cannellini beans, drained','1 can (14oz) diced tomatoes','2 medium zucchini, diced','2 cups kale, roughly chopped','1 medium onion, diced','3 garlic cloves, minced','2 medium carrots, sliced','2 celery stalks, sliced','½ cup whole wheat small pasta (ditalini or elbow)','4 cups vegetable broth','1 tsp dried oregano','1 tsp dried basil','Salt and pepper to taste'],
-    steps:['Water-sauté onion, carrot, celery, and garlic in a large pot over medium heat for 7 minutes.','Add diced tomatoes, vegetable broth, oregano, and basil. Bring to a boil.','Add zucchini and pasta. Cook for 10 minutes until pasta is nearly al dente.','Add cannellini beans and kale. Simmer for 5 more minutes until kale is wilted and pasta is cooked through.','Season with salt and pepper. Serve hot with a squeeze of lemon if desired.']
-  },
-  {
-    id:'ia-004', cat:'sauce', catLabel:'Sauces & Dressings', emoji:'🫙',
-    bg:'linear-gradient(135deg,#fff3e0,#fce4ec)',
-    title:'Oil-Free Tahini Dressing',
-    author:'by Sandra M. · APB Community',
-    desc:'A creamy, tangy tahini dressing that goes with everything   grain bowls, salads, roasted vegetables. No oil, just whole food goodness.',
-    time:'5 min', servings:'8',
-    badge:'community', badgeLabel:'Community',
-    tags:['oil-free','quick','versatile','raw'],
-    wfpb: true,
-    ingredients:['¼ cup tahini (100% sesame, no oil added)','Juice of 1 large lemon','2 tbsp apple cider vinegar','1 tbsp pure maple syrup','1 small garlic clove, minced','3-4 tbsp warm water (to thin)','Salt to taste'],
-    steps:['Combine tahini, lemon juice, apple cider vinegar, maple syrup, and garlic in a small bowl or jar.','Whisk together   the mixture will seize up at first, keep whisking.','Add warm water one tablespoon at a time, whisking until you reach a pourable but creamy consistency.','Taste and adjust   more lemon for tang, more maple for sweetness, more water for thinner consistency. Store refrigerated for up to 1 week.']
-  },
-  {
-    id:'ia-005', cat:'main', catLabel:'Main Plates', emoji:'🥗',
-    bg:'linear-gradient(135deg,#d8f3dc,#e8f5e9)',
-    title:'Rainbow Quinoa Power Bowl',
-    author:'by Diane · APB Community',
-    desc:'A vibrant bowl with fluffy quinoa, shredded beet, edamame, roasted red pepper, cucumber, and oil-free tahini dressing. Lunch or dinner in 20 minutes.',
-    time:'20 min', servings:'2',
-    badge:'featured', badgeLabel:'⭐ Featured',
-    tags:['oil-free','high-protein','gluten-free','quick'],
-    wfpb: true,
-    ingredients:['1 cup cooked quinoa (cooled)','½ cup shredded raw beet','½ cup shelled edamame (thawed if frozen)','½ cup cucumber, diced','1 roasted red pepper, sliced','2 cups mixed greens','2 tbsp Oil-Free Tahini Dressing (see sauce recipes)','Fresh herbs to garnish (parsley or cilantro)','Black sesame seeds to garnish'],
-    steps:['Divide cooked, cooled quinoa between two bowls as the base.','Arrange shredded beet, edamame, cucumber, roasted red pepper, and mixed greens over the quinoa in sections   each ingredient in its own color zone for the rainbow effect.','Drizzle generously with Oil-Free Tahini Dressing.','Garnish with fresh herbs and black sesame seeds. Serve immediately.']
-  },
-  {
-    id:'ia-006', cat:'breakfast', catLabel:'Breakfast', emoji:'🫐',
-    bg:'linear-gradient(135deg,#e8eaf6,#dce8ff)',
-    title:'Blueberry Banana Overnight Oats',
-    author:'by Priya T. · APB Community',
-    desc:'Five ingredients, five minutes prep, zero cooking. A creamy no-cook overnight oat bowl that\'s ready the moment you wake up.',
-    time:'5 min + overnight', servings:'1',
-    badge:'community', badgeLabel:'Community',
-    tags:['oil-free','no-cook','meal-prep','breakfast'],
-    wfpb: true,
-    ingredients:['½ cup rolled oats','¾ cup oat milk (unsweetened)','1 ripe banana, mashed','½ cup fresh or frozen blueberries','1 tsp chia seeds','½ tsp vanilla extract (alcohol-free)','Pinch of cinnamon'],
-    steps:['Mash the banana in a jar or container until smooth.','Add oat milk, vanilla, and cinnamon to the mashed banana and stir well.','Add rolled oats and chia seeds. Stir until fully combined.','Top with blueberries. Cover and refrigerate overnight (at least 6 hours).','In the morning, stir, add a splash more oat milk if too thick, and enjoy cold or gently warmed.']
-  },
-  {
-    id:'ia-007', cat:'snack', catLabel:'Snacks', emoji:'🫘',
-    bg:'linear-gradient(135deg,#fff3e0,#ffe0b2)',
-    title:'Smoky Roasted Chickpeas',
-    author:'by James K. · APB Community',
-    desc:'Crunchy, addictive, and packed with protein. These oven-roasted chickpeas are seasoned with smoked paprika and cumin   the perfect WFPB snack.',
-    time:'35 min', servings:'4',
-    badge:'community', badgeLabel:'Community',
-    tags:['oil-free','high-protein','snack','kid-friendly'],
-    wfpb: true,
-    ingredients:['2 cans (15oz each) chickpeas, drained and rinsed','1 tsp smoked paprika','1 tsp ground cumin','½ tsp garlic powder','½ tsp onion powder','Salt to taste','1 tbsp apple cider vinegar (helps spices adhere without oil)'],
-    steps:['Preheat oven to 400°F (200°C). Drain and rinse chickpeas, then spread on a clean kitchen towel and pat very dry   the drier they are, the crunchier they get.','Toss completely dry chickpeas with apple cider vinegar, smoked paprika, cumin, garlic powder, onion powder, and salt in a large bowl.','Spread in a single layer on a parchment-lined baking sheet.','Roast for 30-35 minutes, shaking the pan halfway through, until golden and crispy.','Let cool completely on the pan   they crisp up further as they cool. Store in an open container at room temperature for up to 3 days.']
-  },
-  {
-    id:'ia-008', cat:'dessert', catLabel:'Desserts', emoji:'🍫',
-    bg:'linear-gradient(135deg,#3d1a0d,#6b2d0e)',
-    title:'Chocolate Banana Nice Cream',
-    author:'by Maria R. · APB Community',
-    desc:'Three ingredients. Two minutes. Pure joy. Frozen bananas blended with raw cacao powder into a rich, creamy soft-serve that tastes like it shouldn\'t be this good for you.',
-    time:'2 min (+ freeze bananas)', servings:'2',
-    badge:'featured', badgeLabel:'⭐ Featured',
-    tags:['oil-free','no-refined-sugar','dessert','kid-friendly'],
-    wfpb: true,
-    ingredients:['3 ripe bananas, peeled, sliced, and frozen overnight','2 tbsp raw cacao powder (or cocoa powder)','2 tbsp oat milk (or just enough to blend)','Optional: ½ tsp vanilla extract'],
-    steps:['Freeze peeled, sliced bananas for at least 8 hours or overnight. The riper the bananas, the sweeter and creamier the result.','Add frozen banana slices, cacao powder, and oat milk to a high-speed blender or food processor.','Blend, stopping to scrape down the sides, until completely smooth and creamy. Add oat milk one teaspoon at a time only if needed   too much makes it icy.','Serve immediately as soft-serve, or freeze for 30 more minutes for a scoopable texture. Top with banana slices or a sprinkle of cacao nibs.']
-  },
-  {
-    id:'ia-009', cat:'main', catLabel:'Main Plates', emoji:'🌮',
-    bg:'linear-gradient(135deg,#fce4ec,#ffccbc)',
-    title:'Black Bean Tacos with Mango Salsa',
-    author:'by Sandra M. · APB Community',
-    desc:'Corn tortillas filled with smoky black beans, crisp cabbage slaw, and a bright fresh mango salsa. Ready in 20 minutes   no oil anywhere.',
-    time:'20 min', servings:'3',
-    badge:'community', badgeLabel:'Community',
-    tags:['oil-free','gluten-free','quick','family-friendly'],
-    wfpb: true,
-    ingredients:['6 corn tortillas (100% corn, no lard)','1 can (15oz) black beans, drained','1 tsp ground cumin','1 tsp smoked paprika','1 mango, diced','½ red onion, finely diced','1 jalapeño, seeded and minced','Juice of 1 lime','Fresh cilantro, chopped','1 cup red cabbage, thinly shredded','Lime wedges to serve'],
-    steps:['Make the mango salsa: combine diced mango, red onion, jalapeño, lime juice, and cilantro. Season with salt and set aside.','Heat black beans in a pan over medium heat with cumin, smoked paprika, and a splash of water. Mash lightly   you want about half smooth, half whole beans.','Warm corn tortillas directly over a gas burner or in a dry skillet until lightly charred and pliable.','Assemble: spoon black beans onto each tortilla, top with red cabbage slaw, and finish with a generous heap of mango salsa. Serve with lime wedges.']
-  },
-  {
-    id:'ia-010', cat:'soup', catLabel:'Soups', emoji:'🥣',
-    bg:'linear-gradient(135deg,#e8f5e9,#c8e6c9)',
-    title:'Creamy Broccoli Soup',
-    author:'by Priya T. · APB Community',
-    desc:'Velvety smooth and deeply nourishing. This oil-free broccoli soup gets its creaminess from white beans and potato   not cream or cashews.',
-    time:'30 min', servings:'4',
-    badge:'community', badgeLabel:'Community',
-    tags:['oil-free','nut-free','creamy','comfort-food'],
-    wfpb: true,
-    ingredients:['2 large heads of broccoli, chopped (including stems)','1 can (15oz) white beans (cannellini), drained','1 medium potato, peeled and diced','1 medium onion, diced','3 garlic cloves, minced','3 cups vegetable broth','1 tbsp nutritional yeast','Juice of ½ lemon','Salt and white pepper to taste'],
-    steps:['Water-sauté onion and garlic in a large pot for 5 minutes over medium heat.','Add diced potato and vegetable broth. Bring to a boil and cook for 8 minutes until potato begins to soften.','Add broccoli florets and stems. Cook for 8 more minutes until completely tender.','Add white beans and nutritional yeast. Remove from heat.','Blend until completely smooth using an immersion blender or in batches in a regular blender. Add lemon juice, season with salt and white pepper, and serve.']
-  },
-  {
-    id:'ia-011', cat:'sauce', catLabel:'Sauces & Dressings', emoji:'🧀',
-    bg:'linear-gradient(135deg,#fff8e1,#fce4ec)',
-    title:'Potato & Carrot Cheese Sauce',
-    author:'by Diane · APB Community',
-    desc:'Inspired by Plantiful Kiki\'s famous sauce   a creamy, nut-free cheese sauce built on potato and carrot. Goes on nachos, pasta, broccoli, everything.',
-    time:'25 min', servings:'8',
-    badge:'featured', badgeLabel:'⭐ Featured',
-    tags:['oil-free','nut-free','versatile'],
-    wfpb: true,
-    ingredients:['2 medium Yukon gold potatoes, peeled and cubed','1 large carrot, chopped','¼ cup nutritional yeast','2 tbsp lemon juice','1 tsp garlic powder','1 tsp onion powder','½ tsp smoked paprika','½ tsp salt','¼ tsp turmeric (for color)','½ cup cooking water from the potatoes'],
-    steps:['Boil potato and carrot pieces together in a pot of water until completely tender, about 15 minutes. Reserve ½ cup of the cooking water before draining.','Transfer cooked potato and carrot to a high-speed blender. Add nutritional yeast, lemon juice, garlic powder, onion powder, smoked paprika, turmeric, and salt.','Add ¼ cup of the reserved cooking water and blend until completely silky smooth.','Add more cooking water a tablespoon at a time until you reach a thick, pourable consistency. Taste and adjust seasoning.','Use immediately or store refrigerated for up to 5 days. Reheat gently with a splash of water.']
-  },
-  {
-    id:'ia-012', cat:'snack', catLabel:'Snacks', emoji:'🌿',
-    bg:'linear-gradient(135deg,#d8f3dc,#b7e4c7)',
-    title:'Sweet Potato & Black Bean Dip',
-    author:'by James K. · APB Community',
-    desc:'A thick, smoky dip with roasted sweet potato and black beans. Better than hummus, great with raw veggies, and completely oil-free.',
-    time:'45 min', servings:'6',
-    badge:'new', badgeLabel:'New',
-    tags:['oil-free','high-fiber','snack','party-food'],
-    wfpb: true,
-    ingredients:['1 large sweet potato, roasted','1 can (15oz) black beans, drained','2 tbsp tahini','Juice of 1 lime','1 tsp smoked paprika','1 tsp ground cumin','1 garlic clove','Salt to taste','Fresh cilantro and lime wedges to serve'],
-    steps:['Roast sweet potato: pierce all over with a fork, bake at 400°F for 45 minutes until soft. Let cool slightly, then peel.','Add sweet potato flesh, black beans, tahini, lime juice, smoked paprika, cumin, and garlic to a food processor.','Blend until smooth   it will be thick. Add water one tablespoon at a time if needed.','Season with salt, taste, and adjust. Serve topped with fresh cilantro, a sprinkle of smoked paprika, and lime wedges alongside raw vegetables.']
-  }
-];
+const INAPP_RECIPES = [];
 
 // ══════════════════════════════════════════
 // DATA: EXTERNAL RECIPES (link out to creator sites)
@@ -461,6 +304,14 @@ function showSection(id, btn) {
 // RENDER IN-APP RECIPES
 // ══════════════════════════════════════════
 function renderInApp(recipes) {
+  if (!recipes.length) {
+    document.getElementById('inapp-grid').innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:48px 20px;color:var(--muted);">
+        <p style="font-size:14px;margin-bottom:12px;">No community recipes yet — be the first to share one!</p>
+        <button style="background:var(--leaf);color:white;border:none;border-radius:100px;padding:9px 18px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;" onclick="alert('Sign in to submit your recipe to the APB community!')">+ Submit Recipe</button>
+      </div>`;
+    return;
+  }
   document.getElementById('inapp-grid').innerHTML = recipes.map(r => `
     <div class="recipe-card" data-cat="${r.cat}" onclick="openDetail('${r.id}')">
       <div class="recipe-card-img" style="background:${r.bg}">
