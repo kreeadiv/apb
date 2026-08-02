@@ -246,7 +246,21 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
 // ══════════════════════════════════════════
 // DATA: IN-APP RECIPES (full content stored in APB)
 // ══════════════════════════════════════════
-const INAPP_RECIPES = [];
+const INAPP_RECIPES = [
+  {
+    id:'ia-001', cat:'snack', catLabel:'Snacks', emoji:'🥔',
+    bg:'linear-gradient(135deg,#ffe0b2,#ffccbc)',
+    title:'Air Fryer Roasted Red Potatoes',
+    author:'APB Team',
+    desc:'Crispy, golden red potatoes seasoned with garlic and Italian herbs, finished with fresh parsley and almond parmesan. No oil needed — the air fryer does all the work.',
+    time:'40 min', servings:'4',
+    badge:'featured', badgeLabel:'⭐ Featured',
+    tags:['oil-free','gluten-free','air-fryer'],
+    wfpb: true,
+    ingredients:['1.5–2 lbs red potatoes, cubed','1.5 tsp garlic powder','1.5 tsp salt','½ tsp black pepper','1 tsp Italian seasoning','2 Tbsp fresh parsley, chopped','¼ cup almond parmesan (we used <a href="https://smartyplants.org/recipes/almond-parmesan" target="_blank" rel="noopener" style="color:var(--leaf);">SmartyPlants\' free recipe</a>)'],
+    steps:['Preheat air fryer to 400°F.','In a large bowl, mix garlic powder, salt, pepper, and Italian seasoning, then toss with the cubed potatoes until evenly coated.','Spread the potatoes in the air fryer basket in as close to a single layer as possible.','Air fry at 400°F for 40 minutes, shaking the basket several times during cooking so they crisp up evenly.','Toss with chopped parsley and almond parmesan just before serving.']
+  }
+];
 
 // ══════════════════════════════════════════
 // DATA: EXTERNAL RECIPES (link out to creator sites)
