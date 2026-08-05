@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>APB   Recommended Products</title>
+<title>APB - Recommended Products</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
@@ -127,7 +127,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
   <div class="nav-avatar">D</div>
 </nav>
 
-<div class="notice">🌱 All products are community-recommended and APB-verified as WFPB-aligned. Always check labels   formulas change.</div>
+<div class="notice">🌱 All products are community-recommended and APB-verified as WFPB-aligned. Always check labels - formulas change.</div>
 
 <!-- PAGE TABS -->
 <div class="page-tabs">
@@ -145,7 +145,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
   <div class="section-header">
     <div>
       <h2>Condiments <em>& Sauces</em></h2>
-      <p>Oil-free, WFPB-aligned condiments and sauces recommended by the APB community. Check labels   some brands vary by product line.</p>
+      <p>Oil-free, WFPB-aligned condiments and sauces recommended by the APB community. Check labels - some brands vary by product line.</p>
     </div>
     <button class="btn-submit-product" onclick="openSubmitModal('condiments')">+ Recommend a Product</button>
   </div>
@@ -166,7 +166,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
   <div class="section-header">
     <div>
       <h2>Kitchen <em>Staples</em></h2>
-      <p>Trusted brands for everyday WFPB cooking   grains, legumes, flours, and more.</p>
+      <p>Trusted brands for everyday WFPB cooking - grains, legumes, flours, and more.</p>
     </div>
     <button class="btn-submit-product" onclick="openSubmitModal('staples')">+ Recommend a Product</button>
   </div>
@@ -187,7 +187,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
   <div class="section-header">
     <div>
       <h2>Snacks <em>& Treats</em></h2>
-      <p>WFPB-friendly packaged snacks for when you need something quick. Always check the label   "plant-based" doesn't always mean oil-free.</p>
+      <p>WFPB-friendly packaged snacks for when you need something quick. Always check the label - "plant-based" doesn't always mean oil-free.</p>
     </div>
     <button class="btn-submit-product" onclick="openSubmitModal('snacks')">+ Recommend a Product</button>
   </div>
@@ -208,7 +208,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
   <div class="section-header">
     <div>
       <h2>Specialty <em>Ingredients</em></h2>
-      <p>Harder-to-find whole food ingredients with notes on where to get them   including locally in Monroe and Charlotte.</p>
+      <p>Harder-to-find whole food ingredients with notes on where to get them - including locally in Monroe and Charlotte.</p>
     </div>
     <button class="btn-submit-product" onclick="openSubmitModal('ingredients')">+ Recommend a Product</button>
   </div>
@@ -226,7 +226,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
 <div class="modal-overlay" id="submit-modal" onclick="if(event.target===this)closeSubmitModal()">
   <div class="modal">
     <h3>🌱 Recommend a Product</h3>
-    <div class="modal-sub">Share a product you love with the APB community. All submissions are reviewed before going live.</div>
+    <div class="modal-sub">Share a product you love with the APB community. Your submission goes live right away.</div>
 
     <div class="modal-label">Product Name</div>
     <input class="modal-input" id="sub-name" type="text" placeholder="e.g. Bragg Nutritional Yeast">
@@ -243,7 +243,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
     </div>
 
     <div class="modal-label">Why do you recommend it?</div>
-    <textarea class="modal-textarea" id="sub-desc" placeholder="e.g. Best nutritional yeast I've found   nutty, cheesy flavor and no added ingredients. Widely available at most grocery stores."></textarea>
+    <textarea class="modal-textarea" id="sub-desc" placeholder="e.g. Best nutritional yeast I've found - nutty, cheesy flavor and no added ingredients. Widely available at most grocery stores."></textarea>
 
     <div class="modal-label">Where to find it</div>
     <input class="modal-input" id="sub-where" type="text" placeholder="e.g. Harris Teeter, Whole Foods, Amazon, Trader Joe's">
@@ -257,7 +257,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
     <div class="modal-label">Your Name or Initials</div>
     <input class="modal-input" id="sub-author" type="text" placeholder="e.g. Dana M.">
 
-    <div class="modal-note">🔍 The APB team reviews all submissions. We check the label and verify the product is WFPB-aligned before it goes live   usually within 48 hours.</div>
+    <div class="modal-note">🔍 Your submission goes live right away. Spot something wrong? Flag it and the APB team will take a look.</div>
 
     <div class="modal-actions">
       <button class="btn-submit" onclick="submitProduct()">Submit Product</button>
@@ -284,7 +284,7 @@ const PRODUCTS = {
       desc: 'The nutritional yeast APB uses and recommends. Nutty, cheesy flavor with no added oil or sugar. B12-fortified. Works in cheese sauces, soups, dressings, and sprinkled on just about anything.',
       where: 'Harris Teeter, Whole Foods, Walmart, Amazon',
       apbTested: true,
-      apbNote: 'APB founder tested   our go-to for the Yummiest Cheese Sauce and any recipe calling for nutritional yeast.',
+      apbNote: 'APB founder tested - our go-to for the Yummiest Cheese Sauce and any recipe calling for nutritional yeast.',
       upvotes: 0,
       submittedBy: 'APB Team',
     },
@@ -305,7 +305,6 @@ const PRODUCTS = {
     {
       id: 'c-003',
       name: 'Vegan Worcestershire Sauce',
-      brand: 'Annie\'s',
       emoji: '🍶',
       bg: '#f3e5f5',
       category: 'condiments',
@@ -322,12 +321,11 @@ const PRODUCTS = {
     {
       id: 's-001',
       name: 'Rolled Oats (Old Fashioned)',
-      brand: 'Any brand — old-fashioned rolled oats',
       emoji: '🌾',
       bg: '#fff3e0',
       category: 'staples',
       tags: ['oil-free', 'whole-grain', 'gluten-free-option'],
-      desc: 'A WFPB kitchen essential. Used in the APB-tested Peanut Butter Granola and Vanilla Pumpkin Spice Waffles. Look for whole grain oats with nothing added — a certified gluten-free version is also widely available.',
+      desc: 'A WFPB kitchen essential. Used in the APB-tested Peanut Butter Granola and Vanilla Pumpkin Spice Waffles. Look for whole grain oats with nothing added - a certified gluten-free version is also widely available.',
       where: 'Harris Teeter, Walmart, Costco, Amazon',
       apbTested: true,
       apbNote: 'Used in two APB-tested recipes. Costco carries a large bag at a great price.',
@@ -337,15 +335,15 @@ const PRODUCTS = {
     {
       id: 's-002',
       name: 'White Wheat Flour',
-      brand: 'King Arthur',
+      brand: 'White Wheat/Golden Wheat - King Arthur',
       emoji: '🫙',
       bg: '#e8f5e9',
       category: 'staples',
       tags: ['oil-free', 'whole-grain', 'apb-tested'],
-      desc: 'White whole wheat flour   the whole grain goodness of regular whole wheat with a lighter taste and texture. APB uses this as a swap for all-purpose flour in recipes like the Double Chocolate Mug Cake. King Arthur is the most consistent brand.',
+      desc: 'White whole wheat flour - the whole grain goodness of regular whole wheat with a lighter taste and texture. APB uses this as a swap for all-purpose flour in recipes like the Double Chocolate Mug Cake. King Arthur is the most consistent brand.',
       where: 'Harris Teeter, Walmart, Amazon',
       apbTested: true,
-      apbNote: 'APB\'s go-to flour swap   used in the Double Chocolate Mug Cake instead of all-purpose flour.',
+      apbNote: 'APB\'s go-to flour swap - used in the Double Chocolate Mug Cake instead of all-purpose flour.',
       upvotes: 0,
       submittedBy: 'APB Team',
     },
@@ -355,7 +353,6 @@ const PRODUCTS = {
     {
       id: 'sn-001',
       name: 'Medjool Dates',
-      brand: 'Various   look for "just dates"',
       emoji: '🍬',
       bg: '#fff8e1',
       category: 'snacks',
@@ -378,7 +375,7 @@ const PRODUCTS = {
       bg: '#fff3e0',
       category: 'ingredients',
       tags: ['oil-free', 'apb-tested', 'high-protein', 'local-limited'],
-      desc: 'Whole soybeans dehydrated into strips   not a processed meat alternative, a real whole food. High protein, no additives, no oil. The base for the APB-tested Chicken-Style Soy Curls. Hard to find in stores locally but reliably available on Amazon.',
+      desc: 'Whole soybeans dehydrated into strips - not a processed meat alternative, a real whole food. High protein, no additives, no oil. The base for the APB-tested Chicken-Style Soy Curls. Hard to find in stores locally but reliably available on Amazon.',
       where: 'Amazon (most reliable), some Whole Foods locations',
       apbTested: true,
       apbNote: 'APB founder tested. Order on Amazon if you can\'t find them locally in Monroe or Charlotte.',
@@ -388,15 +385,14 @@ const PRODUCTS = {
     {
       id: 'i-002',
       name: 'Pumpkin Puree (canned)',
-      brand: 'Libby\'s   100% pure pumpkin',
       emoji: '🎃',
       bg: '#fbe9e7',
       category: 'ingredients',
       tags: ['oil-free', 'whole-food', 'seasonal', 'apb-tested'],
-      desc: 'One ingredient: pumpkin. Used in the APB-tested Vanilla Pumpkin Spice Waffles. Make sure you\'re grabbing pure pumpkin puree, not pumpkin pie filling   they look similar on the shelf but pie filling has added sugar and spices.',
-      where: 'Available everywhere year-round   Harris Teeter, Walmart, Aldi',
+      desc: 'One ingredient: pumpkin. Used in the APB-tested Vanilla Pumpkin Spice Waffles. Make sure you\'re grabbing pure pumpkin puree, not pumpkin pie filling - they look similar on the shelf but pie filling has added sugar and spices.',
+      where: 'Available everywhere year-round - Harris Teeter, Walmart, Aldi',
       apbTested: true,
-      apbNote: 'Used in the APB-tested waffles. Double-check the label   grab the 100% pure pumpkin, not the pie filling.',
+      apbNote: 'Used in the APB-tested waffles. Double-check the label - grab the 100% pure pumpkin, not the pie filling.',
       upvotes: 0,
       submittedBy: 'APB Team',
     },
@@ -408,7 +404,7 @@ const PRODUCTS = {
 
 function renderProductCard(p) {
   return `
-    <div class="product-card" data-tags="${p.tags.join(',')}" data-name="${p.name.toLowerCase()} ${p.brand.toLowerCase()}">
+    <div class="product-card" data-tags="${p.tags.join(',')}" data-name="${p.name.toLowerCase()} ${(p.brand||'').toLowerCase()}">
       <div class="product-card-img" style="background:${p.bg};">
         ${p.emoji}
         ${p.apbTested ? '<span class="product-badge badge-apb">✅ APB Tested</span>' : '<span class="product-badge badge-community">👥 Community Pick</span>'}
@@ -416,7 +412,7 @@ function renderProductCard(p) {
       <div class="product-body">
         <div class="product-category">${p.category.charAt(0).toUpperCase() + p.category.slice(1)}</div>
         <div class="product-name">${p.name}</div>
-        <div class="product-brand">${p.brand}</div>
+        ${p.brand ? `<div class="product-brand">${p.brand}</div>` : ''}
         <div class="product-desc">${p.desc}</div>
         ${p.apbNote ? `<div style="margin-top:6px;padding:8px 10px;background:var(--leaf-xpale);border-radius:8px;font-size:11px;color:var(--leaf);line-height:1.5;">💚 ${p.apbNote}</div>` : ''}
         <div class="product-tags">${p.tags.slice(0,3).map(t => `<span class="product-tag">${t}</span>`).join('')}</div>
@@ -533,7 +529,7 @@ function submitProduct() {
     oilFree: submitOilFree,
     author: document.getElementById('sub-author').value.trim() || 'Anonymous',
     submitted: new Date().toISOString(),
-    status: 'pending'
+    status: 'published'
   };
 
   // In production: POST to Supabase submissions table
@@ -552,7 +548,7 @@ function submitProduct() {
     <span style="font-size:32px;">🌱</span>
     <div class="confirm-banner-text">
       <strong>Thanks for recommending ${name}!</strong>
-      <p>The APB team will check the label and verify it's WFPB-aligned   usually within 48 hours.</p>
+      <p>It's live now. If anything looks off, flag it and our team will take a look.</p>
     </div>
     <button class="confirm-close" onclick="this.parentElement.remove()">×</button>
   `;
