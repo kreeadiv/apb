@@ -892,7 +892,7 @@ window.addEventListener('load', () => {
 <div class="modal-overlay" id="submit-modal" onclick="if(event.target===this)closeSubmitModal()">
   <div class="modal">
     <h3>📍 Add a Place</h3>
-    <div class="modal-place">Help the APB community discover plant-friendly spots. Submissions are reviewed before going live.</div>
+    <div class="modal-place">Help the APB community discover plant-friendly spots. Your submission goes live right away — the APB team may remove or edit listings that turn out to be inaccurate.</div>
 
     <div class="modal-sec-label">Restaurant or Business Name</div>
     <input class="modal-textarea" id="submit-name" type="text" placeholder="e.g. Green Bowl Cafe" style="min-height:auto;padding:10px 14px;">
@@ -927,7 +927,7 @@ window.addEventListener('load', () => {
     <input class="modal-textarea" id="submit-author" type="text" placeholder="e.g. Dana M." style="min-height:auto;padding:10px 14px;">
 
     <div style="margin-top:16px;padding:12px 14px;background:var(--leaf-xpale);border-radius:10px;font-size:12px;color:var(--muted);line-height:1.6;">
-      🔍 All submissions are reviewed by the APB team before going live. We verify the place exists and check the tier suggestion. Usually reviewed within 48 hours.
+      🔍 Your submission goes live right away so the community benefits immediately. Spot something wrong? Flag it and the APB team will take a look.
     </div>
 
     <div class="modal-actions" style="margin-top:16px;">
@@ -1033,7 +1033,7 @@ function submitPlace() {
     tip: document.getElementById('submit-tip').value.trim(),
     author: document.getElementById('submit-author').value.trim() || 'Anonymous',
     submitted: new Date().toISOString(),
-    status: 'pending'
+    status: 'published'
   };
 
   // In production: POST to Supabase submissions table
@@ -1048,7 +1048,7 @@ function submitPlace() {
       <span style="font-size:32px;">🌱</span>
       <div>
         <div style="font-weight:600;font-size:15px;">Thanks for submitting ${name}!</div>
-        <div style="font-size:13px;opacity:.85;margin-top:3px;">The APB team will review it within 48 hours. We'll add it to the map once verified.</div>
+        <div style="font-size:13px;opacity:.85;margin-top:3px;">It's live on the map now. If anything looks off, flag it and our team will take a look.</div>
       </div>
       <button onclick="document.getElementById('submit-confirm').remove()" style="background:none;border:none;color:white;font-size:20px;cursor:pointer;margin-left:auto;">×</button>
     </div>
@@ -1062,7 +1062,7 @@ function submitPlace() {
   <div class="modal">
     <h3>🌱 Add APB Info</h3>
     <div class="modal-place" id="add-info-place-name" style="font-weight:600;font-size:15px;margin-bottom:4px;"></div>
-    <div class="modal-place" style="margin-bottom:16px;">Help the APB community know what to expect here. Your tip goes live after a quick review.</div>
+    <div class="modal-place" style="margin-bottom:16px;">Help the APB community know what to expect here. Your tip goes live right away.</div>
 
     <div class="modal-sec-label">🏷️ WFPB Tier <span class="modal-sec-sub">  How would you rate this place?</span></div>
     <div class="tier-vote-grid">
@@ -1096,7 +1096,7 @@ function submitPlace() {
     <input class="modal-textarea" id="add-info-author" type="text" placeholder="e.g. Dana M." style="min-height:auto;padding:10px 14px;">
 
     <div style="margin-top:16px;padding:12px 14px;background:var(--leaf-xpale);border-radius:10px;font-size:12px;color:var(--muted);line-height:1.6;">
-      🔍 The APB team reviews all submissions before they go live   usually within 48 hours. Thank you for helping the community!
+      🔍 Your tip goes live right away. Spot something wrong? Flag it and the APB team will take a look. Thank you for helping the community!
     </div>
 
     <div class="modal-actions" style="margin-top:16px;">
@@ -1145,7 +1145,7 @@ function submitAddInfo() {
     tip,
     author: document.getElementById('add-info-author').value.trim() || 'Anonymous',
     submitted: new Date().toISOString(),
-    status: 'pending'
+    status: 'published'
   };
 
   // In production: POST to Supabase apb_info_submissions table
@@ -1161,7 +1161,7 @@ function submitAddInfo() {
     const confirm = document.createElement('div');
     confirm.className = 'apb-info-confirm';
     confirm.style.cssText = 'background:var(--leaf);color:white;border-radius:10px;padding:10px 14px;font-size:12px;margin-top:8px;line-height:1.5;';
-    confirm.innerHTML = '🌱 Thanks for your tip! The APB team will review it within 48 hours.';
+    confirm.innerHTML = '🌱 Thanks for your tip! It\'s live now.';
     card.appendChild(confirm);
     setTimeout(() => confirm.remove(), 6000);
   }
