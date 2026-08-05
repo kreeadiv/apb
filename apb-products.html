@@ -101,6 +101,14 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
 .btn-cancel { background:transparent; color:var(--muted); border:1.5px solid rgba(0,0,0,.1); border-radius:100px; padding:13px 20px; font-size:14px; cursor:pointer; font-family:'DM Sans',sans-serif; }
 .modal-note { margin-top:16px; padding:12px 14px; background:var(--leaf-xpale); border-radius:10px; font-size:12px; color:var(--muted); line-height:1.6; }
 
+/* FLAGGING */
+.flags-nav-btn { position:relative; background:none; border:none; cursor:pointer; font-size:17px; padding:4px; line-height:1; }
+.flags-nav-badge { position:absolute; top:-4px; right:-6px; background:#dc2626; color:white; font-size:10px; font-weight:600; border-radius:100px; padding:1px 5px; line-height:1.4; }
+.flag-reason-btn { display:block; width:100%; text-align:left; padding:10px 14px; border-radius:10px; border:1.5px solid rgba(0,0,0,.08); background:white; cursor:pointer; font-size:13px; font-family:'DM Sans',sans-serif; margin-bottom:8px; transition:all .15s; }
+.flag-reason-btn.selected { border-color:#dc2626; background:#fef2f2; color:#991b1b; }
+.flags-queue-item { border:1px solid rgba(0,0,0,.08); border-radius:12px; padding:14px 16px; margin-bottom:10px; }
+.flags-queue-empty { text-align:center; padding:40px 20px; color:var(--muted); font-size:13px; }
+
 /* CONFIRM BANNER */
 .confirm-banner { background:var(--leaf); color:white; border-radius:var(--radius); padding:18px 24px; display:flex; align-items:center; gap:16px; margin:20px 48px 0; }
 .confirm-banner-text strong { display:block; font-size:15px; margin-bottom:3px; }
@@ -124,6 +132,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
   <a href="apb-blog.html" class="nav-link">Blog</a>
   <a href="apb-products.html" class="nav-link active">Products</a>
   <a href="apb-recipe-book.html" class="nav-link">My Book</a>
+  <button class="flags-nav-btn" onclick="openFlagsQueue()" title="Flagged items">🚩<span class="flags-nav-badge" id="flags-nav-badge" style="display:none;">0</span></button>
   <div class="nav-avatar">D</div>
 </nav>
 
@@ -262,6 +271,41 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
     <div class="modal-actions">
       <button class="btn-submit" onclick="submitProduct()">Submit Product</button>
       <button class="btn-cancel" onclick="closeSubmitModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- FLAG / REPORT MODAL -->
+<div class="modal-overlay" id="flag-modal" onclick="if(event.target===this)closeFlagModal()">
+  <div class="modal">
+    <h3>🚩 Report a Problem</h3>
+    <div class="modal-sub" id="flag-place-name" style="font-weight:600;color:var(--dark);margin-bottom:18px;"></div>
+
+    <div class="modal-label" style="margin-top:0;">What's wrong?</div>
+    <button class="flag-reason-btn" onclick="selectFlagReason('Incorrect information',this)">Incorrect information</button>
+    <button class="flag-reason-btn" onclick="selectFlagReason('Product discontinued or unavailable',this)">Product discontinued or unavailable</button>
+    <button class="flag-reason-btn" onclick="selectFlagReason('Not actually oil-free / WFPB',this)">Not actually oil-free / WFPB</button>
+    <button class="flag-reason-btn" onclick="selectFlagReason('Duplicate listing',this)">Duplicate listing</button>
+    <button class="flag-reason-btn" onclick="selectFlagReason('Other',this)">Other</button>
+
+    <div class="modal-label">Details <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;color:var(--muted);">(optional)</span></div>
+    <textarea class="modal-textarea" id="flag-details" placeholder="Tell us more about the problem…"></textarea>
+
+    <div class="modal-actions">
+      <button class="btn-submit" onclick="submitFlag()">Submit Report</button>
+      <button class="btn-cancel" onclick="closeFlagModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- FLAGS QUEUE MODAL -->
+<div class="modal-overlay" id="flags-queue-modal" onclick="if(event.target===this)closeFlagsQueue()">
+  <div class="modal" style="max-width:560px;">
+    <h3>🚩 Flagged Items</h3>
+    <div class="modal-sub">Community reports awaiting review.</div>
+    <div id="flags-queue-list"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" style="width:100%;" onclick="closeFlagsQueue()">Close</button>
     </div>
   </div>
 </div>
@@ -421,7 +465,10 @@ function renderProductCard(p) {
             <div class="product-where">📍 ${p.where}</div>
             <div class="product-meta" style="margin-top:3px;">by ${p.submittedBy}</div>
           </div>
-          <button class="upvote-btn" onclick="upvote('${p.id}',this)">👍 <span>${p.upvotes}</span></button>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <button class="upvote-btn" onclick="upvote('${p.id}',this)">👍 <span>${p.upvotes}</span></button>
+            <button class="btn-sm-icon" onclick="openFlagModal('${p.id}','${p.name.replace(/'/g,"\\'")}')" title="Report this product">🚩</button>
+          </div>
         </div>
       </div>
     </div>`;
@@ -560,6 +607,115 @@ function submitProduct() {
 
 // ── RUN ───────────────────────────────────────────────────────────────
 init();
+</script>
+
+<script>
+// ══════════════════════════════════════════
+// FLAGGING / REPORTING SYSTEM
+// ══════════════════════════════════════════
+const FLAGS_KEY = 'apb_product_flags';
+let flagTargetId = null, flagTargetLabel = null, flagReason = null;
+
+function loadFlags() {
+  try { return JSON.parse(localStorage.getItem(FLAGS_KEY)) || []; } catch(e) { return []; }
+}
+function saveFlags(flags) {
+  localStorage.setItem(FLAGS_KEY, JSON.stringify(flags));
+}
+
+function openFlagModal(targetId, targetLabel) {
+  flagTargetId = targetId;
+  flagTargetLabel = targetLabel;
+  flagReason = null;
+  document.getElementById('flag-place-name').textContent = targetLabel;
+  document.getElementById('flag-details').value = '';
+  document.querySelectorAll('#flag-modal .flag-reason-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('flag-modal').classList.add('open');
+}
+function closeFlagModal() {
+  document.getElementById('flag-modal').classList.remove('open');
+}
+function selectFlagReason(reason, btn) {
+  flagReason = reason;
+  document.querySelectorAll('#flag-modal .flag-reason-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+function submitFlag() {
+  if (!flagReason) { alert('Please select a reason.'); return; }
+  const flags = loadFlags();
+  flags.unshift({
+    id: 'flag-' + Date.now(),
+    targetId: flagTargetId,
+    targetLabel: flagTargetLabel,
+    reason: flagReason,
+    details: document.getElementById('flag-details').value.trim(),
+    reportedAt: new Date().toISOString(),
+    status: 'open'
+  });
+  saveFlags(flags);
+  // In production: POST to Supabase flags table
+  closeFlagModal();
+  updateFlagsBadge();
+  alert('Thanks for flagging this — our team will take a look.');
+}
+
+function updateFlagsBadge() {
+  const openCount = loadFlags().filter(f => f.status === 'open').length;
+  const badge = document.getElementById('flags-nav-badge');
+  if (!badge) return;
+  if (openCount > 0) { badge.textContent = openCount; badge.style.display = 'inline-block'; }
+  else { badge.style.display = 'none'; }
+}
+
+function openFlagsQueue() {
+  renderFlagsQueue();
+  document.getElementById('flags-queue-modal').classList.add('open');
+}
+function closeFlagsQueue() {
+  document.getElementById('flags-queue-modal').classList.remove('open');
+}
+function renderFlagsQueue() {
+  const flags = loadFlags().filter(f => f.status === 'open');
+  const list = document.getElementById('flags-queue-list');
+  if (!flags.length) {
+    list.innerHTML = `<div class="flags-queue-empty">No open flags right now.</div>`;
+    return;
+  }
+  list.innerHTML = flags.map(f => `
+    <div class="flags-queue-item">
+      <div style="font-weight:600;font-size:13px;margin-bottom:2px;">${f.targetLabel}</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">${new Date(f.reportedAt).toLocaleDateString()}</div>
+      <div style="font-size:13px;margin-bottom:4px;"><strong>${f.reason}</strong></div>
+      ${f.details ? `<div style="font-size:12px;color:#2a2a2a;margin-bottom:8px;">${f.details}</div>` : ''}
+      <div style="display:flex;gap:8px;">
+        <button class="btn-sm-icon" style="flex:1;font-size:12px;" onclick="dismissFlag('${f.id}')">Dismiss</button>
+        <button class="btn-sm-icon" style="flex:1;font-size:12px;color:#dc2626;border-color:#dc2626;" onclick="removeFlaggedContent('${f.id}')">Remove Content</button>
+      </div>
+    </div>`).join('');
+}
+function dismissFlag(flagId) {
+  const flags = loadFlags();
+  const f = flags.find(x => x.id === flagId);
+  if (f) f.status = 'dismissed';
+  saveFlags(flags);
+  renderFlagsQueue();
+  updateFlagsBadge();
+}
+function removeFlaggedContent(flagId) {
+  const flags = loadFlags();
+  const f = flags.find(x => x.id === flagId);
+  if (!f) return;
+  Object.keys(PRODUCTS).forEach(cat => {
+    PRODUCTS[cat] = PRODUCTS[cat].filter(p => p.id !== f.targetId);
+  });
+  f.status = 'resolved';
+  saveFlags(flags);
+  if (typeof init === 'function') init();
+  renderFlagsQueue();
+  updateFlagsBadge();
+}
+
+updateFlagsBadge();
 </script>
 </body>
 </html>

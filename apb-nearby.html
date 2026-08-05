@@ -184,6 +184,16 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
 .btn-submit { flex:1; background:var(--leaf); color:white; border:none; border-radius:100px; padding:13px; font-size:14px; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; }
 .btn-cancel { background:white; color:var(--muted); border:1.5px solid rgba(0,0,0,.1); border-radius:100px; padding:13px 18px; font-size:14px; cursor:pointer; font-family:'DM Sans',sans-serif; }
 
+/* FLAGGING */
+.flags-nav-btn { position:relative; background:none; border:none; cursor:pointer; font-size:17px; padding:4px; line-height:1; }
+.flags-nav-badge { position:absolute; top:-4px; right:-6px; background:#dc2626; color:white; font-size:10px; font-weight:600; border-radius:100px; padding:1px 5px; line-height:1.4; }
+.card-tip-report { font-size:11px; color:var(--muted); cursor:pointer; text-decoration:underline; white-space:nowrap; }
+.card-tip-report:hover { color:var(--leaf); }
+.flag-reason-btn { display:block; width:100%; text-align:left; padding:10px 14px; border-radius:10px; border:1.5px solid rgba(0,0,0,.08); background:white; cursor:pointer; font-size:13px; font-family:'DM Sans',sans-serif; margin-bottom:8px; transition:all .15s; }
+.flag-reason-btn.selected { border-color:#dc2626; background:#fef2f2; color:#991b1b; }
+.flags-queue-item { border:1px solid rgba(0,0,0,.08); border-radius:12px; padding:14px 16px; margin-bottom:10px; }
+.flags-queue-empty { text-align:center; padding:40px 20px; color:var(--muted); font-size:13px; }
+
 /* ADD PLACE BANNER */
 .add-place-banner { margin:0 48px 24px; background:var(--dark); border-radius:14px; padding:18px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
 .apb-text h4 { color:white; font-size:15px; margin-bottom:3px; }
@@ -206,6 +216,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
   <a href="apb-blog.html" class="nav-link">Blog</a>
   <a href="apb-products.html" class="nav-link">Products</a>
   <a href="apb-recipe-book.html" class="nav-link">My Book</a>
+  <button class="flags-nav-btn" onclick="openFlagsQueue()" title="Flagged items">🚩<span class="flags-nav-badge" id="flags-nav-badge" style="display:none;">0</span></button>
   <div class="nav-avatar">D</div>
 </nav>
 
@@ -667,7 +678,7 @@ function cardHTML(p) {
     : `<div style="font-size:12px;color:var(--muted);font-style:italic;margin-bottom:4px;">No ratings yet</div>`;
 
   const wtoBlock = p.wto
-    ? `<div class="what-to-order"><div class="wto-label">${p.tier === 'haven' ? '🌱' : p.tier === 'friendly' ? '🌿' : '🍃'} What to order</div><div class="wto-text">${p.wto}</div></div>`
+    ? `<div class="what-to-order"><div class="wto-label" style="display:flex;justify-content:space-between;align-items:center;gap:8px;"><span>${p.tier === 'haven' ? '🌱' : p.tier === 'friendly' ? '🌿' : '🍃'} What to order</span><span class="card-tip-report" onclick="openFlagModal('tip','${p.place_id}','${p.name.replace(/'/g,"\\'")}')">🚩 Report</span></div><div class="wto-text">${p.wto}</div></div>`
     : `<div style="padding:10px 12px;background:#f9f9f9;border-radius:8px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
         <span style="font-size:12px;color:var(--muted);font-style:italic;">No APB info yet for this place.</span>
         <button style="background:var(--leaf);color:white;border:none;border-radius:100px;padding:5px 12px;font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;" onclick="openAddInfoModal('${p.place_id}','${p.name.replace(/'/g,"\\'")}')">+ Add Info</button>
@@ -717,6 +728,7 @@ function cardHTML(p) {
       <a class="btn-directions" href="${mapsUrl}" target="_blank">📍 Directions</a>
       <button class="btn-sm-icon" onclick="openRating('${p.place_id}','${p.name.replace(/'/g,"\\'")}')">⭐</button>
       <button class="btn-sm-icon" onclick="savePlace('${p.name.replace(/'/g,"\\'")}')">♡</button>
+      <button class="btn-sm-icon" onclick="openFlagModal('listing','${p.place_id}','${p.name.replace(/'/g,"\\'")}')" title="Report this listing">🚩</button>
     </div>
   </div>`;
 }
@@ -1106,6 +1118,42 @@ function submitPlace() {
   </div>
 </div>
 
+<!-- FLAG / REPORT MODAL -->
+<div class="modal-overlay" id="flag-modal" onclick="if(event.target===this)closeFlagModal()">
+  <div class="modal">
+    <h3>🚩 Report a Problem</h3>
+    <div class="modal-place" id="flag-place-name" style="font-weight:600;font-size:15px;margin-bottom:2px;"></div>
+    <div class="modal-place" id="flag-target-label" style="margin-bottom:16px;font-size:12px;color:var(--muted);"></div>
+
+    <div class="modal-sec-label">What's wrong?</div>
+    <button class="flag-reason-btn" onclick="selectFlagReason('Incorrect information',this)">Incorrect information</button>
+    <button class="flag-reason-btn" onclick="selectFlagReason('Place closed or doesn\'t exist',this)">Place closed or doesn't exist</button>
+    <button class="flag-reason-btn" onclick="selectFlagReason('Inappropriate or offensive content',this)">Inappropriate or offensive content</button>
+    <button class="flag-reason-btn" onclick="selectFlagReason('Duplicate listing',this)">Duplicate listing</button>
+    <button class="flag-reason-btn" onclick="selectFlagReason('Other',this)">Other</button>
+
+    <div class="modal-sec-label" style="margin-top:16px;">Details <span class="modal-sec-sub">(optional)</span></div>
+    <textarea class="modal-textarea" id="flag-details" placeholder="Tell us more about the problem…"></textarea>
+
+    <div class="modal-actions" style="margin-top:16px;">
+      <button class="btn-submit" onclick="submitFlag()">Submit Report</button>
+      <button class="btn-cancel" onclick="closeFlagModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- FLAGS QUEUE MODAL -->
+<div class="modal-overlay" id="flags-queue-modal" onclick="if(event.target===this)closeFlagsQueue()">
+  <div class="modal" style="max-width:560px;">
+    <h3>🚩 Flagged Items</h3>
+    <div class="modal-place" style="margin-bottom:16px;font-size:13px;color:var(--muted);">Community reports awaiting review.</div>
+    <div id="flags-queue-list"></div>
+    <div class="modal-actions" style="margin-top:16px;">
+      <button class="btn-cancel" style="width:100%;" onclick="closeFlagsQueue()">Close</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ── ADD APB INFO ─────────────────────────────────────────────
 let addInfoTier = null;
@@ -1166,6 +1214,122 @@ function submitAddInfo() {
     setTimeout(() => confirm.remove(), 6000);
   }
 }
+</script>
+
+<script>
+// ══════════════════════════════════════════
+// FLAGGING / REPORTING SYSTEM
+// ══════════════════════════════════════════
+const FLAGS_KEY = 'apb_nearby_flags';
+let flagTargetType = null, flagTargetId = null, flagTargetLabel = null, flagReason = null;
+
+function loadFlags() {
+  try { return JSON.parse(localStorage.getItem(FLAGS_KEY)) || []; } catch(e) { return []; }
+}
+function saveFlags(flags) {
+  localStorage.setItem(FLAGS_KEY, JSON.stringify(flags));
+}
+
+function openFlagModal(targetType, targetId, targetLabel) {
+  flagTargetType = targetType;
+  flagTargetId = targetId;
+  flagTargetLabel = targetLabel;
+  flagReason = null;
+  document.getElementById('flag-place-name').textContent = targetLabel;
+  document.getElementById('flag-target-label').textContent = targetType === 'tip' ? 'Reporting: What to Order tip' : 'Reporting: this listing';
+  document.getElementById('flag-details').value = '';
+  document.querySelectorAll('#flag-modal .flag-reason-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('flag-modal').classList.add('open');
+}
+function closeFlagModal() {
+  document.getElementById('flag-modal').classList.remove('open');
+}
+function selectFlagReason(reason, btn) {
+  flagReason = reason;
+  document.querySelectorAll('#flag-modal .flag-reason-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+function submitFlag() {
+  if (!flagReason) { alert('Please select a reason.'); return; }
+  const flags = loadFlags();
+  flags.unshift({
+    id: 'flag-' + Date.now(),
+    targetType: flagTargetType,
+    targetId: flagTargetId,
+    targetLabel: flagTargetLabel,
+    reason: flagReason,
+    details: document.getElementById('flag-details').value.trim(),
+    reportedAt: new Date().toISOString(),
+    status: 'open'
+  });
+  saveFlags(flags);
+  // In production: POST to Supabase flags table
+  closeFlagModal();
+  updateFlagsBadge();
+  alert('Thanks for flagging this — our team will take a look.');
+}
+
+function updateFlagsBadge() {
+  const openCount = loadFlags().filter(f => f.status === 'open').length;
+  const badge = document.getElementById('flags-nav-badge');
+  if (!badge) return;
+  if (openCount > 0) { badge.textContent = openCount; badge.style.display = 'inline-block'; }
+  else { badge.style.display = 'none'; }
+}
+
+function openFlagsQueue() {
+  renderFlagsQueue();
+  document.getElementById('flags-queue-modal').classList.add('open');
+}
+function closeFlagsQueue() {
+  document.getElementById('flags-queue-modal').classList.remove('open');
+}
+function renderFlagsQueue() {
+  const flags = loadFlags().filter(f => f.status === 'open');
+  const list = document.getElementById('flags-queue-list');
+  if (!flags.length) {
+    list.innerHTML = `<div class="flags-queue-empty">No open flags right now.</div>`;
+    return;
+  }
+  list.innerHTML = flags.map(f => `
+    <div class="flags-queue-item">
+      <div style="font-weight:600;font-size:13px;margin-bottom:2px;">${f.targetLabel}</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px;">${f.targetType === 'tip' ? 'What to Order tip' : 'Listing'} · ${new Date(f.reportedAt).toLocaleDateString()}</div>
+      <div style="font-size:13px;margin-bottom:4px;"><strong>${f.reason}</strong></div>
+      ${f.details ? `<div style="font-size:12px;color:#2a2a2a;margin-bottom:8px;">${f.details}</div>` : ''}
+      <div style="display:flex;gap:8px;">
+        <button class="btn-sm-icon" style="flex:1;font-size:12px;" onclick="dismissFlag('${f.id}')">Dismiss</button>
+        <button class="btn-sm-icon" style="flex:1;font-size:12px;color:#dc2626;border-color:#dc2626;" onclick="removeFlaggedContent('${f.id}')">Remove Content</button>
+      </div>
+    </div>`).join('');
+}
+function dismissFlag(flagId) {
+  const flags = loadFlags();
+  const f = flags.find(x => x.id === flagId);
+  if (f) f.status = 'dismissed';
+  saveFlags(flags);
+  renderFlagsQueue();
+  updateFlagsBadge();
+}
+function removeFlaggedContent(flagId) {
+  const flags = loadFlags();
+  const f = flags.find(x => x.id === flagId);
+  if (!f) return;
+  if (f.targetType === 'tip') {
+    if (typeof APB_COMMUNITY_DATA !== 'undefined' && APB_COMMUNITY_DATA[f.targetId]) {
+      delete APB_COMMUNITY_DATA[f.targetId].wto;
+    }
+  } else {
+    if (typeof allResults !== 'undefined') allResults = allResults.filter(p => p.place_id !== f.targetId);
+  }
+  f.status = 'resolved';
+  saveFlags(flags);
+  if (typeof renderCards === 'function') renderCards();
+  renderFlagsQueue();
+  updateFlagsBadge();
+}
+
+updateFlagsBadge();
 </script>
 
 </body>
