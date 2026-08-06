@@ -1202,7 +1202,7 @@ function submitAddInfo() {
   closeAddInfoModal();
 
   // Show confirmation on the card
-  const card = document.querySelector(\`[data-place-id="\${addInfoPlaceId}"]\`);
+  const card = document.querySelector(`[data-place-id="${addInfoPlaceId}"]`);
   if (card) {
     const existing = card.querySelector('.apb-info-confirm');
     if (existing) existing.remove();
