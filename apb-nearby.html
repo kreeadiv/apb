@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>APB   Find Plant-Friendly Places Near You</title>
+<title>APB - Find Plant-Friendly Places Near You</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
@@ -223,7 +223,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
 <div class="page-header">
   <div class="page-eyebrow" id="eyebrow">📍 Detecting your location…</div>
   <h1 class="page-title">Find Plant-Friendly Places <em>Near You</em></h1>
-  <p class="page-sub">Real restaurants, grocers, and markets   rated by the APB community for WFPB alignment. Works anywhere in the world.</p>
+  <p class="page-sub">Real restaurants, grocers, and markets - rated by the APB community for WFPB alignment. Works anywhere in the world.</p>
 
   <!-- LOCATION BAR -->
   <div class="location-bar">
@@ -262,7 +262,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
 
   <!-- TIER EXPLAINER -->
   <div class="tier-explainer" id="tier-explainer" style="background:#f5f5f5;color:var(--muted);">
-    Tap a tier above to filter. <strong>🌱 Haven</strong> = designed for WFPB eating, oil-free options ready. <strong>🌿 Friendly</strong> = accommodating, good options with minimal modification. <strong>🍃 Possible</strong> = not plant-focused but workable   modifications needed. <strong>❓ Not Yet Rated</strong> = new places waiting for community ratings. <strong>🚫 Not WFPB</strong> = no suitable options for WFPB eating — listed so the community knows what to expect.
+    Tap a tier above to filter. <strong>🌱 Haven</strong> = designed for WFPB eating, oil-free options ready. <strong>🌿 Friendly</strong> = accommodating, good options with minimal modification. <strong>🍃 Possible</strong> = not plant-focused but workable - modifications needed. <strong>❓ Not Yet Rated</strong> = new places waiting for community ratings. <strong>🚫 Not WFPB</strong> = no suitable options for WFPB eating - listed so the community knows what to expect.
   </div>
 
   <!-- TYPE FILTERS -->
@@ -303,7 +303,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
   <div class="state-box">
     <div class="state-icon">🌍</div>
     <div class="state-title">Find food anywhere</div>
-    <div class="state-sub">Allow location access or search a city to find real plant-friendly restaurants and grocers near you   rated by the APB community for WFPB alignment.</div>
+    <div class="state-sub">Allow location access or search a city to find real plant-friendly restaurants and grocers near you - rated by the APB community for WFPB alignment.</div>
     <button class="btn-action" onclick="detectLocation()">📍 Use My Location</button>
   </div>
 </div>
@@ -314,7 +314,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
     <h3>Rate this place</h3>
     <div class="modal-place" id="modal-place-name"></div>
 
-    <div class="modal-sec-label">⭐ Overall Experience <span class="modal-sec-sub">  How was your visit?</span></div>
+    <div class="modal-sec-label">⭐ Overall Experience <span class="modal-sec-sub">- How was your visit?</span></div>
     <div class="star-row" id="overall-stars">
       <button class="star-btn" style="color:var(--sun)" onclick="setStars('overall',1)">★</button>
       <button class="star-btn" style="color:var(--sun)" onclick="setStars('overall',2)">★</button>
@@ -323,7 +323,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
       <button class="star-btn" style="color:var(--sun)" onclick="setStars('overall',5)">★</button>
     </div>
 
-    <div class="modal-sec-label">🌱 WFPB Rating <span class="modal-sec-sub">  How well does it serve a WFPB eater?</span></div>
+    <div class="modal-sec-label">🌱 WFPB Rating <span class="modal-sec-sub">- How well does it serve a WFPB eater?</span></div>
     <div class="star-row" id="wfpb-stars">
       <button class="star-btn" style="color:var(--leaf-light)" onclick="setStars('wfpb',1)">★</button>
       <button class="star-btn" style="color:var(--leaf-light)" onclick="setStars('wfpb',2)">★</button>
@@ -332,7 +332,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
       <button class="star-btn" style="color:var(--leaf-light)" onclick="setStars('wfpb',5)">★</button>
     </div>
 
-    <div class="modal-sec-label">🏷️ WFPB Tier <span class="modal-sec-sub">  Which tier fits based on your experience?</span></div>
+    <div class="modal-sec-label">🏷️ WFPB Tier <span class="modal-sec-sub">- Which tier fits based on your experience?</span></div>
     <div class="tier-vote-grid">
       <button class="tier-vote-btn" onclick="selectTierVote('haven',this)"><span class="tvb-emoji">🌱</span><div><div class="tvb-title">WFPB Haven</div><div class="tvb-desc">Whole food, plant-based eating is central to what this place does. Oil-free options exist without asking.</div></div></button>
       <button class="tier-vote-btn" onclick="selectTierVote('friendly',this)"><span class="tvb-emoji">🌿</span><div><div class="tvb-title">WFPB Friendly</div><div class="tvb-desc">Not exclusively plant-based but genuinely accommodating. Good options, staff willing to modify.</div></div></button>
@@ -351,7 +351,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
 
 <!--
   ═══════════════════════════════════════════════════════════════
-  DEVELOPER NOTES   Google Places API Integration
+  DEVELOPER NOTES - Google Places API Integration
   ═══════════════════════════════════════════════════════════════
 
   SETUP REQUIRED:
@@ -395,35 +395,35 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
 // Replace with your real key. In production, proxy through Supabase Edge Function.
 const GOOGLE_API_KEY = 'YOUR_GOOGLE_PLACES_API_KEY';
 
-// APB community data   in production this comes from Supabase.
+// APB community data - in production this comes from Supabase.
 // Keyed by Google place_id. Shows what the community has rated.
 const APB_COMMUNITY_DATA = {
-  'ChIJKzpW9PExVIgRB_lkoO5aPCQ': { tier:'friendly', wfpb_rating:null, overall_rating:null, wto:'Ask about oil-free prep. Menu rotates   check their Instagram for current veg specials.' },
+  'ChIJKzpW9PExVIgRB_lkoO5aPCQ': { tier:'friendly', wfpb_rating:null, overall_rating:null, wto:'Ask about oil-free prep. Menu rotates - check their Instagram for current veg specials.' },
   'ChIJt8e4nYw5VIgRDMCdh_dqZ2I': { tier:'haven',    wfpb_rating:null, overall_rating:null, wto:'Stock up on seasonal produce, bulk grains, and legumes. Best WFPB pantry shopping near Monroe.' },
   'ChIJgxW7cLUwVIgRD_tJzmzNyPY': { tier:'possible',  wfpb_rating:null, overall_rating:null, wto:'Produce section, dried beans, lentils, rice and grains. Good for everyday staples.' },
   'ChIJI0CXR-w7VIgR_5HJPYqq8uw': { tier:'possible',  wfpb_rating:null, overall_rating:null, wto:'Call ahead to ask about plant-based prep without oil. Rice and peas and vegetable dishes are your best bet.' },
-  'ChIJD0aMOtYlVIgR_hc3kePlw3U': { tier:'friendly', wfpb_rating:null, overall_rating:null, wto:'Ask Yanni directly about oil-free prep   the kitchen is accommodating.' },
+  'ChIJD0aMOtYlVIgR_hc3kePlw3U': { tier:'friendly', wfpb_rating:null, overall_rating:null, wto:'Ask Yanni directly about oil-free prep - the kitchen is accommodating.' },
   'ChIJuzWMj_YdVIgRajR1bJ0e5fA': { tier:'possible', wfpb_rating:null, overall_rating:null, wto:'Ask for grilled mushroom bowls without oil. Skip the fries and fried items.' },
-  'ChIJFcgZqs9-hYARZzkB8L40ZDI': { tier:'friendly', wfpb_rating:null, overall_rating:null, wto:'Tell your server you eat whole food plant-based   they have a printed list and adapt dishes. Mushroom chowder and king oysters can be made oil-free.' },
+  'ChIJFcgZqs9-hYARZzkB8L40ZDI': { tier:'friendly', wfpb_rating:null, overall_rating:null, wto:'Tell your server you eat whole food plant-based - they have a printed list and adapt dishes. Mushroom chowder and king oysters can be made oil-free.' },
   'ChIJ7Xdl_qEfVIgRHpOpGMREYEY': { tier:'possible', wfpb_rating:null, overall_rating:null, wto:'Rainbow wrap and pressed juices are most WFPB-aligned. Skip nachos, elote ribs, and fried items.' },
   'ChIJraDu1--hVogR7xixAzNcKwo': { tier:'friendly', wfpb_rating:null, overall_rating:null, wto:'Power Bowl and taco salad (dressing on the side) are most WFPB-aligned. Skip the chikie bites.' },
-  'ChIJtfNvQAChVogRFEKAr1RTAHM': { tier:'possible', wfpb_rating:null, overall_rating:null, wto:'Soul Bowl (grilled mushrooms, rice, sweet potatoes, black-eyed peas)   ask for oil-free. Skip the BBQ ribs.' },
+  'ChIJtfNvQAChVogRFEKAr1RTAHM': { tier:'possible', wfpb_rating:null, overall_rating:null, wto:'Soul Bowl (grilled mushrooms, rice, sweet potatoes, black-eyed peas) - ask for oil-free. Skip the BBQ ribs.' },
   'ChIJFWApelqhVogRsYXI3XbODu4': { tier:'possible', wfpb_rating:null, overall_rating:null, wto:'Ask about lighter preparations. Oyster mushroom sandwich without sauce. Limited Thu-Sun only.' },
   'ChIJ6yQf5BkgVIgRTQ-MHoKeLV0': { tier:'possible', wfpb_rating:null, overall_rating:null, wto:'Bean-based chili and collard greens are most WFPB-aligned. Skip the carrot bacon and burgers.' },
-  'ChIJM6vihBSeVogRy6Qw_JteorU': { tier:'haven',    wfpb_rating:null, overall_rating:null, wto:'Bulk bins, organic produce, plant milks, nutritional yeast. Hot bar   ask about oil-free options.' },
+  'ChIJM6vihBSeVogRy6Qw_JteorU': { tier:'haven',    wfpb_rating:null, overall_rating:null, wto:'Bulk bins, organic produce, plant milks, nutritional yeast. Hot bar - ask about oil-free options.' },
   'ChIJx47_MM0nVIgRiqiMCJ90RLc': { tier:'haven',    wfpb_rating:null, overall_rating:null, wto:'Bulk bins, organic produce, plant milks. Upstairs dining area. Closest Whole Foods to Monroe.' },
   'ChIJVU-E6tOCVogRhv04rFpH3HI': { tier:'haven',    wfpb_rating:null, overall_rating:null, wto:'Supplement section (B12, nooch), plant milks, organic produce. Open 7 AM daily.' },
-  'ChIJyX3YAq4fVIgRtdy_FFdUvnY': { tier:'haven',    wfpb_rating:null, overall_rating:null, wto:'Fresh produce, bulk bins. Near Oh My Soul and Soul Miner\'s Garden   great combo trip.' },
+  'ChIJyX3YAq4fVIgRtdy_FFdUvnY': { tier:'haven',    wfpb_rating:null, overall_rating:null, wto:'Fresh produce, bulk bins. Near Oh My Soul and Soul Miner\'s Garden - great combo trip.' },
   'ChIJkRJNZoyfVogRmWLdSIS3sFA': { tier:'haven',    wfpb_rating:null, overall_rating:null, wto:'Best value organic staples in Charlotte. Frozen veggies, canned legumes, whole grains, plant milks.' },
-  'ChIJgZApsnudVogRhjsY5IDyYuQ': { tier:'haven',    wfpb_rating:null, overall_rating:null, wto:'Closest TJ\'s to Monroe. Right next to Sanctuary Bistro on Rea Rd   perfect combo trip.' },
+  'ChIJgZApsnudVogRhjsY5IDyYuQ': { tier:'haven',    wfpb_rating:null, overall_rating:null, wto:'Closest TJ\'s to Monroe. Right next to Sanctuary Bistro on Rea Rd - perfect combo trip.' },
   'mod-pizza-indian-trail': { tier:'possible', wfpb_rating:null, overall_rating:null, name:'MOD Pizza', address:'6720 Old Monroe Rd, Indian Trail, NC 28079', wto:'Build your own salad with lots of ingredient choices, but the only oil-free dressing option is balsamic vinegar. APB tip: bring your own dressing from home for a better salad experience. For pizza, the signature red tomato sauce is oil-free and there are plenty of veggie toppings. The crust does contain some oil so keep that in mind. Leave off the cheese, or ask for vegan cheese if that is something you include in your diet. Great option for going out with non-plant-based friends since everyone can build exactly what they want.', submittedBy:'APB Team', apbTested:true },
   'mikes-vegan-charlotte': { tier:'notwfpb', wfpb_rating:null, overall_rating:null, name:"Mike's Vegan Grill", address:'440 E McCullough Dr Ste 123, Charlotte, NC 28262', wto:'Great vegan comfort food with excellent reviews and really friendly staff. However, if you are eating WFPB there are not really available options here. The menu focuses on vegan versions of classic comfort foods like burgers, cheesesteaks, and fried chicken. Worth knowing about if you are with non-WFPB friends who want vegan food, but do not expect to find oil-free whole food options.', submittedBy:'APB Team', apbTested:true },
-  'healthy-habit-hilton-head': { tier:'friendly', wfpb_rating:null, overall_rating:null, name:'Healthy Habit', address:'33 Office Park Rd Ste 227, Hilton Head Island, SC 29928', wto:'Has a separate vegan/vegetarian menu   watch the key carefully since it can be confusing. Breakfast bowls and smoothies appeared to be WFPB. For dinner, salads and wraps are your best bet. APB recommends the Yummus Salad (watch out   there is also a chicken version) and ask to leave off the Mediterranean red wine dressing. The Latin Wrap is also excellent. Ingredients are fresh and flavorful throughout. The hummus may contain oil so keep that in mind. Always check the ingredients of whichever dish you try.', submittedBy:'APB Team', apbTested:true },
+  'healthy-habit-hilton-head': { tier:'friendly', wfpb_rating:null, overall_rating:null, name:'Healthy Habit', address:'33 Office Park Rd Ste 227, Hilton Head Island, SC 29928', wto:'Has a separate vegan/vegetarian menu - watch the key carefully since it can be confusing. Breakfast bowls and smoothies appeared to be WFPB. For dinner, salads and wraps are your best bet. APB recommends the Yummus Salad (watch out - there is also a chicken version) and ask to leave off the Mediterranean red wine dressing. The Latin Wrap is also excellent. Ingredients are fresh and flavorful throughout. The hummus may contain oil so keep that in mind. Always check the ingredients of whichever dish you try.', submittedBy:'APB Team', apbTested:true },
   'ChIJfQzmipmfVogRBHP01F5-IME': { tier:'friendly', wfpb_rating:null, overall_rating:null, wto:'B12 supplements, nutritional yeast, alkaline water. Good for hard-to-find WFPB supplements. Closed Sundays.' },
-  'ChIJPfuWb7GFVogR00e11ZThvcg': { tier:'haven',    wfpb_rating:null, overall_rating:null, wto:'Hot bar   ask about oil-free. Organic produce, clean-label condiments. Bakery/meat close ~6 PM.' },
+  'ChIJPfuWb7GFVogR00e11ZThvcg': { tier:'haven',    wfpb_rating:null, overall_rating:null, wto:'Hot bar - ask about oil-free. Organic produce, clean-label condiments. Bakery/meat close ~6 PM.' },
 };
 
-// Place types to search   covers restaurants, cafes, grocers, health food stores
+// Place types to search - covers restaurants, cafes, grocers, health food stores
 const SEARCH_TYPES = {
   all: ['vegan_restaurant','vegetarian_restaurant','restaurant','grocery_or_supermarket','health_food_store','supermarket','meal_takeaway','cafe'],
   restaurant: ['vegan_restaurant','vegetarian_restaurant','restaurant'],
@@ -474,17 +474,17 @@ function detectLocation() {
       display.classList.remove('loading');
       btn.disabled = false;
       if (err.code === 1) {
-        // PERMISSION_DENIED   user blocked it, or browser remembered a prior block
+        // PERMISSION_DENIED - user blocked it, or browser remembered a prior block
         display.textContent = 'Location permission denied';
         btn.textContent = '📍 Use My Location';
         showState('denied-permission');
       } else if (err.code === 2) {
-        // POSITION_UNAVAILABLE   GPS/network couldn't get a fix
+        // POSITION_UNAVAILABLE - GPS/network couldn't get a fix
         display.textContent = 'Location unavailable';
         btn.textContent = '🔄 Try Again';
         showState('denied-unavailable');
       } else if (err.code === 3) {
-        // TIMEOUT   took longer than 10 seconds
+        // TIMEOUT - took longer than 10 seconds
         display.textContent = 'Location timed out';
         btn.textContent = '🔄 Try Again';
         showState('denied-timeout');
@@ -557,7 +557,7 @@ function searchNearby(lat, lng) {
 
   // Google Places Nearby Search
   // POST https://places.googleapis.com/v1/places:searchNearby
-  // This is the Places API (New) endpoint   uses POST with JSON body
+  // This is the Places API (New) endpoint - uses POST with JSON body
   //
   // For the legacy Places API, use:
   // GET https://maps.googleapis.com/maps/api/place/nearbysearch/json
@@ -604,7 +604,7 @@ function enrichPlace(p, userLat, userLng) {
   const types = (p.types || []).join(' ');
   const vicinity = (p.vicinity || '').toLowerCase();
 
-  // Plant-friendliness score   higher = more relevant to show
+  // Plant-friendliness score - higher = more relevant to show
   let plantScore = 0;
   if (types.includes('vegan_restaurant')) plantScore += 10;
   if (types.includes('vegetarian_restaurant')) plantScore += 8;
@@ -756,15 +756,15 @@ function showState(type, msg) {
     ? `<ol class="state-steps"><li>Open your iPhone <strong>Settings</strong></li><li>Scroll down to <strong>Safari</strong> (or your browser)</li><li>Tap <strong>Location</strong> and choose <strong>While Using the App</strong></li><li>Come back and tap <strong>Use My Location</strong></li></ol>`
     : isAndroid
     ? `<ol class="state-steps"><li>Tap the <strong>lock icon</strong> or <strong>ⓘ</strong> in your browser's address bar</li><li>Tap <strong>Permissions → Location</strong></li><li>Select <strong>Allow</strong></li><li>Refresh the page and tap <strong>Use My Location</strong></li></ol>`
-    : `<ol class="state-steps"><li>Click the <strong>lock icon 🔒</strong> in your browser's address bar</li><li>Find <strong>Location</strong> in the permissions list</li><li>Change it from <strong>Block</strong> to <strong>Allow</strong></li><li>Refresh the page and tap <strong>Use My Location</strong></li></ol><p class="state-note">Or skip this entirely   just search any city or zip code in the search bar above. 👆</p>`;
+    : `<ol class="state-steps"><li>Click the <strong>lock icon 🔒</strong> in your browser's address bar</li><li>Find <strong>Location</strong> in the permissions list</li><li>Change it from <strong>Block</strong> to <strong>Allow</strong></li><li>Refresh the page and tap <strong>Use My Location</strong></li></ol><p class="state-note">Or skip this entirely - just search any city or zip code in the search bar above. 👆</p>`;
 
   const msgs = {
     'denied-permission': {
       icon: '🔒',
       title: 'Location permission is blocked',
-      sub: `APB needs location access to find places near you. Your browser has blocked it   either from a previous choice or a system setting. Here's how to fix it:`,
+      sub: `APB needs location access to find places near you. Your browser has blocked it - either from a previous choice or a system setting. Here's how to fix it:`,
       extra: permissionSteps,
-      action: null  // Try Again won't work until they fix permissions   don't show it
+      action: null  // Try Again won't work until they fix permissions - don't show it
     },
     'denied-unavailable': {
       icon: '📡',
@@ -784,14 +784,14 @@ function showState(type, msg) {
       icon: '🌐',
       title: 'Location not supported',
       sub: `Your browser doesn't support location detection. This can happen in some older browsers or certain privacy-focused settings.`,
-      extra: `<p class="state-note">No problem   just search any city, zip code, or address in the search bar above to find plant-friendly places anywhere. 👆</p>`,
+      extra: `<p class="state-note">No problem - just search any city, zip code, or address in the search bar above to find plant-friendly places anywhere. 👆</p>`,
       action: null
     },
     'no-results': {
       icon: '🌿',
       title: 'No plant-friendly places found here',
       sub: msg || 'APB didn\'t find any matches in this area. Try a wider radius or a different location.',
-      extra: `<p class="state-note">You can also <strong>add a place</strong>   if you know a great plant-friendly spot here, contribute it to the community.</p>`,
+      extra: `<p class="state-note">You can also <strong>add a place</strong> - if you know a great plant-friendly spot here, contribute it to the community.</p>`,
       action: { label: '+ Add a Place', fn: 'openSubmitModal()' }
     },
     'error': {
@@ -904,7 +904,7 @@ window.addEventListener('load', () => {
 <div class="modal-overlay" id="submit-modal" onclick="if(event.target===this)closeSubmitModal()">
   <div class="modal">
     <h3>📍 Add a Place</h3>
-    <div class="modal-place">Help the APB community discover plant-friendly spots. Your submission goes live right away — the APB team may remove or edit listings that turn out to be inaccurate.</div>
+    <div class="modal-place">Help the APB community discover plant-friendly spots. Your submission goes live right away - the APB team may remove or edit listings that turn out to be inaccurate.</div>
 
     <div class="modal-sec-label">Restaurant or Business Name</div>
     <input class="modal-textarea" id="submit-name" type="text" placeholder="e.g. Green Bowl Cafe" style="min-height:auto;padding:10px 14px;">
@@ -924,7 +924,7 @@ window.addEventListener('load', () => {
       <button class="tier-vote-btn" onclick="selectPlaceType('other',this)" style="flex:1;min-width:120px;"><span class="tvb-emoji">📍</span><div><div class="tvb-title">Other</div></div></button>
     </div>
 
-    <div class="modal-sec-label" style="margin-top:16px;">🏷️ WFPB Tier <span class="modal-sec-sub">  Your best guess</span></div>
+    <div class="modal-sec-label" style="margin-top:16px;">🏷️ WFPB Tier <span class="modal-sec-sub">- Your best guess</span></div>
     <div class="tier-vote-grid">
       <button class="tier-vote-btn" onclick="selectSubmitTier('haven',this)"><span class="tvb-emoji">🌱</span><div><div class="tvb-title">WFPB Haven</div><div class="tvb-desc">Whole food, plant-based eating is central here. Oil-free options exist without asking.</div></div></button>
       <button class="tier-vote-btn" onclick="selectSubmitTier('friendly',this)"><span class="tvb-emoji">🌿</span><div><div class="tvb-title">WFPB Friendly</div><div class="tvb-desc">Not exclusively plant-based but genuinely accommodating. Good options with minimal modification.</div></div></button>
@@ -935,7 +935,7 @@ window.addEventListener('load', () => {
     <div class="modal-sec-label" style="margin-top:16px;">🌱 What to Order / Tips for WFPB Eaters <span class="modal-sec-sub">(optional but really helpful)</span></div>
     <textarea class="modal-textarea" id="submit-tip" placeholder="e.g. Ask for the veggie bowl without oil. The lentil soup is fully plant-based. Staff are very accommodating."></textarea>
 
-    <div class="modal-sec-label" style="margin-top:16px;">Your Name or Initials <span class="modal-sec-sub">  shown as submitted by</span></div>
+    <div class="modal-sec-label" style="margin-top:16px;">Your Name or Initials <span class="modal-sec-sub">- shown as submitted by</span></div>
     <input class="modal-textarea" id="submit-author" type="text" placeholder="e.g. Dana M." style="min-height:auto;padding:10px 14px;">
 
     <div style="margin-top:16px;padding:12px 14px;background:var(--leaf-xpale);border-radius:10px;font-size:12px;color:var(--muted);line-height:1.6;">
@@ -1076,7 +1076,7 @@ function submitPlace() {
     <div class="modal-place" id="add-info-place-name" style="font-weight:600;font-size:15px;margin-bottom:4px;"></div>
     <div class="modal-place" style="margin-bottom:16px;">Help the APB community know what to expect here. Your tip goes live right away.</div>
 
-    <div class="modal-sec-label">🏷️ WFPB Tier <span class="modal-sec-sub">  How would you rate this place?</span></div>
+    <div class="modal-sec-label">🏷️ WFPB Tier <span class="modal-sec-sub">- How would you rate this place?</span></div>
     <div class="tier-vote-grid">
       <button class="tier-vote-btn" onclick="selectAddInfoTier('haven',this)">
         <span class="tvb-emoji">🌱</span>
@@ -1104,7 +1104,7 @@ function submitPlace() {
     <div class="modal-sec-label" style="margin-top:16px;">🌱 What to Order / Tips for WFPB Eaters <span class="modal-sec-sub">(really helpful for the community)</span></div>
     <textarea class="modal-textarea" id="add-info-tip" placeholder="e.g. Ask for the veggie bowl without oil. The lentil soup is fully plant-based. The staff are very accommodating if you explain what you need."></textarea>
 
-    <div class="modal-sec-label" style="margin-top:16px;">Your Name or Initials <span class="modal-sec-sub">  shown as submitted by</span></div>
+    <div class="modal-sec-label" style="margin-top:16px;">Your Name or Initials <span class="modal-sec-sub">- shown as submitted by</span></div>
     <input class="modal-textarea" id="add-info-author" type="text" placeholder="e.g. Dana M." style="min-height:auto;padding:10px 14px;">
 
     <div style="margin-top:16px;padding:12px 14px;background:var(--leaf-xpale);border-radius:10px;font-size:12px;color:var(--muted);line-height:1.6;">
@@ -1266,7 +1266,7 @@ function submitFlag() {
   // In production: POST to Supabase flags table
   closeFlagModal();
   updateFlagsBadge();
-  alert('Thanks for flagging this — our team will take a look.');
+  alert('Thanks for flagging this - our team will take a look.');
 }
 
 function updateFlagsBadge() {

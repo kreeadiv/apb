@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>APB — Join Free</title>
+<title>APB - Join Free</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -148,7 +148,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--da
       <div class="benefit"><div class="benefit-check">✓</div><div class="benefit-text"><strong>Find plant-friendly places</strong> anywhere you go</div></div>
       <div class="benefit"><div class="benefit-check">✓</div><div class="benefit-text"><strong>Save and share</strong> recipes you love</div></div>
       <div class="benefit"><div class="benefit-check">✓</div><div class="benefit-text"><strong>Rate restaurants</strong> for WFPB friendliness</div></div>
-      <div class="benefit"><div class="benefit-check">✓</div><div class="benefit-text"><strong>Community blog</strong> — read and contribute</div></div>
+      <div class="benefit"><div class="benefit-check">✓</div><div class="benefit-text"><strong>Community blog</strong> - read and contribute</div></div>
     </div>
   </div>
 
@@ -165,7 +165,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--da
       <div class="step-dot" id="dot-2"></div>
       <div class="step-dot" id="dot-3"></div>
     </div>
-    <div class="step-label" id="step-label">Step 1 of 3 — Your account</div>
+    <div class="step-label" id="step-label">Step 1 of 3 - Your account</div>
 
     <div class="alert alert-error" id="alert-error"></div>
     <div class="alert alert-success" id="alert-success"></div>
@@ -215,7 +215,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--da
     <!-- ── STEP 2: Plant-based experience ── -->
     <div class="form-step" id="step-2">
       <h1 class="form-title">Your <em>journey</em></h1>
-      <p class="form-sub" style="margin-bottom:20px;">Tell us where you are — APB personalizes your dashboard and recommendations to match.</p>
+      <p class="form-sub" style="margin-bottom:20px;">Tell us where you are - APB personalizes your dashboard and recommendations to match.</p>
 
       <div class="form-label" style="margin-bottom:10px;">Where are you on your plant-based journey?</div>
       <div class="experience-grid">
@@ -273,17 +273,17 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--da
         <div style="display:flex;flex-direction:column;gap:8px;">
           <div id="plan-free" class="exp-btn selected" onclick="selectPlan('free')" style="cursor:pointer;">
             <span class="exp-btn-icon">🌱</span>
-            <span class="exp-btn-label">Free — $0</span>
+            <span class="exp-btn-label">Free - $0</span>
             <span class="exp-btn-sub">Browse, save, rate, and contribute.</span>
           </div>
           <div id="plan-removeads" class="exp-btn" onclick="selectPlan('removeads')" style="cursor:pointer;">
             <span class="exp-btn-icon">🔕</span>
-            <span class="exp-btn-label">Remove Ads — $4.99 once</span>
+            <span class="exp-btn-label">Remove Ads - $4.99 once</span>
             <span class="exp-btn-sub">Everything free, no ads ever. One-time, never expires.</span>
           </div>
           <div id="plan-premium" class="exp-btn" onclick="selectPlan('premium')" style="cursor:pointer;">
             <span class="exp-btn-icon">✨</span>
-            <span class="exp-btn-label">Premium — $3.99/mo or $29.99/yr</span>
+            <span class="exp-btn-label">Premium - $3.99/mo or $29.99/yr</span>
             <span class="exp-btn-sub">No ads + early access to upcoming premium features. Cancel anytime.</span>
           </div>
         </div>
@@ -336,7 +336,7 @@ let signupEmail = '';
 function goToStep(n) {
   document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
   document.getElementById(`step-${n}`).classList.add('active');
-  document.getElementById('step-label').textContent = `Step ${n} of 3 — ${['Your account','Your journey','Almost there'][n-1]}`;
+  document.getElementById('step-label').textContent = `Step ${n} of 3 - ${['Your account','Your journey','Almost there'][n-1]}`;
   for (let i = 1; i <= 3; i++) {
     const dot = document.getElementById(`dot-${i}`);
     dot.classList.remove('active','done');

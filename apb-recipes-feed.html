@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>APB   Recipes</title>
+<title>APB - Recipes</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
@@ -24,7 +24,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
 .nav-link.active { color:var(--leaf); font-weight:500; }
 .nav-avatar { width:32px; height:32px; border-radius:50%; background:var(--leaf); color:white; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:500; }
 
-/* PAGE TABS   main navigation between sections */
+/* PAGE TABS - main navigation between sections */
 .page-tabs { display:flex; gap:0; border-bottom:2px solid rgba(0,0,0,.08); padding:0 48px; background:white; }
 .page-tab { padding:16px 24px; font-size:14px; font-weight:500; color:var(--muted); cursor:pointer; border:none; background:none; font-family:'DM Sans',sans-serif; border-bottom:2px solid transparent; margin-bottom:-2px; transition:all .15s; }
 .page-tab:hover { color:var(--leaf); }
@@ -169,7 +169,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
   <div class="inapp-header">
     <div>
       <h2>From the <em>APB Community</em></h2>
-      <p style="font-size:13px;color:var(--muted);margin-top:4px;">Recipes shared by APB members — be the first to add yours.</p>
+      <p style="font-size:13px;color:var(--muted);margin-top:4px;">Recipes shared by APB members - be the first to add yours.</p>
     </div>
     <div class="inapp-header-actions">
       <div class="search-pill">
@@ -201,7 +201,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
 <div class="section active" id="section-external">
   <div class="external-header">
     <h2>Recipes from <em>the Web</em></h2>
-    <p>Curated links to the best WFPB recipes from trusted creators. We show the title, description, and tags   the full recipe lives on the creator's site. Click to visit. Sign in to save and rate.</p>
+    <p>Curated links to the best WFPB recipes from trusted creators. We show the title, description, and tags - the full recipe lives on the creator's site. Click to visit. Sign in to save and rate.</p>
     <div class="source-strip">
       <button type="button" class="source-badge" onclick="filterBySource('Plantiful Kiki',this)"><div class="source-dot" style="background:var(--leaf-light);"></div>Plantiful Kiki</button>
       <button type="button" class="source-badge" onclick="filterBySource('SmartyPlants',this)"><div class="source-dot" style="background:var(--sun);"></div>SmartyPlants</button>
@@ -214,7 +214,7 @@ nav { position:sticky; top:0; z-index:200; background:rgba(254,250,224,0.95); ba
 
   <div class="notice">
     <span>🔗</span>
-    <span>All recipes below link to their original creators' websites   APB never reproduces their content. Click "View Full Recipe" to visit the source. Sign in to save to your Recipe Book and rate.</span>
+    <span>All recipes below link to their original creators' websites - APB never reproduces their content. Click "View Full Recipe" to visit the source. Sign in to save to your Recipe Book and rate.</span>
   </div>
 
   <div class="ext-filter-bar">
@@ -252,7 +252,7 @@ const INAPP_RECIPES = [
     bg:'linear-gradient(135deg,#ffe0b2,#ffccbc)',
     title:'Air Fryer Roasted Red Potatoes',
     author:'APB Team',
-    desc:'Crispy, golden red potatoes seasoned with garlic, Italian herbs, dried parsley, and almond parmesan before air frying. No oil needed — the air fryer does all the work.',
+    desc:'Crispy, golden red potatoes seasoned with garlic, Italian herbs, dried parsley, and almond parmesan before air frying. No oil needed - the air fryer does all the work.',
     time:'40 min', servings:'4-6',
     badge:'featured', badgeLabel:'⭐ Featured',
     tags:['oil-free','gluten-free','air-fryer'],
@@ -299,7 +299,7 @@ const EXTERNAL_RECIPES = [
   { id:'nf-004', source:'NutritionFacts.org', sourceDot:'#774936', cat:'Desserts', emoji:'🍪', bg:'linear-gradient(135deg,#d7ccc8,#bcaaa4)', title:'Molasses Spice Cookies', desc:'Warmly spiced cookies made with almond and oat flour, sweetened with molasses and date syrup.', meta:'⏱ 45 min · 12 servings', url:'https://nutritionfacts.org/recipe/molasses-spice-cookies/', tags:['Oil-Free'] },
   { id:'nf-005', source:'NutritionFacts.org', sourceDot:'#774936', cat:'Soups & Salads', emoji:'🥣', bg:'linear-gradient(135deg,#f5f5f5,#e0e0e0)', title:'Cauliflower Bisque', desc:'A creamy, veggie-forward bisque made with cauliflower and sweet potato, no cream required.', meta:'⏱ 30 min · 4 servings', url:'https://nutritionfacts.org/recipe/cauliflower-bisque/', tags:['Oil-Free'] },
   { id:'nf-006', source:'NutritionFacts.org', sourceDot:'#774936', cat:'Soups & Salads', emoji:'🥗', bg:'linear-gradient(135deg,#e8f5e9,#c8e6c9)', title:'Roasted Chickpea and Kale Salad with Sweet Potatoes and Apple', desc:'A hearty salad with roasted chickpeas, steamed sweet potato, kale, and crisp apple in a tangy almond-miso dressing.', meta:'⏱ 45 min · 4 servings', url:'https://nutritionfacts.org/recipe/roasted-chickpea-and-kale-salad-with-sweet-potatoes-and-apple/', tags:['Oil-Free','High Protein'] },
-  { id:'vid-001', type:'video', source:'Plantiful Kiki', sourceDot:'#52b788', cat:'video', emoji:'▶️', bg:'linear-gradient(135deg,#1a2e1a,#0d150d)', title:'Easy Meals For Weight Loss   The Starch Solution', desc:'Kiki walks through a full day of easy starch-solution-style plant-based meals for weight loss.', meta:'YouTube · Plantiful Kiki', url:'https://www.youtube.com/watch?v=u3PvrPe2p6g', tags:['Weight Loss','Meal Ideas','Beginner'] },
+  { id:'vid-001', type:'video', source:'Plantiful Kiki', sourceDot:'#52b788', cat:'video', emoji:'▶️', bg:'linear-gradient(135deg,#1a2e1a,#0d150d)', title:'Easy Meals For Weight Loss - The Starch Solution', desc:'Kiki walks through a full day of easy starch-solution-style plant-based meals for weight loss.', meta:'YouTube · Plantiful Kiki', url:'https://www.youtube.com/watch?v=u3PvrPe2p6g', tags:['Weight Loss','Meal Ideas','Beginner'] },
   { id:'vid-002', type:'video', source:'Plantiful Kiki', sourceDot:'#52b788', cat:'video', emoji:'▶️', bg:'linear-gradient(135deg,#1a2e1a,#0d150d)', title:'Easy Meals For Maximum Weight Loss', desc:'Kiki answers community questions on maximizing weight loss through plant-based eating, with a full day of meals.', meta:'YouTube · Plantiful Kiki', url:'https://www.youtube.com/watch?v=Q30VfybAwPc', tags:['Weight Loss','Q&A'] },
   { id:'vid-003', type:'video', source:'NutritionFacts.org', sourceDot:'#774936', cat:'video', emoji:'🔬', bg:'linear-gradient(135deg,#1a1a2e,#0d0d1f)', title:"Dr. Greger's NutritionFacts.org Video Library", desc:"Thousands of short, science-backed videos on whole food plant-based nutrition. The why behind whole food plant-based eating.", meta:'YouTube · NutritionFacts.org', url:'https://www.youtube.com/user/NutritionFactsOrg', tags:['Science','Nutrition','Dr. Greger'] }
 ];
@@ -321,7 +321,7 @@ function renderInApp(recipes) {
   if (!recipes.length) {
     document.getElementById('inapp-grid').innerHTML = `
       <div style="grid-column:1/-1;text-align:center;padding:48px 20px;color:var(--muted);">
-        <p style="font-size:14px;margin-bottom:12px;">No community recipes yet — be the first to share one!</p>
+        <p style="font-size:14px;margin-bottom:12px;">No community recipes yet - be the first to share one!</p>
         <button style="background:var(--leaf);color:white;border:none;border-radius:100px;padding:9px 18px;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;" onclick="alert('Sign in to submit your recipe to the APB community!')">+ Submit Recipe</button>
       </div>`;
     return;
@@ -387,7 +387,7 @@ function openDetail(id) {
       <div class="detail-category">${r.catLabel}</div>
       <div class="detail-title">${r.title}</div>
       <div class="detail-author">${r.author}</div>
-      <div class="wfpb-check">🌱 WFPB Compliant   whole food, plant-based, no oil, no refined ingredients</div>
+      <div class="wfpb-check">🌱 WFPB Compliant - whole food, plant-based, no oil, no refined ingredients</div>
       <div class="detail-stats">
         <div class="detail-stat"><div class="detail-stat-val">⏱ ${r.time}</div><div class="detail-stat-lbl">Total Time</div></div>
         <div class="detail-stat"><div class="detail-stat-val">🍽 ${r.servings}</div><div class="detail-stat-lbl">Servings</div></div>
