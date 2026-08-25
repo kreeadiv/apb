@@ -235,6 +235,7 @@ export default function NearbyScreen() {
   const [locationLabel, setLocationLabel] = useState('Not detected yet');
   const [locating, setLocating] = useState(false);
   const [citySearch, setCitySearch] = useState('');
+  const [nameFilter, setNameFilter] = useState('');
   const [radiusM, setRadiusM] = useState('8000');
   const [activeTiers, setActiveTiers] = useState(new Set(['haven', 'friendly', 'possible', 'unrated', 'notwfpb']));
   const [activeType, setActiveType] = useState('all');
@@ -305,22 +306,51 @@ export default function NearbyScreen() {
         .from('place_ratings')
         .select('*')
         .in('place_id', ids);
+
+      const uniqueNames = [...new Set(enriched.map((p) => p.name).filter(Boolean))];
+      let chainRows = [];
+      if (uniqueNames.length > 0) {
+        const { data: nameRows, error: nameError } = await supabase
+          .from('place_ratings')
+          .select('*')
+          .in('place_name', uniqueNames);
+        if (!nameError && nameRows) chainRows = nameRows;
+      }
+
       if (!ratingsError && ratingRows) {
         const byPlace = {};
         ratingRows.forEach((r) => {
           (byPlace[r.place_id] = byPlace[r.place_id] || []).push(r);
         });
+        const byName = {};
+        chainRows.forEach((r) => {
+          (byName[r.place_name] = byName[r.place_name] || []).push(r);
+        });
         enriched = enriched.map((p) => {
           const agg = aggregateRatings(byPlace[p.id], session.user.id);
-          if (!agg) return p;
-          return {
-            ...p,
-            tier: agg.tier || p.tier,
-            apbWfpb: agg.wfpbAvg ?? p.apbWfpb,
-            wto: agg.tip ?? p.wto,
-            ratingCount: agg.count,
-            myRating: agg.mine || null,
-          };
+          if (agg) {
+            return {
+              ...p,
+              tier: agg.tier || p.tier,
+              apbWfpb: agg.wfpbAvg ?? p.apbWfpb,
+              wto: agg.tip ?? p.wto,
+              ratingCount: agg.count,
+              myRating: agg.mine || null,
+            };
+          }
+          const otherRows = (byName[p.name] || []).filter((r) => r.place_id !== p.id);
+          const chainAgg = aggregateRatings(otherRows, null);
+          if (chainAgg) {
+            return {
+              ...p,
+              tier: chainAgg.tier || p.tier,
+              apbWfpb: chainAgg.wfpbAvg ?? p.apbWfpb,
+              wto: chainAgg.tip ?? p.wto,
+              ratingCount: chainAgg.count,
+              chainFallback: true,
+            };
+          }
+          return p;
         });
       }
     }
@@ -448,22 +478,59 @@ export default function NearbyScreen() {
             .from('place_ratings')
             .select('*')
             .in('place_id', ids);
+
+          // Also pull ratings left at any OTHER location sharing the same
+          // name - chains like MOD Pizza usually have the same menu
+          // everywhere, so a tip from one location is useful at another
+          // that has no ratings of its own yet.
+          const uniqueNames = [...new Set(enriched.map((p) => p.name).filter(Boolean))];
+          let chainRows = [];
+          if (uniqueNames.length > 0) {
+            const { data: nameRows, error: nameError } = await supabase
+              .from('place_ratings')
+              .select('*')
+              .in('place_name', uniqueNames);
+            if (!nameError && nameRows) chainRows = nameRows;
+          }
+
           if (!ratingsError && ratingRows) {
             const byPlace = {};
             ratingRows.forEach((r) => {
               (byPlace[r.place_id] = byPlace[r.place_id] || []).push(r);
             });
+            const byName = {};
+            chainRows.forEach((r) => {
+              (byName[r.place_name] = byName[r.place_name] || []).push(r);
+            });
             enriched = enriched.map((p) => {
               const agg = aggregateRatings(byPlace[p.id], session?.user?.id);
-              if (!agg) return p;
-              return {
-                ...p,
-                tier: agg.tier || p.tier,
-                apbWfpb: agg.wfpbAvg ?? p.apbWfpb,
-                wto: agg.tip ?? p.wto,
-                ratingCount: agg.count,
-                myRating: agg.mine || null,
-              };
+              if (agg) {
+                return {
+                  ...p,
+                  tier: agg.tier || p.tier,
+                  apbWfpb: agg.wfpbAvg ?? p.apbWfpb,
+                  wto: agg.tip ?? p.wto,
+                  ratingCount: agg.count,
+                  myRating: agg.mine || null,
+                };
+              }
+              // No ratings at this exact location yet - fall back to other
+              // locations of the same chain, if the community has rated any.
+              if (!p.apb) {
+                const otherRows = (byName[p.name] || []).filter((r) => r.place_id !== p.id);
+                const chainAgg = aggregateRatings(otherRows, null);
+                if (chainAgg) {
+                  return {
+                    ...p,
+                    tier: chainAgg.tier || p.tier,
+                    apbWfpb: chainAgg.wfpbAvg ?? p.apbWfpb,
+                    wto: chainAgg.tip ?? p.wto,
+                    ratingCount: chainAgg.count,
+                    chainFallback: true,
+                  };
+                }
+              }
+              return p;
             });
           }
         }
@@ -568,7 +635,15 @@ export default function NearbyScreen() {
     }
   }
 
-  const filteredResults = useMemo(() => results.filter((p) => activeTiers.has(p.tier)), [results, activeTiers]);
+  const filteredResults = useMemo(() => {
+    const q = nameFilter.trim().toLowerCase();
+    return results.filter((p) => activeTiers.has(p.tier) && (!q || p.name.toLowerCase().includes(q)));
+  }, [results, activeTiers, nameFilter]);
+
+  const filteredSavedResults = useMemo(() => {
+    const q = nameFilter.trim().toLowerCase();
+    return savedResults.filter((p) => !q || p.name.toLowerCase().includes(q));
+  }, [savedResults, nameFilter]);
 
   function openRating(place) {
     if (!session) {
@@ -882,6 +957,23 @@ export default function NearbyScreen() {
           )}
         </View>
 
+        <View style={styles.nameFilterRow}>
+          <TextInput
+            style={styles.nameFilterInput}
+            placeholder={
+              viewTab === 'search' ? 'Filter these results by name (e.g. MOD Pizza)' : 'Filter your saved places by name'
+            }
+            placeholderTextColor={colors.muted}
+            value={nameFilter}
+            onChangeText={setNameFilter}
+          />
+          {nameFilter.length > 0 && (
+            <TouchableOpacity onPress={() => setNameFilter('')} style={styles.nameFilterClear}>
+              <Text style={styles.nameFilterClearText}>✕</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+
         <View style={styles.resultsHeader}>
           <Text style={styles.resultsCount}>
             {viewTab === 'search'
@@ -892,7 +984,7 @@ export default function NearbyScreen() {
                 : '-'
               : loadingSaved
               ? 'Loading…'
-              : `${savedResults.length} saved place${savedResults.length !== 1 ? 's' : ''}`}
+              : `${filteredSavedResults.length} saved place${filteredSavedResults.length !== 1 ? 's' : ''}`}
           </Text>
         </View>
 
@@ -928,8 +1020,14 @@ export default function NearbyScreen() {
               <Text style={styles.emptyTitle}>No saved places yet</Text>
               <Text style={styles.emptyText}>Tap the ♡ on any search result to save it here.</Text>
             </View>
+          ) : viewTab === 'saved' && filteredSavedResults.length === 0 ? (
+            <View style={styles.emptyBox}>
+              <Text style={styles.emptyIcon}>🔍</Text>
+              <Text style={styles.emptyTitle}>No matches</Text>
+              <Text style={styles.emptyText}>No saved places match "{nameFilter}".</Text>
+            </View>
           ) : (
-            (viewTab === 'search' ? filteredResults : savedResults).map((p) => (
+            (viewTab === 'search' ? filteredResults : filteredSavedResults).map((p) => (
               <View key={p.id} style={styles.card}>
                 <View style={styles.cardHeader}>
                   <View style={styles.cardHeaderTop}>
@@ -1020,6 +1118,11 @@ export default function NearbyScreen() {
                           <Text style={styles.wtoReport}>🚩 Report</Text>
                         </TouchableOpacity>
                       </View>
+                      {p.chainFallback && (
+                        <Text style={styles.chainNote}>
+                          Based on other {p.name} locations - menu may vary here.
+                        </Text>
+                      )}
                       <Text style={styles.wtoText}>{p.wto}</Text>
                     </View>
                   ) : (
@@ -1413,6 +1516,26 @@ const styles = StyleSheet.create({
   typePillActive: { backgroundColor: colors.dark, borderColor: colors.dark },
   typePillText: { fontSize: 12, color: colors.muted, fontWeight: '500' },
   typePillTextActive: { color: colors.white },
+  nameFilterRow: { flexDirection: 'row', gap: 8, paddingHorizontal: spacing.md, marginBottom: spacing.sm },
+  nameFilterInput: {
+    flex: 1,
+    backgroundColor: colors.white,
+    borderWidth: 1.5,
+    borderColor: 'rgba(0,0,0,0.1)',
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 9,
+    fontSize: 13,
+  },
+  nameFilterClear: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: radius.pill,
+    width: 34,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  nameFilterClearText: { fontSize: 13, color: colors.muted },
+  chainNote: { fontSize: 10, color: colors.muted, fontStyle: 'italic', marginBottom: 4 },
   resultsHeader: { paddingHorizontal: spacing.md, marginBottom: spacing.sm },
   resultsCount: { fontSize: 12, color: colors.muted },
   grid: { paddingHorizontal: spacing.md, gap: spacing.md },
